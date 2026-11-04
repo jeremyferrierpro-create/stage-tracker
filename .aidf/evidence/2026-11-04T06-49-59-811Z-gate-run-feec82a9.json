@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-04T06-49-59-811Z-2ef077",
+  "type": "gate-run",
+  "status": "NOT_PROVEN",
+  "gate": "planning-exit",
+  "phase": "planning",
+  "summary": "planning-exit (exit) -> NOT_PROVEN",
+  "note": "",
+  "createdBy": "aidf",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-04T06:49:59.811Z",
+  "checks": [
+    {
+      "id": "trd-plan-validated",
+      "type": "doc-status",
+      "status": "PASS",
+      "reason": "TRD: TRD is VALIDATED. PLAN: PLAN is VALIDATED.",
+      "evidence": null
+    },
+    {
+      "id": "backend-not-blocked",
+      "type": "doc-status",
+      "status": "PASS",
+      "reason": "BACKEND: BACKEND is VALIDATED.",
+      "evidence": null
+    },
+    {
+      "id": "plan-human-approval",
+      "type": "evidence",
+      "status": "NOT_PROVEN",
+      "reason": "No PASS evidence of type \"plan-approval\" with human approval.",
+      "evidence": null
+    }
+  ],
+  "commands": [],
+  "files": [],
+  "limitations": [],
+  "previous": "729a5f0b5ab183f4d68a2654281d8115471ce88bbf23de762ddb281e831e129d",
+  "hash": "feec82a9eee285dd8917a0e19dfe1ed01fdc19edc24dc258bc88416b0eac0420"
+}

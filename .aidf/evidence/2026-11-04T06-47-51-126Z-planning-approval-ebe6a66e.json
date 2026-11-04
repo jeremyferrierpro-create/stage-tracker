@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-04T06-47-51-125Z-970488",
+  "type": "planning-approval",
+  "status": "PASS",
+  "gate": null,
+  "phase": null,
+  "summary": "Approbation humaine explicite (2026-11-04) de l'entree en phase PLANNING: decoupage atomique des taches, ordonnancement, dependances, fichiers concernes, tests et preuves attendues, criteres d'acceptation, risques. Pilote COAB confirme comme premier cas d'usage. Arret prevu avant IMPLEMENTATION.",
+  "note": "Approbation humaine explicite (2026-11-04) de l'entree en phase PLANNING: decoupage atomique des taches, ordonnancement, dependances, fichiers concernes, tests et preuves attendues, criteres d'acceptation, risques. Pilote COAB confirme comme premier cas d'usage. Arret prevu avant IMPLEMENTATION.",
+  "createdBy": "human",
+  "humanApproval": true,
+  "approvedBy": "Jeremy Ferrier",
+  "createdAt": "2026-11-04T06:47:51.125Z",
+  "checks": [
+    {
+      "id": "manual-record",
+      "status": "PASS",
+      "reason": "Approved by Jeremy Ferrier"
+    }
+  ],
+  "commands": [],
+  "files": [],
+  "limitations": [],
+  "previous": "fb8bebab6e39140d37b4775866469b7ad55d73933df3957faf5679eda0211e9a",
+  "hash": "ebe6a66eacb6b2119873d76ce43a4c4e572b63102fd8438f5edc44641ee04cc4"
+}

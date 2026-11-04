@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-04T06-48-13-793Z-3f739a",
+  "type": "gate-run",
+  "status": "PASS",
+  "gate": "planning-entry",
+  "phase": "planning",
+  "summary": "planning-entry (entry) -> PASS",
+  "note": "",
+  "createdBy": "aidf",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-04T06:48:13.793Z",
+  "checks": [
+    {
+      "id": "previous-specification",
+      "type": "previous-gate",
+      "status": "PASS",
+      "reason": "Prior gates PASS: specification-exit.",
+      "evidence": null
+    }
+  ],
+  "commands": [],
+  "files": [],
+  "limitations": [],
+  "previous": "ebe6a66eacb6b2119873d76ce43a4c4e572b63102fd8438f5edc44641ee04cc4",
+  "hash": "729a5f0b5ab183f4d68a2654281d8115471ce88bbf23de762ddb281e831e129d"
+}
