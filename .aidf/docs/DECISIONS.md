@@ -94,3 +94,23 @@ Format : identifiant, statut, date, décision, justification, conséquences.
 - Décision : `audit_logs` en append-only pour les actions sensibles.
 - Justification : traçabilité et non-répudiation (SECURITY §2).
 - Conséquences : aucune mise à jour/suppression applicative des entrées.
+
+## DEC-ST-013 — README comme manuel utilisateur vivant
+- Statut : ACCEPTED (2026-11-04, exigence propriétaire)
+- Décision : le `README.md` du projet est un **mode d'emploi de l'outil**,
+  construit partie par partie. À la fin de **chaque tâche d'implémentation**,
+  la ou les sections concernées sont mises à jour (ou créées) et la mise à jour
+  est incluse dans la Definition of Done de la tâche.
+- Objectif : permettre à un camarade de formation de cloner le dépôt et
+  d'utiliser l'outil pour son propre stage, sans connaissance préalable du code.
+- Règles :
+  1. Aucune section ne documente une fonctionnalité non implémentée et non
+     testée (statut explicite « à venir » avec la tâche qui la livrera).
+  2. Chaque section indique le rôle concerné et le parcours utilisateur réel.
+  3. Les commandes affichées sont celles réellement exécutées et vérifiées.
+  4. Les captures ne remplacent jamais une procédure textuelle.
+  5. Le README est mis à jour dans le même commit que la tâche (ou le commit
+     suivant immédiat, avec preuve).
+- Conséquences : la revue de tâche vérifie le README ; une tâche sans mise à
+  jour README est incomplète (sauf tâche purement technique sans impact
+  utilisateur, justification obligatoire).

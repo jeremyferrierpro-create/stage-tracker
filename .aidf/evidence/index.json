@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-04T06:49:59.814Z",
-  "lastHash": "feec82a9eee285dd8917a0e19dfe1ed01fdc19edc24dc258bc88416b0eac0420",
+  "updatedAt": "2026-11-04T06:55:53.094Z",
+  "lastHash": "d4556607626e9d73885d7e40df1653a3f622fa4c59ada4be20787b49ca566e86",
   "entries": [
     {
       "id": "ev-2026-11-04T06-17-06-517Z-c9d381",
@@ -170,6 +170,54 @@
       "approvedBy": null,
       "file": ".aidf/evidence/2026-11-04T06-49-59-811Z-gate-run-feec82a9.json",
       "hash": "feec82a9eee285dd8917a0e19dfe1ed01fdc19edc24dc258bc88416b0eac0420"
+    },
+    {
+      "id": "ev-2026-11-04T06-54-24-446Z-cab7e5",
+      "type": "plan-approval",
+      "status": "PASS",
+      "gate": null,
+      "phase": null,
+      "createdAt": "2026-11-04T06:54:24.446Z",
+      "humanApproval": true,
+      "approvedBy": "Jeremy Ferrier",
+      "file": ".aidf/evidence/2026-11-04T06-54-24-448Z-plan-approval-517c8e86.json",
+      "hash": "517c8e86c6e1a3ce8d84860ede2c5e2838a78a4d287fcd9ecbf5a00818246ccb"
+    },
+    {
+      "id": "ev-2026-11-04T06-54-26-537Z-608682",
+      "type": "gate-run",
+      "status": "PASS",
+      "gate": "planning-exit",
+      "phase": "planning",
+      "createdAt": "2026-11-04T06:54:26.537Z",
+      "humanApproval": false,
+      "approvedBy": null,
+      "file": ".aidf/evidence/2026-11-04T06-54-26-537Z-gate-run-a1d27de6.json",
+      "hash": "a1d27de6b6026d320dc5f8165877790a2c71c51af2e1cdeb9acb3cfbac0b10f2"
+    },
+    {
+      "id": "ev-2026-11-04T06-55-47-513Z-924dbd",
+      "type": "gate-run",
+      "status": "PASS",
+      "gate": "planning-exit",
+      "phase": "planning",
+      "createdAt": "2026-11-04T06:55:47.513Z",
+      "humanApproval": false,
+      "approvedBy": null,
+      "file": ".aidf/evidence/2026-11-04T06-55-47-514Z-gate-run-65e2dda5.json",
+      "hash": "65e2dda5535f6d6b2c014eba1f642e6385740120eb338a12270be1b81a37690c"
+    },
+    {
+      "id": "ev-2026-11-04T06-55-53-090Z-6220db",
+      "type": "documentation-update",
+      "status": "PASS",
+      "gate": null,
+      "phase": null,
+      "createdAt": "2026-11-04T06:55:53.090Z",
+      "humanApproval": false,
+      "approvedBy": null,
+      "file": ".aidf/evidence/2026-11-04T06-55-53-091Z-documentation-update-d4556607.json",
+      "hash": "d4556607626e9d73885d7e40df1653a3f622fa4c59ada4be20787b49ca566e86"
     }
   ]
 }

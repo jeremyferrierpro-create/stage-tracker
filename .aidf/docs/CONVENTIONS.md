@@ -85,3 +85,15 @@ validated_by: Jeremy Ferrier
 - Checklist : tests exécutés, autorisations, isolation, validation, audit,
   absence de secret, documentation.
 - Un désaccord bloquant est consigné et arbitré par le propriétaire.
+
+## 10. README — manuel utilisateur (DEC-ST-013)
+
+- Le `README.md` est le **mode d'emploi de l'outil**, destiné à un camarade de
+  formation qui clone le dépôt pour son propre stage.
+- À la fin de chaque tâche, les sections concernées sont mises à jour dans le
+  même commit (mapping : `docs/planning/README-PLAN.md`).
+- Une section ne documente jamais une fonctionnalité non implémentée ou non
+  testée ; elle porte alors la mention `À VENIR — livré par T-xxx`.
+- Les commandes affichées doivent avoir été réellement exécutées.
+- Une tâche sans impact utilisateur peut ne pas modifier le README, avec
+  justification en revue.

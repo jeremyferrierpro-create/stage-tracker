@@ -63,8 +63,8 @@
     "CONVENTIONS": {
       "status": "VALIDATED",
       "validatedBy": "Jeremy Ferrier",
-      "validatedAt": "2026-11-04T06:25:56.569Z",
-      "note": "Validation du contenu dans le cadre de l'approbation explicite du plan SPECIFICATION (2026-11-04)"
+      "validatedAt": "2026-11-04T06:55:47.342Z",
+      "note": "Ajout section 10 README (DEC-ST-013) a la demande explicite du proprietaire"
     },
     "constitution": {
       "status": "VALIDATED",
@@ -75,8 +75,8 @@
     "DECISIONS": {
       "status": "VALIDATED",
       "validatedBy": "Jeremy Ferrier",
-      "validatedAt": "2026-11-04T06:25:56.702Z",
-      "note": "Validation du contenu dans le cadre de l'approbation explicite du plan SPECIFICATION (2026-11-04)"
+      "validatedAt": "2026-11-04T06:55:47.167Z",
+      "note": "Ajout DEC-ST-013 (README manuel utilisateur vivant) a la demande explicite du proprietaire"
     },
     "CHANGELOG": {
       "status": "VALIDATED",
@@ -122,5 +122,5 @@
     "retentionDays": 365
   },
   "createdAt": "2026-11-04T06:16:04.454Z",
-  "updatedAt": "2026-11-04T06:25:56.860Z"
+  "updatedAt": "2026-11-04T06:55:47.342Z"
 }

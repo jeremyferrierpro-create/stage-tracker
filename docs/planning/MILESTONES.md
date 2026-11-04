@@ -74,6 +74,20 @@ Toute tâche du chemin critique retarde la release. Les tâches hors chemin
 | L5 | T-060 → T-066 | exploitation pédagogique et exports |
 | L6 | T-070 → T-071 | release prouvée |
 
+### Livrables README par lot (DEC-ST-013)
+
+| Lot | Sections README complétées |
+|---|---|
+| L1 | Présentation, statut, prérequis, installation, premier lancement, guide administrateur (base) |
+| L2 | Concepts clés, guide stagiaire (stage, journal, Kanban, activités) |
+| L3 | Preuves, connecteur GitHub, sécurité/confidentialité (visibilité) |
+| L4 | Guide maître de stage, collaboration, revues |
+| L5 | Guide tuteur, compétences, rapports/exports, sauvegarde/restauration |
+| L6 | Dépannage, développement/contribution, limites connues, finalisation T-072 |
+
+Chaque lot se termine par une relecture du README par le rôle concerné ; une
+section non vérifiée reste marquée « À venir — livré par T-xxx ».
+
 ## 6. Estimation relative (sans engagement de durée)
 
 | Lot | Complexité | Justification |

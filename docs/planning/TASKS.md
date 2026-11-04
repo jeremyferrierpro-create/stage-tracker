@@ -4,6 +4,14 @@
 > si toutes ses dépendances sont **PASS** avec preuve. Format : objectif,
 > entrées, traitement, sorties, fichiers, tests, preuves, acceptation, risques.
 
+## Règle transverse — README (DEC-ST-013)
+
+À la fin de **chaque tâche**, le `README.md` est mis à jour dans les sections
+concernées (mapping dans `docs/planning/README-PLAN.md` §2). Le README est un
+**manuel utilisateur** destiné à un camarade de formation qui clone le dépôt.
+Une tâche sans mise à jour README doit justifier l'absence d'impact utilisateur
+dans sa revue.
+
 ## Phase 1 — Socle multiutilisateur
 
 ### T-001 — Squelette Laravel et structure de domaine
@@ -516,3 +524,20 @@
 - **Preuves** : rapport + approbations.
 - **Acceptation** : aucune condition BLOCKED/FAIL/NOT_PROVEN non justifiée.
 - **Risques** : précipitation → gate bloquant.
+
+### T-072 — Manuel utilisateur final (README)
+- **Objectif** : garantir que le README permet à un camarade de formation
+  d'installer et d'utiliser l'outil sans aide.
+- **Dépend de** : T-066, T-071.
+- **Entrées** : README construit au fil des tâches, `README-PLAN.md`.
+- **Traitement** : relecture complète par rôle, test réel d'installation sur un
+  environnement vierge, correction des écarts, ajout des limites connues.
+- **Sorties** : README finalisé (manuel complet), rapport de test d'installation.
+- **Fichiers** : `README.md`, `docs/planning/README-PLAN.md`.
+- **Tests** : installation guidée uniquement par le README (clone → application
+  fonctionnelle) ; parcours stagiaire, maître, tuteur, admin.
+- **Preuves** : journal d'installation + sorties réelles + captures complémentaires.
+- **Acceptation** : un utilisateur non développeur installe et réalise un
+  parcours complet sans intervention externe.
+- **Risques** : documentation optimiste → test réel obligatoire ; environnement
+  différent → prérequis explicites et vérifiés.

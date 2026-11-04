@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-04T06-55-47-513Z-924dbd",
+  "type": "gate-run",
+  "status": "PASS",
+  "gate": "planning-exit",
+  "phase": "planning",
+  "summary": "planning-exit (exit) -> PASS",
+  "note": "",
+  "createdBy": "aidf",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-04T06:55:47.513Z",
+  "checks": [
+    {
+      "id": "trd-plan-validated",
+      "type": "doc-status",
+      "status": "PASS",
+      "reason": "TRD: TRD is VALIDATED. PLAN: PLAN is VALIDATED.",
+      "evidence": null
+    },
+    {
+      "id": "backend-not-blocked",
+      "type": "doc-status",
+      "status": "PASS",
+      "reason": "BACKEND: BACKEND is VALIDATED.",
+      "evidence": null
+    },
+    {
+      "id": "plan-human-approval",
+      "type": "evidence",
+      "status": "PASS",
+      "reason": "Found 1 matching evidence record(s).",
+      "evidence": [
+        ".aidf/evidence/2026-11-04T06-54-24-448Z-plan-approval-517c8e86.json"
+      ]
+    }
+  ],
+  "commands": [],
+  "files": [],
+  "limitations": [],
+  "previous": "a1d27de6b6026d320dc5f8165877790a2c71c51af2e1cdeb9acb3cfbac0b10f2",
+  "hash": "65e2dda5535f6d6b2c014eba1f642e6385740120eb338a12270be1b81a37690c"
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-04T06-55-53-090Z-6220db",
+  "type": "documentation-update",
+  "status": "PASS",
+  "gate": null,
+  "phase": null,
+  "summary": "README transforme en manuel utilisateur vivant (DEC-ST-013): 17 sections, statuts DISPONIBLE/ A VENIR rattaches aux taches T-001..T-072. Ajout docs/planning/README-PLAN.md (mapping section<->tache, regles de redaction, critere de completude T-072). TASKS.md: regle transverse + T-072. MILESTONES.md: livrables README par lot L1..L6. CONVENTIONS.md section 10. Aucune fonctionnalite non implementee documentee comme disponible.",
+  "note": "README transforme en manuel utilisateur vivant (DEC-ST-013): 17 sections, statuts DISPONIBLE/ A VENIR rattaches aux taches T-001..T-072. Ajout docs/planning/README-PLAN.md (mapping section<->tache, regles de redaction, critere de completude T-072). TASKS.md: regle transverse + T-072. MILESTONES.md: livrables README par lot L1..L6. CONVENTIONS.md section 10. Aucune fonctionnalite non implementee documentee comme disponible.",
+  "createdBy": "agent",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-04T06:55:53.090Z",
+  "checks": [
+    {
+      "id": "manual-record",
+      "status": "NOT_PROVEN",
+      "reason": "Agent declaration only; not a human approval."
+    }
+  ],
+  "commands": [],
+  "files": [],
+  "limitations": [
+    "Agent-declared evidence is not human approval."
+  ],
+  "previous": "65e2dda5535f6d6b2c014eba1f642e6385740120eb338a12270be1b81a37690c",
+  "hash": "d4556607626e9d73885d7e40df1653a3f622fa4c59ada4be20787b49ca566e86"
+}

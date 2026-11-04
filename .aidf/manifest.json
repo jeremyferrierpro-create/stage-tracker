@@ -10,7 +10,7 @@
   },
   "adapter": "qoder",
   "installedAt": "2026-11-04T06:16:04.454Z",
-  "updatedAt": "2026-11-04T06:25:56.870Z",
+  "updatedAt": "2026-11-04T06:55:47.354Z",
   "files": {
     ".aidf/framework/src/cli.mjs": {
       "sha256": "5447ac39270ce9894c5fabcdd0c0a3de39875e89fde0675b08349154c4894433",
@@ -665,18 +665,18 @@
       "updatedAt": "2026-11-04T06:25:55.322Z"
     },
     ".aidf/docs/CONVENTIONS.md": {
-      "sha256": "cdd42eaf8681966ee3fde2765111a03c8fa28437401dfa5372274e6137173e99",
+      "sha256": "960cee19faa39daf7bb6a25018836177586dcb219a97b21f0f7d674de109de4a",
       "category": "documents",
       "owner": "aidf",
       "installedAt": "2026-11-04T06:16:04.841Z",
-      "updatedAt": "2026-11-04T06:25:56.577Z"
+      "updatedAt": "2026-11-04T06:55:47.354Z"
     },
     ".aidf/docs/DECISIONS.md": {
-      "sha256": "6f4d24ee088bc84344408275574ffc78c9d0eaced530f97455451da18c139043",
+      "sha256": "aeccc3993a154c6e2a3520ad28237981d547fa97118cff0d38310cfd180ca6c5",
       "category": "documents",
       "owner": "aidf",
       "installedAt": "2026-11-04T06:16:04.845Z",
-      "updatedAt": "2026-11-04T06:25:56.714Z"
+      "updatedAt": "2026-11-04T06:55:47.176Z"
     },
     ".aidf/docs/PLAN.md": {
       "sha256": "4f8e58d51da39caae7aec35543ceae9a393500600b2c56d14d5f902b56815dc0",
