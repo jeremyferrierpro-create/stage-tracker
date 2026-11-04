@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-04T07-11-55-541Z-566cd6",
+  "type": "implementation-change",
+  "status": "PASS",
+  "gate": null,
+  "phase": null,
+  "summary": "T-003 termine: phpunit.xml cree (suites Unit/Feature, base stage_tracker_test, APP_ENV=testing), base stage_tracker_test creee dans le conteneur, .env.testing local (ignore). php artisan test = 2 tests PASS / 2 assertions. vendor/bin/pint --test = PASS. composer install = dependances installees depuis le lock, package:discover OK. README mis a jour (§1,§2,§3,§4,§16,§17) avec commandes reellement executees.",
+  "note": "T-003 termine: phpunit.xml cree (suites Unit/Feature, base stage_tracker_test, APP_ENV=testing), base stage_tracker_test creee dans le conteneur, .env.testing local (ignore). php artisan test = 2 tests PASS / 2 assertions. vendor/bin/pint --test = PASS. composer install = dependances installees depuis le lock, package:discover OK. README mis a jour (§1,§2,§3,§4,§16,§17) avec commandes reellement executees.",
+  "createdBy": "agent",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-04T07:11:55.541Z",
+  "checks": [
+    {
+      "id": "manual-record",
+      "status": "NOT_PROVEN",
+      "reason": "Agent declaration only; not a human approval."
+    }
+  ],
+  "commands": [],
+  "files": [],
+  "limitations": [
+    "Agent-declared evidence is not human approval."
+  ],
+  "previous": "29d3d756715d7f95d63c6d5fbdd535ef78818589a3185abccabf6416bb67a686",
+  "hash": "c2eab0af20c50914e8404af274d9e00ea67688d29ac20792fd5dd5ca5939d154"
+}

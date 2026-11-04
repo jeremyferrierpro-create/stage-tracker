@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-04T07-11-55-404Z-77a905",
+  "type": "implementation-change",
+  "status": "PASS",
+  "gate": null,
+  "phase": null,
+  "summary": "T-002 termine: PostgreSQL 16.15 via Docker (conteneur stage-tracker-postgres, image postgres:16-alpine, healthcheck healthy). .env local cree depuis .env.example avec DB_PASSWORD genere (non versionne). php artisan key:generate OK. php artisan db:show = PostgreSQL 16.15, connexion pgsql, base stage_tracker. Pipeline migration prouve: make:migration -> migrate DONE -> rollback DONE -> fichier temporaire supprime (schema revenu a migrations seule).",
+  "note": "T-002 termine: PostgreSQL 16.15 via Docker (conteneur stage-tracker-postgres, image postgres:16-alpine, healthcheck healthy). .env local cree depuis .env.example avec DB_PASSWORD genere (non versionne). php artisan key:generate OK. php artisan db:show = PostgreSQL 16.15, connexion pgsql, base stage_tracker. Pipeline migration prouve: make:migration -> migrate DONE -> rollback DONE -> fichier temporaire supprime (schema revenu a migrations seule).",
+  "createdBy": "agent",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-04T07:11:55.404Z",
+  "checks": [
+    {
+      "id": "manual-record",
+      "status": "NOT_PROVEN",
+      "reason": "Agent declaration only; not a human approval."
+    }
+  ],
+  "commands": [],
+  "files": [],
+  "limitations": [
+    "Agent-declared evidence is not human approval."
+  ],
+  "previous": "069f8fdb9cd282cbd1e357e14b189adf4156bff2b3468badc857d774db2de0dd",
+  "hash": "29d3d756715d7f95d63c6d5fbdd535ef78818589a3185abccabf6416bb67a686"
+}

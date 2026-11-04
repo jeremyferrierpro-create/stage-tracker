@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-04T07-11-55-240Z-ad3809",
+  "type": "implementation-change",
+  "status": "PASS",
+  "gate": null,
+  "phase": null,
+  "summary": "T-001 termine: squelette Laravel 13.40.0 fusionne dans projets/stage-tracker (robocopy depuis create-project, exclusion .git/.env/README/.gitignore/.env.example). Structure app/Domain (12 domaines) + app/Integrations (Git/GitHub/Storage) + app/Policies. php artisan --version = Laravel Framework 13.40.0. Aucun fichier de gouvernance ecrase.",
+  "note": "T-001 termine: squelette Laravel 13.40.0 fusionne dans projets/stage-tracker (robocopy depuis create-project, exclusion .git/.env/README/.gitignore/.env.example). Structure app/Domain (12 domaines) + app/Integrations (Git/GitHub/Storage) + app/Policies. php artisan --version = Laravel Framework 13.40.0. Aucun fichier de gouvernance ecrase.",
+  "createdBy": "agent",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-04T07:11:55.240Z",
+  "checks": [
+    {
+      "id": "manual-record",
+      "status": "NOT_PROVEN",
+      "reason": "Agent declaration only; not a human approval."
+    }
+  ],
+  "commands": [],
+  "files": [],
+  "limitations": [
+    "Agent-declared evidence is not human approval."
+  ],
+  "previous": "0878383c4bb23b84a7b585706d83a85f482499c2b8a5389ecd0f825e89db6b9e",
+  "hash": "069f8fdb9cd282cbd1e357e14b189adf4156bff2b3468badc857d774db2de0dd"
+}

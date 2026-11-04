@@ -19,6 +19,28 @@ versionnement [SemVer](https://semver.org/lang/fr/).
 - Squelette Laravel + PostgreSQL + Docker.
 - Modules Identity, Workspace, Organization.
 
+## [0.2.0] — 2026-11-04 — Socle technique (T-001 → T-003)
+
+### Ajouté
+- Squelette Laravel 13.40.0 fusionné dans le dépôt sans écraser la gouvernance.
+- Structure `app/Domain/*` (12 domaines) et `app/Integrations/*` (Git, GitHub, Storage).
+- PostgreSQL 16.15 via Docker (`stage-tracker-postgres`, healthcheck healthy).
+- `phpunit.xml` (base de test `stage_tracker_test`), `.env.example` complété.
+- Page d'accueil minimale en français.
+- Migration/rollback vérifiés (migration technique temporaire, supprimée).
+
+### Vérifié
+- `php artisan --version` → Laravel Framework 13.40.0.
+- `php artisan db:show` → PostgreSQL 16.15, connexion `pgsql`.
+- `php artisan test` → 2 tests PASS, 2 assertions.
+- `vendor/bin/pint --test` → PASS.
+- `docker compose config` → VALID ; conteneur `healthy`.
+
+### Limites
+- Aucune fonctionnalité métier (T-004 et suivantes).
+- Frontend Vite/npm non installé (T-011).
+- Migrations métier non créées (T-004+).
+
 ## [0.1.0] — 2026-11-04 — Spécification
 
 ### Ajouté

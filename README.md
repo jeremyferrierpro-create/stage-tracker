@@ -63,8 +63,10 @@ Preuve → Compétence → Évaluation → Synthèse.
 
 | Élément | État |
 |---|---|
-| Phase AIDF | SPECIFICATION et PLANNING terminées (gates PASS) |
-| Code applicatif | **non démarré** (phase IMPLEMENTATION à venir) |
+| Phase AIDF | IMPLEMENTATION démarrée — socle T-001 → T-003 livré |
+| Code applicatif | socle Laravel 13.40.0 installé ; fonctionnalités métier à venir |
+| Base de données | PostgreSQL 16.15 (conteneur Docker `stage-tracker-postgres`) |
+| Tests | `php artisan test` → 2 tests PASS ; `pint --test` → PASS |
 | Documents de référence | `.aidf/docs/` (11 documents validés) |
 | Annexes techniques | `docs/` (MCD, MLD, API, invariants, tests, planning) |
 | Preuves | `.aidf/evidence/` (chaîne de preuves SHA-256) |
@@ -100,6 +102,7 @@ développement du projet :
 | Git | 2.56.0 | `git --version` |
 | Docker | 29.8.2 (engine actif) | `docker --version`, `docker ps` |
 | Image PostgreSQL | `postgres:16-alpine` | `docker images` |
+| PostgreSQL en service | 16.15 (conteneur `stage-tracker-postgres`) | `php artisan db:show` |
 
 > `pdo_sqlite` n'est pas requis : la base cible est PostgreSQL.
 
@@ -109,9 +112,8 @@ développement du projet :
 
 ## 4. Installation
 
-> `À VENIR — livré par T-001 → T-003` (squelette Laravel, PostgreSQL, qualité).
-> Les commandes ci-dessous décrivent la cible ; elles ne seront déclarées
-> disponibles qu'après exécution réelle et preuve enregistrée.
+> **Backend vérifié le 2026-11-04** (T-001 → T-003). La partie frontend
+> (Vite/npm) sera ajoutée avec T-011.
 
 ### 4.1 Cloner le dépôt
 
@@ -120,12 +122,13 @@ git clone <url-du-depot> stage-tracker
 cd stage-tracker
 ```
 
-### 4.2 Installer les dépendances
+### 4.2 Installer les dépendances PHP
 
 ```bash
 composer install
-npm install
 ```
+
+Exécuté : dépendances installées depuis `composer.lock`, découverte des paquets OK.
 
 ### 4.3 Configurer l'environnement
 
@@ -136,6 +139,8 @@ php artisan key:generate
 
 Renseigner `DB_PASSWORD` dans `.env` (aucun secret n'est versionné).
 
+Exécuté : clé d'application générée.
+
 ### 4.4 Démarrer PostgreSQL
 
 ```bash
@@ -143,16 +148,28 @@ docker compose up -d
 docker compose ps        # attendre l'état "healthy"
 ```
 
+Exécuté : conteneur `stage-tracker-postgres` démarré, healthcheck `healthy`.
+
 ### 4.5 Créer le schéma
 
 ```bash
 php artisan migrate
 ```
 
+Exécuté : table `migrations` créée. Les migrations métier seront ajoutées au fil
+des tâches (T-004 et suivantes).
+
 > Les seeders sont réservés aux environnements `local` et `test` ; ils ne
 > contiennent aucune donnée réelle.
 
-*Statut : `À VENIR — T-001 → T-003`.*
+### 4.6 Vérifier que le socle fonctionne
+
+```bash
+php artisan --version       # Laravel Framework 13.40.0
+php artisan db:show         # PostgreSQL 16.15, connexion pgsql
+```
+
+*Statut : `DISPONIBLE` — vérifié le 2026-11-04.*
 
 ---
 
@@ -335,22 +352,42 @@ Faits déjà observés sur l'environnement de développement :
 ```
 .aidf/            gouvernance AIDF, documents, preuves, workflow
 docs/             architecture, base de données, fonctionnel, tests, planning
-app/              code applicatif (à créer en IMPLEMENTATION)
+app/Domain/       domaines métier (Identity, Organization, Training, Framework,
+                  Internship, Project, Journal, Evidence, Evaluation,
+                  Reporting, Collaboration, Audit)
+app/Integrations/ Git, GitHub, Storage
+app/Policies/     autorisations par ressource
+bootstrap/        démarrage de l'application
+config/           configuration
 database/         migrations, factories, seeders
+public/           point d'entrée web
 resources/        vues, styles, scripts
-routes/           web.php, api.php
+routes/           web.php (api.php à ajouter avec l'API)
+storage/          logs, cache, fichiers privés
 tests/            Feature, Unit, Browser
+vendor/           dépendances PHP (ignoré par Git)
 docker-compose.yml
 .env.example
+phpunit.xml
 ```
 
-### 16.2 Commandes de qualité (cibles, à activer en T-003)
+### 16.2 Commandes de qualité
 
 ```bash
-vendor/bin/pint --test      # style
-php artisan test            # tests PHPUnit
-npx playwright test         # tests navigateur
+vendor/bin/pint --test      # style — PASS le 2026-11-04
+php artisan test            # tests PHPUnit — 2 tests PASS le 2026-11-04
+npx playwright test         # navigateur — à activer en T-046/T-066
 ```
+
+Base de test isolée (une seule fois) :
+
+```bash
+docker exec stage-tracker-postgres psql -U stage_tracker -d postgres \
+  -c "CREATE DATABASE stage_tracker_test OWNER stage_tracker;"
+```
+
+Créer `.env.testing` à partir de `.env` avec `APP_ENV=testing` et
+`DB_DATABASE=stage_tracker_test` (fichier ignoré par Git).
 
 ### 16.3 Conventions
 
@@ -360,7 +397,7 @@ npx playwright test         # tests navigateur
 - Aucun secret dans Git ; `.env` ignoré.
 - Aucune fonctionnalité déclarée terminée sans test exécuté et preuve AIDF.
 
-*Statut : `DISPONIBLE` (conventions) — commandes à activer en T-003.*
+*Statut : `DISPONIBLE` — Pint et PHPUnit activés et vérifiés le 2026-11-04.*
 
 ---
 
@@ -368,7 +405,8 @@ npx playwright test         # tests navigateur
 
 | Limite | Statut |
 |---|---|
-| Aucun code applicatif à ce stade | phase IMPLEMENTATION non démarrée |
+| Fonctionnalités métier | non implémentées — socle technique uniquement (T-001 → T-003) |
+| Frontend (Vite/npm) | non installé — livré avec T-011 |
 | Conformité RGPD | **NOT_PROVEN** — analyse juridique requise |
 | Playwright sous Windows | non vérifié (IN-07) |
 | Trames officielles de rapports | indisponibles — modèles configurables |
