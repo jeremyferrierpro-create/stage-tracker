@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-04T07-32-55-997Z-a5f8c8",
+  "type": "implementation-change",
+  "status": "PASS",
+  "gate": null,
+  "phase": null,
+  "summary": "T-005 termine: migrations workspaces (uuid, CHECK type/status) et workspace_members (CHECK role/status, UNIQUE workspace_id+user_id). Modeles Workspace/WorkspaceMember, WorkspaceContext singleton, trait BelongsToWorkspace (scope global + remplissage workspace_id), middleware EnsureWorkspaceMember (403 non-membre/suspendu, 404 uuid inconnu/malforme), route /w/{workspace}/dashboard. Tests: WorkspaceIsolationTest (MT-01/MT-02 premieres versions) et WorkspaceScopeTest.",
+  "note": "T-005 termine: migrations workspaces (uuid, CHECK type/status) et workspace_members (CHECK role/status, UNIQUE workspace_id+user_id). Modeles Workspace/WorkspaceMember, WorkspaceContext singleton, trait BelongsToWorkspace (scope global + remplissage workspace_id), middleware EnsureWorkspaceMember (403 non-membre/suspendu, 404 uuid inconnu/malforme), route /w/{workspace}/dashboard. Tests: WorkspaceIsolationTest (MT-01/MT-02 premieres versions) et WorkspaceScopeTest.",
+  "createdBy": "agent",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-04T07:32:55.997Z",
+  "checks": [
+    {
+      "id": "manual-record",
+      "status": "NOT_PROVEN",
+      "reason": "Agent declaration only; not a human approval."
+    }
+  ],
+  "commands": [],
+  "files": [],
+  "limitations": [
+    "Agent-declared evidence is not human approval."
+  ],
+  "previous": "a5f1c03a211e37a83c30310ef0744ba77edeced181da5d8bee91d5237d288949",
+  "hash": "e322bc3a8be45d5c2e81e59373239060eebc88278b37cc2eae1ee8c85068ff18"
+}

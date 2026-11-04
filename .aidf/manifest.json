@@ -10,7 +10,7 @@
   },
   "adapter": "qoder",
   "installedAt": "2026-11-04T06:16:04.454Z",
-  "updatedAt": "2026-11-04T07:11:55.076Z",
+  "updatedAt": "2026-11-04T07:32:55.714Z",
   "files": {
     ".aidf/framework/src/cli.mjs": {
       "sha256": "5447ac39270ce9894c5fabcdd0c0a3de39875e89fde0675b08349154c4894433",
@@ -651,11 +651,11 @@
       "updatedAt": "2026-11-04T06:25:56.088Z"
     },
     ".aidf/docs/CHANGELOG.md": {
-      "sha256": "e9fd6f4a283e3433b2dbad0f7c53761bf7539022845ddb273a531f18a1d56ef4",
+      "sha256": "1413cd54c230000ba6dffea702b61800a823db46f80c085f33b0955ee8579df1",
       "category": "documents",
       "owner": "aidf",
       "installedAt": "2026-11-04T06:16:04.835Z",
-      "updatedAt": "2026-11-04T07:11:55.076Z"
+      "updatedAt": "2026-11-04T07:32:55.714Z"
     },
     ".aidf/docs/constitution.md": {
       "sha256": "7bd9b3681dd03eff13f56a3df43700b545fd132240972f05bcdd208497d43992",

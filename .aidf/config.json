@@ -81,8 +81,8 @@
     "CHANGELOG": {
       "status": "VALIDATED",
       "validatedBy": "Jeremy Ferrier",
-      "validatedAt": "2026-11-04T07:11:55.067Z",
-      "note": "Mise a jour factuelle de suivi: socle technique 0.2.0 (T-001..T-003) apres approbation d'implementation"
+      "validatedAt": "2026-11-04T07:32:55.703Z",
+      "note": "Mise a jour factuelle de suivi: version 0.3.0 authentification et isolation (T-004..T-006)"
     }
   },
   "workflow": {
@@ -122,5 +122,5 @@
     "retentionDays": 365
   },
   "createdAt": "2026-11-04T06:16:04.454Z",
-  "updatedAt": "2026-11-04T07:11:55.067Z"
+  "updatedAt": "2026-11-04T07:32:55.703Z"
 }

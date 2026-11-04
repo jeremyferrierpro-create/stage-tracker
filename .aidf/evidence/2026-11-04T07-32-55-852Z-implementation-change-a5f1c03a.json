@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-04T07-32-55-851Z-497f71",
+  "type": "implementation-change",
+  "status": "PASS",
+  "gate": null,
+  "phase": null,
+  "summary": "T-004 termine: migration users (password_hash, status CHECK, last_login_at) + sessions/cache/jobs. Authentification Argon2id (config/hashing.php), LoginRequest avec rate limiting 5/15min retournant HTTP 429 + Retry-After, messages neutres identiques (compte inconnu/mot de passe faux/compte disabled), regeneration de session et last_login_at. Tests: LoginTest (connexion valide, argon2id, mot de passe faux, compte desactive, email inconnu, 429 apres 5 echecs, deconnexion).",
+  "note": "T-004 termine: migration users (password_hash, status CHECK, last_login_at) + sessions/cache/jobs. Authentification Argon2id (config/hashing.php), LoginRequest avec rate limiting 5/15min retournant HTTP 429 + Retry-After, messages neutres identiques (compte inconnu/mot de passe faux/compte disabled), regeneration de session et last_login_at. Tests: LoginTest (connexion valide, argon2id, mot de passe faux, compte desactive, email inconnu, 429 apres 5 echecs, deconnexion).",
+  "createdBy": "agent",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-04T07:32:55.851Z",
+  "checks": [
+    {
+      "id": "manual-record",
+      "status": "NOT_PROVEN",
+      "reason": "Agent declaration only; not a human approval."
+    }
+  ],
+  "commands": [],
+  "files": [],
+  "limitations": [
+    "Agent-declared evidence is not human approval."
+  ],
+  "previous": "c2eab0af20c50914e8404af274d9e00ea67688d29ac20792fd5dd5ca5939d154",
+  "hash": "a5f1c03a211e37a83c30310ef0744ba77edeced181da5d8bee91d5237d288949"
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-04T07-32-56-135Z-4d0046",
+  "type": "implementation-change",
+  "status": "PASS",
+  "gate": null,
+  "phase": null,
+  "summary": "T-006 termine: WorkspacePolicy (view/update/manageMembers/delete) + AuthServiceProvider. Matrice verifiee par WorkspacePolicyTest: owner=tout, admin=update+manageMembers sans delete, trainee/viewer=view seule, non-membre et suspendu=aucun acces. Tests globaux: 29 PASS / 85 assertions; Pint PASS; 5 migrations Ran sur PostgreSQL 16.15; smoke HTTP /login=200 et /=302. Decouverte corrigee: squelette Laravel 13 sans public/index.php (cree) et artefacts runtime non ignores (gitignore ajoutes).",
+  "note": "T-006 termine: WorkspacePolicy (view/update/manageMembers/delete) + AuthServiceProvider. Matrice verifiee par WorkspacePolicyTest: owner=tout, admin=update+manageMembers sans delete, trainee/viewer=view seule, non-membre et suspendu=aucun acces. Tests globaux: 29 PASS / 85 assertions; Pint PASS; 5 migrations Ran sur PostgreSQL 16.15; smoke HTTP /login=200 et /=302. Decouverte corrigee: squelette Laravel 13 sans public/index.php (cree) et artefacts runtime non ignores (gitignore ajoutes).",
+  "createdBy": "agent",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-04T07:32:56.135Z",
+  "checks": [
+    {
+      "id": "manual-record",
+      "status": "NOT_PROVEN",
+      "reason": "Agent declaration only; not a human approval."
+    }
+  ],
+  "commands": [],
+  "files": [],
+  "limitations": [
+    "Agent-declared evidence is not human approval."
+  ],
+  "previous": "e322bc3a8be45d5c2e81e59373239060eebc88278b37cc2eae1ee8c85068ff18",
+  "hash": "a7bf12cfc018db92db6458b7e1bf48c2de1eba3f84d77987cfb464871ba9da6c"
+}

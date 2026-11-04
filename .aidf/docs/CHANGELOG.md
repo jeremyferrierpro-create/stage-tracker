@@ -14,10 +14,40 @@ versionnement [SemVer](https://semver.org/lang/fr/).
 
 ## [Unreleased]
 
-### À venir (PLANNING puis IMPLEMENTATION)
-- Découpage atomique des tâches (phase PLANNING).
-- Squelette Laravel + PostgreSQL + Docker.
-- Modules Identity, Workspace, Organization.
+### À venir
+- Modules métier : organisations, formations, référentiels, stages, activités.
+- Frontend Vite/Tailwind (T-011).
+- Invitations et gestion des membres (T-021).
+- Journal d'audit persistant (T-009).
+
+## [0.3.0] — 2026-11-04 — Authentification et isolation (T-004 → T-006)
+
+### Ajouté
+- Migrations `users` (`password_hash`, statut, `last_login_at`), `sessions`, `cache`, `jobs`.
+- `workspaces` (UUID) et `workspace_members` avec contraintes CHECK (rôles, statuts).
+- Authentification : connexion/déconnexion, Argon2id, régénération de session, `last_login_at`.
+- Rate limiting 5 tentatives / 15 minutes → HTTP 429 avec `Retry-After`.
+- Messages d'erreur neutres (compte inconnu, mot de passe faux, compte désactivé).
+- Middleware `EnsureWorkspaceMember` et route `/w/{workspace}/dashboard`.
+- `WorkspaceContext` + trait `BelongsToWorkspace` (scope global, remplissage automatique).
+- Policies `Workspace` (view/update/manageMembers/delete) et `AuthServiceProvider`.
+- Commandes `app:create-user` et `app:create-workspace`.
+- Vues Blade : connexion, mes espaces, tableau de bord d'espace.
+- Front controller `public/index.php`, `.htaccess`, `robots.txt` (absents du squelette Laravel 13).
+- `.gitignore` pour `bootstrap/cache` et `storage` (artefacts runtime non versionnés).
+
+### Vérifié
+- `php artisan test` → 29 tests PASS, 85 assertions.
+- `vendor/bin/pint --test` → PASS.
+- `php artisan migrate` → 5 migrations DONE sur PostgreSQL 16.15.
+- `php artisan serve` + HTTP → `/login` 200, `/` 302 (invité).
+- `app:create-user` et `app:create-workspace` exécutées réellement (données de démo supprimées).
+
+### Limites
+- Pas d'invitation ni de gestion des membres en interface (T-021).
+- Audit persistant en base à venir (T-009) ; logs transitoires seulement.
+- Frontend Vite/npm non installé (T-011).
+- Aucun module métier (organisations, stages, journal, preuves) à ce stade.
 
 ## [0.2.0] — 2026-11-04 — Socle technique (T-001 → T-003)
 

@@ -63,10 +63,11 @@ Preuve → Compétence → Évaluation → Synthèse.
 
 | Élément | État |
 |---|---|
-| Phase AIDF | IMPLEMENTATION démarrée — socle T-001 → T-003 livré |
-| Code applicatif | socle Laravel 13.40.0 installé ; fonctionnalités métier à venir |
+| Phase AIDF | IMPLEMENTATION en cours — T-001 → T-006 livrés |
+| Code applicatif | socle Laravel 13.40.0 + authentification + isolation multi-tenant ; modules métier à venir |
 | Base de données | PostgreSQL 16.15 (conteneur Docker `stage-tracker-postgres`) |
-| Tests | `php artisan test` → 2 tests PASS ; `pint --test` → PASS |
+| Tests | `php artisan test` → 29 tests PASS (85 assertions) ; `pint --test` → PASS |
+| Sécurité | Argon2id, rate limiting 5/15 min (429), sessions en base, messages neutres |
 | Documents de référence | `.aidf/docs/` (11 documents validés) |
 | Annexes techniques | `docs/` (MCD, MLD, API, invariants, tests, planning) |
 | Preuves | `.aidf/evidence/` (chaîne de preuves SHA-256) |
@@ -156,8 +157,8 @@ Exécuté : conteneur `stage-tracker-postgres` démarré, healthcheck `healthy`.
 php artisan migrate
 ```
 
-Exécuté : table `migrations` créée. Les migrations métier seront ajoutées au fil
-des tâches (T-004 et suivantes).
+Exécuté : tables `users`, `sessions`, `cache`, `jobs`, `workspaces` et
+`workspace_members` créées (T-004 → T-006).
 
 > Les seeders sont réservés aux environnements `local` et `test` ; ils ne
 > contiennent aucune donnée réelle.
@@ -175,15 +176,54 @@ php artisan db:show         # PostgreSQL 16.15, connexion pgsql
 
 ## 5. Premier lancement
 
-> `À VENIR — livré par T-004, T-005, T-011`.
+> **Disponible** depuis T-004 → T-006 (vérifié le 2026-11-04).
 
-Contenu prévu :
-- création du premier compte ;
-- création du workspace initial ;
-- invitation des participants ;
-- navigation de base.
+### 5.1 Créer le premier compte
 
-*Statut : `À VENIR`.*
+Aucune inscription publique : un administrateur crée les comptes.
+
+```bash
+php artisan app:create-user vous@example.test --name="Votre nom"
+```
+
+Le mot de passe est demandé de façon masquée (12 caractères minimum) et stocké
+avec Argon2id. Éviter `--password=` (visible dans l'historique du shell).
+
+### 5.2 Créer l'espace de travail initial
+
+```bash
+php artisan app:create-workspace "Mon stage" --owner=vous@example.test --type=personal
+```
+
+Types disponibles : `personal`, `association`, `professional`, `pedagogical`.
+Le créateur devient automatiquement membre avec le rôle `owner`.
+
+### 5.3 Se connecter
+
+```bash
+php artisan serve
+```
+
+Ouvrir <http://127.0.0.1:8000> : la page de connexion s'affiche. Après
+connexion, « Mes espaces » liste les espaces dont vous êtes membre actif.
+
+### 5.4 Naviguer
+
+1. Se connecter avec l'e-mail et le mot de passe créés.
+2. Ouvrir un espace depuis « Mes espaces ».
+3. L'URL `/w/{workspace}/dashboard` est refusée (403) si vous n'êtes pas membre
+   actif de cet espace.
+
+### 5.5 Sécurité de connexion
+
+- Mots de passe hachés avec Argon2id.
+- 5 échecs en 15 minutes → réponse HTTP 429 avec `Retry-After`.
+- Message d'erreur identique pour un compte inconnu, un mot de passe faux ou un
+  compte désactivé (aucune fuite d'existence).
+- Sessions stockées en base ; identifiant de session régénéré à la connexion.
+- `last_login_at` mis à jour à chaque connexion réussie (table d'audit en T-009).
+
+*Statut : `DISPONIBLE` — vérifié le 2026-11-04.*
 
 ---
 
@@ -256,15 +296,54 @@ Sections prévues :
 
 ## 10. Guide de l'administrateur
 
-> `À VENIR — livré par T-006 → T-009, T-021, T-062`.
+> **Partiel** — base livrée par T-006 ; complété par T-009, T-021, T-062.
 
-Sections prévues :
-- gérer les membres et les rôles ;
-- gérer les organisations et les formations ;
-- créer et publier un référentiel (immuable après publication) ;
-- consulter le journal d'audit.
+### 10.1 Rôles d'un espace de travail
 
-*Statut : `À VENIR`.*
+| Rôle | Consulter | Modifier l'espace | Gérer les membres | Supprimer |
+|---|---|---|---|---|
+| `owner` | oui | oui | oui | oui |
+| `admin` | oui | oui | oui | non |
+| `trainee` | oui | non | non | non |
+| `supervisor` | oui | non | non | non |
+| `tutor` | oui | non | non | non |
+| `viewer` | oui | non | non | non |
+
+Un membre `suspended`, `invited` ou `removed` n'a aucun accès. Les rôles sont
+contextualisés : un utilisateur peut être `owner` dans un espace et `trainee`
+dans un autre.
+
+### 10.2 Créer un compte
+
+```bash
+php artisan app:create-user email@example.test --name="Nom complet"
+```
+
+Aucune inscription publique. Un compte `disabled` conserve son historique
+(INV-13) mais ne peut plus se connecter.
+
+### 10.3 Créer un espace et nommer le propriétaire
+
+```bash
+php artisan app:create-workspace "Nom de l'espace" --owner=email@example.test --type=association
+```
+
+### 10.4 Inviter des participants
+
+`À VENIR — T-021` (invitations, rôles, suspension).
+
+### 10.5 Référentiels et organisations
+
+`À VENIR — T-012 → T-018`.
+
+### 10.6 Journal d'audit
+
+`À VENIR — T-009`. Les connexions sont journalisées de façon transitoire dans
+`storage/logs/laravel.log` (`auth.login`, `auth.logout`, `auth.login.failed`,
+`auth.login.throttled`).
+
+*Statut : `PARTIEL` — matrice des rôles et création de comptes/espaces vérifiées
+le 2026-11-04.*
 
 ---
 
@@ -352,19 +431,23 @@ Faits déjà observés sur l'environnement de développement :
 ```
 .aidf/            gouvernance AIDF, documents, preuves, workflow
 docs/             architecture, base de données, fonctionnel, tests, planning
-app/Domain/       domaines métier (Identity, Organization, Training, Framework,
+app/Console/      commandes artisan (comptes, espaces)
+app/Domain/Identity/  utilisateurs, workspaces, appartenances, contexte courant
+app/Domain/       autres domaines métier (Organization, Training, Framework,
                   Internship, Project, Journal, Evidence, Evaluation,
                   Reporting, Collaboration, Audit)
+app/Http/         contrôleurs, middlewares, requêtes de formulaire
 app/Integrations/ Git, GitHub, Storage
+app/Models/Concerns/  traits transverses (BelongsToWorkspace)
 app/Policies/     autorisations par ressource
 bootstrap/        démarrage de l'application
 config/           configuration
 database/         migrations, factories, seeders
-public/           point d'entrée web
+public/           point d'entrée web (index.php)
 resources/        vues, styles, scripts
 routes/           web.php (api.php à ajouter avec l'API)
 storage/          logs, cache, fichiers privés
-tests/            Feature, Unit, Browser
+tests/            Feature, Unit, Support
 vendor/           dépendances PHP (ignoré par Git)
 docker-compose.yml
 .env.example
@@ -375,7 +458,7 @@ phpunit.xml
 
 ```bash
 vendor/bin/pint --test      # style — PASS le 2026-11-04
-php artisan test            # tests PHPUnit — 2 tests PASS le 2026-11-04
+php artisan test            # tests PHPUnit — 29 tests PASS (85 assertions) le 2026-11-04
 npx playwright test         # navigateur — à activer en T-046/T-066
 ```
 
@@ -405,7 +488,7 @@ Créer `.env.testing` à partir de `.env` avec `APP_ENV=testing` et
 
 | Limite | Statut |
 |---|---|
-| Fonctionnalités métier | non implémentées — socle technique uniquement (T-001 → T-003) |
+| Fonctionnalités métier | non implémentées — authentification et isolation disponibles (T-004 → T-006) |
 | Frontend (Vite/npm) | non installé — livré avec T-011 |
 | Conformité RGPD | **NOT_PROVEN** — analyse juridique requise |
 | Playwright sous Windows | non vérifié (IN-07) |
