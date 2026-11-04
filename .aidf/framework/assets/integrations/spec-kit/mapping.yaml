@@ -1,0 +1,92 @@
+schemaVersion: 1
+description: |
+  Mapping between AIDF durable documents and GitHub Spec Kit artefacts.
+  AIDF owns product-wide truth; Spec Kit owns feature-level change artefacts.
+  Nothing is duplicated: each fact has one canonical owner.
+
+specKit:
+  supportedSince: 1.0.0
+  verifiedAgainst:
+    cli: 1.2.3
+    source: 1.2.6.dev0
+  integration:
+    key: qodercli
+    installCommand: specify init --here --integration qodercli --ignore-agent-tools --non-interactive
+    layout:
+      skills: .qoder/skills
+      commands: .qoder/commands (legacy)
+    requiresCli: true
+
+mapping:
+  - aidf: constitution
+    aidfPath: .aidf/docs/constitution.md
+    specKit: constitution
+    specKitPath: .specify/memory/constitution.md
+    owner: AIDF
+    sync: copy-with-hash
+    notes: |
+      AIDF constitution is the source of truth. Spec Kit receives a generated
+      copy with a header and a source hash. If Spec Kit already has a
+      constitution, AIDF does not overwrite it; it reports a conflict.
+
+  - aidf: PRD
+    aidfPath: .aidf/docs/PRD.md
+    specKit: spec / requirements
+    specKitPath: specs/<feature>/spec.md
+    owner: shared
+    sync: reference
+    notes: |
+      PRD holds product-wide requirements. Feature specs hold the delta for a
+      feature and reference PRD requirement IDs.
+
+  - aidf: TRD
+    aidfPath: .aidf/docs/TRD.md
+    specKit: plan
+    specKitPath: specs/<feature>/plan.md
+    owner: shared
+    sync: reference
+    notes: |
+      TRD holds durable technical constraints and architecture. The feature plan
+      holds implementation choices for that feature.
+
+  - aidf: APPFLOW
+    aidfPath: .aidf/docs/APPFLOW.md
+    specKit: spec scenarios
+    specKitPath: specs/<feature>/spec.md
+    owner: shared
+    sync: reference
+
+  - aidf: UI-UX
+    aidfPath: .aidf/docs/UI-UX.md
+    specKit: design artefacts
+    specKitPath: specs/<feature>/design/
+    owner: shared
+    sync: reference
+
+  - aidf: BACKEND
+    aidfPath: .aidf/docs/BACKEND.md
+    specKit: contracts / plan
+    specKitPath: specs/<feature>/contracts/
+    owner: shared
+    sync: reference
+
+  - aidf: PLAN
+    aidfPath: .aidf/docs/PLAN.md
+    specKit: plan + tasks
+    specKitPath: specs/<feature>/tasks.md
+    owner: shared
+    sync: reference
+
+  - aidf: SECURITY
+    aidfPath: .aidf/docs/SECURITY.md
+    specKit: invariants, requirements, checklists
+    specKitPath: specs/<feature>/checklists/security.md
+    owner: AIDF
+    sync: reference
+
+  - aidf: CONVENTIONS
+    aidfPath: .aidf/docs/CONVENTIONS.md
+    specKit: constitution / agent instructions
+    specKitPath: .specify/memory/constitution.md
+    owner: AIDF
+    sync: reference

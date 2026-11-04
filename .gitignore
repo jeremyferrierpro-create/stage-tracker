@@ -1,0 +1,36 @@
+# Dépendances
+/vendor
+/node_modules
+/public/build
+/public/hot
+/public/storage
+/storage/*.key
+/storage/pail
+
+# Environnement et secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.crt
+*.key
+auth.json
+
+# Base de données locale
+/database/*.sqlite
+/database/*.sqlite-journal
+
+# Logs runtime et artefacts AIDF non gouvernés
+.aidf/logs/
+.aidf/state/
+.storage/
+
+# Outils
+.phpunit.result.cache
+.phpunit.cache
+/coverage
+/.idea
+/.vscode
+*.log
+.DS_Store
+Thumbs.db

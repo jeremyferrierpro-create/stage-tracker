@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-04T06-17-06-846Z-520271",
+  "type": "gate-run",
+  "status": "PASS",
+  "gate": "intake-exit",
+  "phase": "intake",
+  "summary": "intake-exit (exit) -> PASS",
+  "note": "",
+  "createdBy": "aidf",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-04T06:17:06.846Z",
+  "checks": [
+    {
+      "id": "context-selected",
+      "type": "file-exists",
+      "status": "PASS",
+      "reason": ".aidf/state/context/latest.md exists.",
+      "evidence": null
+    },
+    {
+      "id": "task-classification",
+      "type": "evidence",
+      "status": "PASS",
+      "reason": "Found 1 matching evidence record(s).",
+      "evidence": [
+        ".aidf/evidence/2026-11-04T06-17-06-519Z-task-classification-b86fc5a5.json"
+      ]
+    }
+  ],
+  "commands": [],
+  "files": [],
+  "limitations": [],
+  "previous": "57f11baffdb61eb530562666986618d09568c509dce98dcb41c1bdff83b5d3b1",
+  "hash": "bbe18e8931e0d69ec15c296174f5972d034437d2b1e017b19b86f80c87ca0ab5"
+}

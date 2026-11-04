@@ -1,0 +1,29 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .aidf/hooks/session-context.mjs",
+            "timeout": 15,
+            "statusMessage": "AIDF: loading project context"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|search_replace|create_file",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .aidf/hooks/audit.mjs",
+            "timeout": 10,
+            "async": true
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,83 @@
+schemaVersion: 1
+description: |
+  Maps tasks and phases to the minimum set of documents and skills. The context
+  assembler loads only what is selected here, plus the always-on documents.
+  Keywords are matched case-insensitively against the task text.
+
+always:
+  documents:
+    - constitution
+    - CONVENTIONS
+  skills:
+    - project-context
+
+byPhase:
+  intake:
+    documents: [PRD]
+    skills: [project-context, phase-transition]
+  discovery:
+    documents: [TRD, DECISIONS]
+    skills: [project-context, architecture-review]
+  specification:
+    documents: [PRD, APPFLOW, UI-UX]
+    skills: [product-analysis, requirements-engineering, ui-ux-implementation]
+  planning:
+    documents: [TRD, PLAN, BACKEND]
+    skills: [architecture-review, database-design, requirements-engineering]
+  implementation:
+    documents: [CONVENTIONS, BACKEND, UI-UX]
+    skills: [frontend-implementation, backend-implementation, database-design, devops-engineering]
+  testing:
+    documents: [PLAN, CONVENTIONS]
+    skills: [testing-validation]
+  security:
+    documents: [SECURITY, BACKEND, DECISIONS]
+    skills: [security-review, testing-validation]
+  release:
+    documents: [CHANGELOG, PLAN, DECISIONS]
+    skills: [documentation-maintenance, phase-transition, devops-engineering]
+
+byKeyword:
+  - keywords: [api, endpoint, rest, graphql, webhook, contract]
+    documents: [BACKEND, SECURITY]
+    skills: [backend-implementation, requirements-engineering]
+  - keywords: [database, schema, migration, sql, index, query]
+    documents: [BACKEND, SECURITY]
+    skills: [database-design]
+  - keywords: [ui, ux, screen, page, component, design, accessibility, responsive]
+    documents: [UI-UX, APPFLOW]
+    skills: [ui-ux-implementation, frontend-implementation]
+  - keywords: [auth, login, permission, role, token, session, secret, security, vulnerability, privacy]
+    documents: [SECURITY, BACKEND]
+    skills: [security-review]
+  - keywords: [test, coverage, regression, flaky, e2e, unit]
+    documents: [CONVENTIONS]
+    skills: [testing-validation]
+  - keywords: [ci, cd, pipeline, deploy, docker, kubernetes, release, rollback]
+    documents: [TRD, SECURITY, PLAN]
+    skills: [devops-engineering]
+  - keywords: [architecture, refactor, module, boundary, dependency, adr]
+    documents: [TRD, DECISIONS]
+    skills: [architecture-review]
+  - keywords: [bug, error, crash, regression, broken, fix]
+    documents: [APPFLOW, BACKEND]
+    skills: [testing-validation, architecture-review]
+  - keywords: [docs, documentation, changelog, readme, adr]
+    documents: [CHANGELOG, DECISIONS]
+    skills: [documentation-maintenance]
+  - keywords: [performance, latency, memory, cache, load, scale]
+    documents: [TRD, BACKEND]
+    skills: [architecture-review, backend-implementation]
+  - keywords: [rgpd, cnil, gdpr, consent, retention, données, data, privacy policy]
+    documents: [SECURITY]
+    skills: [security-review]
+  - keywords: [php, javascript, html, css, sass, bootstrap, cookie, session, seo, merise, mcd, mld]
+    documents: [CONVENTIONS, BACKEND]
+    skills: [frontend-implementation, backend-implementation]
+
+# Documents that must never be silently ignored when they are BLOCKED/OUTDATED.
+contradictionSensitive:
+  - SECURITY
+  - TRD
+  - BACKEND
+  - PRD

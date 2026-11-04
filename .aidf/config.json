@@ -1,0 +1,126 @@
+{
+  "schemaVersion": 1,
+  "project": {
+    "name": "stage-tracker",
+    "slug": "stage-tracker",
+    "description": ""
+  },
+  "framework": {
+    "name": "aidf",
+    "version": "0.1.0",
+    "channel": "local"
+  },
+  "adapter": "qoder",
+  "commands": {
+    "test": null,
+    "build": null,
+    "lint": null,
+    "securityAudit": null
+  },
+  "documents": {
+    "PRD": {
+      "status": "VALIDATED",
+      "validatedBy": "Jeremy Ferrier",
+      "validatedAt": "2026-11-04T06:25:55.452Z",
+      "note": "Validation du contenu dans le cadre de l'approbation explicite du plan SPECIFICATION (2026-11-04)"
+    },
+    "TRD": {
+      "status": "VALIDATED",
+      "validatedBy": "Jeremy Ferrier",
+      "validatedAt": "2026-11-04T06:25:55.605Z",
+      "note": "Validation du contenu dans le cadre de l'approbation explicite du plan SPECIFICATION (2026-11-04)"
+    },
+    "APPFLOW": {
+      "status": "VALIDATED",
+      "validatedBy": "Jeremy Ferrier",
+      "validatedAt": "2026-11-04T06:25:55.748Z",
+      "note": "Validation du contenu dans le cadre de l'approbation explicite du plan SPECIFICATION (2026-11-04)"
+    },
+    "UI-UX": {
+      "status": "VALIDATED",
+      "validatedBy": "Jeremy Ferrier",
+      "validatedAt": "2026-11-04T06:25:55.905Z",
+      "note": "Validation du contenu dans le cadre de l'approbation explicite du plan SPECIFICATION (2026-11-04)"
+    },
+    "BACKEND": {
+      "status": "VALIDATED",
+      "validatedBy": "Jeremy Ferrier",
+      "validatedAt": "2026-11-04T06:25:56.080Z",
+      "note": "Validation du contenu dans le cadre de l'approbation explicite du plan SPECIFICATION (2026-11-04)"
+    },
+    "PLAN": {
+      "status": "VALIDATED",
+      "validatedBy": "Jeremy Ferrier",
+      "validatedAt": "2026-11-04T06:25:56.212Z",
+      "note": "Validation du contenu dans le cadre de l'approbation explicite du plan SPECIFICATION (2026-11-04)"
+    },
+    "SECURITY": {
+      "status": "VALIDATED",
+      "validatedBy": "Jeremy Ferrier",
+      "validatedAt": "2026-11-04T06:25:56.418Z",
+      "note": "Validation du contenu dans le cadre de l'approbation explicite du plan SPECIFICATION (2026-11-04)"
+    },
+    "CONVENTIONS": {
+      "status": "VALIDATED",
+      "validatedBy": "Jeremy Ferrier",
+      "validatedAt": "2026-11-04T06:25:56.569Z",
+      "note": "Validation du contenu dans le cadre de l'approbation explicite du plan SPECIFICATION (2026-11-04)"
+    },
+    "constitution": {
+      "status": "VALIDATED",
+      "validatedBy": "Jeremy Ferrier",
+      "validatedAt": "2026-11-04T06:25:55.314Z",
+      "note": "Validation du contenu dans le cadre de l'approbation explicite du plan SPECIFICATION (2026-11-04)"
+    },
+    "DECISIONS": {
+      "status": "VALIDATED",
+      "validatedBy": "Jeremy Ferrier",
+      "validatedAt": "2026-11-04T06:25:56.702Z",
+      "note": "Validation du contenu dans le cadre de l'approbation explicite du plan SPECIFICATION (2026-11-04)"
+    },
+    "CHANGELOG": {
+      "status": "VALIDATED",
+      "validatedBy": "Jeremy Ferrier",
+      "validatedAt": "2026-11-04T06:25:56.860Z",
+      "note": "Validation du contenu dans le cadre de l'approbation explicite du plan SPECIFICATION (2026-11-04)"
+    }
+  },
+  "workflow": {
+    "currentPhase": "intake",
+    "history": []
+  },
+  "skills": {
+    "roots": [],
+    "maxActive": 5
+  },
+  "context": {
+    "maxDocuments": 8,
+    "maxSkills": 5,
+    "alwaysInclude": [
+      "constitution",
+      "CONVENTIONS"
+    ]
+  },
+  "security": {
+    "allowCommandExecution": false,
+    "allowedCommands": [],
+    "allowNetwork": false,
+    "allowedHosts": [],
+    "protectSecrets": true,
+    "requireHumanApprovalFor": [
+      "security",
+      "release"
+    ]
+  },
+  "specKit": {
+    "enabled": "auto",
+    "integration": "qodercli",
+    "constitutionSync": "copy-with-hash"
+  },
+  "evidence": {
+    "directory": ".aidf/evidence",
+    "retentionDays": 365
+  },
+  "createdAt": "2026-11-04T06:16:04.454Z",
+  "updatedAt": "2026-11-04T06:25:56.860Z"
+}

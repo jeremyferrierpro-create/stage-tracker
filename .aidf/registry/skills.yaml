@@ -1,0 +1,388 @@
+schemaVersion: 1
+updatedAt: 2026-11-04T06:16:04.997Z
+adapter: qoder
+skills:
+  - id: project-context
+    name: aidf-project-context
+    version: 1.0.0
+    source: builtin
+    description: Discover the real project context (stack, structure, constraints, existing AI resources) before any change. Use at session start, when the stack is unknown, or when the task spans several areas.
+    phases:
+      - intake
+      - discovery
+    documents:
+      - constitution
+      - CONVENTIONS
+      - TRD
+    triggers:
+      - project context
+      - stack
+      - architecture overview
+      - where is
+      - session start
+    ide:
+      - qoder
+      - generic
+    dependencies: []
+    status: AVAILABLE
+    path: C:/Users/jerem/Desktop/stage_tracker/aidf/projets/stage-tracker/.qoder/skills/aidf-project-context/SKILL.md
+    hash: c8a58f628ee11c3c0aac79c4016d51a80480af673999c51e0f79b0bfe6dd927f
+    errors: []
+    warnings: []
+  - id: product-analysis
+    name: aidf-product-analysis
+    version: 1.0.0
+    source: builtin
+    description: Turn a raw request into product goals, users, scope and measurable outcomes without inventing facts. Use for new features, ambiguous requests, or PRD updates.
+    phases:
+      - intake
+      - specification
+    documents:
+      - PRD
+      - APPFLOW
+    triggers:
+      - new feature
+      - product requirement
+      - user story
+      - scope
+      - PRD
+    ide:
+      - qoder
+      - generic
+    dependencies:
+      - project-context
+    status: AVAILABLE
+    path: C:/Users/jerem/Desktop/stage_tracker/aidf/projets/stage-tracker/.qoder/skills/aidf-product-analysis/SKILL.md
+    hash: eadf5ea6ed73d2ccb052a8886c77aaa3d5f7639d3af4afe6508a52ec5aa7a048
+    errors: []
+    warnings: []
+  - id: requirements-engineering
+    name: aidf-requirements-engineering
+    version: 1.0.0
+    source: builtin
+    description: Write precise, testable requirements and acceptance criteria, and trace them to design, tasks and tests. Use when specifying a feature or reviewing requirement quality.
+    phases:
+      - specification
+      - planning
+    documents:
+      - PRD
+      - APPFLOW
+      - PLAN
+    triggers:
+      - acceptance criteria
+      - requirement
+      - specify
+      - edge cases
+      - traceability
+    ide:
+      - qoder
+      - generic
+    dependencies:
+      - product-analysis
+    status: AVAILABLE
+    path: C:/Users/jerem/Desktop/stage_tracker/aidf/projets/stage-tracker/.qoder/skills/aidf-requirements-engineering/SKILL.md
+    hash: d777fa1b09dcd33e9a25245f922038ffd6f5a639dac6744068d77bec6eb49e53
+    errors: []
+    warnings: []
+  - id: architecture-review
+    name: aidf-architecture-review
+    version: 1.0.0
+    source: builtin
+    description: Review or document architecture against real code and constraints, including boundaries, data ownership, failure modes and trade-offs. Use before structural changes or when the TRD is stale.
+    phases:
+      - discovery
+      - planning
+    documents:
+      - TRD
+      - DECISIONS
+      - CONVENTIONS
+    triggers:
+      - architecture
+      - refactor
+      - module boundary
+      - TRD
+      - ADR
+    ide:
+      - qoder
+      - generic
+    dependencies:
+      - project-context
+    status: AVAILABLE
+    path: C:/Users/jerem/Desktop/stage_tracker/aidf/projets/stage-tracker/.qoder/skills/aidf-architecture-review/SKILL.md
+    hash: ad155a5d1245a970178ab092ee272d6530d9d82b9a9d0ae0ea68328d22354b76
+    errors: []
+    warnings: []
+  - id: database-design
+    name: aidf-database-design
+    version: 1.0.0
+    source: builtin
+    description: Design or review schemas, migrations, indexes and data access with attention to integrity, performance and reversibility. Use for any persistent data change.
+    phases:
+      - planning
+      - implementation
+    documents:
+      - BACKEND
+      - SECURITY
+      - TRD
+    triggers:
+      - schema
+      - migration
+      - SQL
+      - database
+      - index
+      - data model
+    ide:
+      - qoder
+      - generic
+    dependencies:
+      - architecture-review
+    status: AVAILABLE
+    path: C:/Users/jerem/Desktop/stage_tracker/aidf/projets/stage-tracker/.qoder/skills/aidf-database-design/SKILL.md
+    hash: fc69fe9baf8b851eea9e9a7c448a8026d00790e877d5a970ef63802698a86398
+    errors: []
+    warnings: []
+  - id: frontend-implementation
+    name: aidf-frontend-implementation
+    version: 1.0.0
+    source: builtin
+    description: Implement frontend changes that respect the existing design system, component patterns, state model and accessibility requirements. Use for UI features and fixes.
+    phases:
+      - implementation
+    documents:
+      - UI-UX
+      - APPFLOW
+      - CONVENTIONS
+    triggers:
+      - UI
+      - component
+      - frontend
+      - React
+      - Vue
+      - page
+      - styling
+    ide:
+      - qoder
+      - generic
+    dependencies:
+      - ui-ux-implementation
+    status: AVAILABLE
+    path: C:/Users/jerem/Desktop/stage_tracker/aidf/projets/stage-tracker/.qoder/skills/aidf-frontend-implementation/SKILL.md
+    hash: c124def19b8325e51675efc910e91dbe25775b7d9247a53ac93acbdd547156ca
+    errors:
+      - "Dependencies not ready: ui-ux-implementation"
+    warnings: []
+  - id: backend-implementation
+    name: aidf-backend-implementation
+    version: 1.0.0
+    source: builtin
+    description: Implement backend services and APIs with explicit contracts, validation, error handling and tests. Use for endpoints, business rules, jobs and integrations.
+    phases:
+      - implementation
+    documents:
+      - BACKEND
+      - SECURITY
+      - CONVENTIONS
+    triggers:
+      - API
+      - endpoint
+      - backend
+      - service
+      - webhook
+      - job
+    ide:
+      - qoder
+      - generic
+    dependencies:
+      - architecture-review
+    status: AVAILABLE
+    path: C:/Users/jerem/Desktop/stage_tracker/aidf/projets/stage-tracker/.qoder/skills/aidf-backend-implementation/SKILL.md
+    hash: e8c4753064c4af8201ffc9e3f4c02b645c62a3e400403bc0da1832fd8f4d5951
+    errors: []
+    warnings: []
+  - id: ui-ux-implementation
+    name: aidf-ui-ux-implementation
+    version: 1.0.0
+    source: builtin
+    description: Translate flows and design intent into interface structure, states and copy while preserving the existing product surface. Use before frontend coding.
+    phases:
+      - specification
+      - planning
+    documents:
+      - UI-UX
+      - APPFLOW
+    triggers:
+      - UX
+      - flow
+      - screen
+      - design
+      - empty state
+      - error state
+    ide:
+      - qoder
+      - generic
+    dependencies:
+      - requirements-engineering
+    status: AVAILABLE
+    path: C:/Users/jerem/Desktop/stage_tracker/aidf/projets/stage-tracker/.qoder/skills/aidf-ui-ux-implementation/SKILL.md
+    hash: ca40763336d7d779a6842750f4fa32fc62263c7a61c7d6ba9dcd7e1b1af65398
+    errors: []
+    warnings: []
+  - id: security-review
+    name: aidf-security-review
+    version: 1.0.0
+    source: builtin
+    description: Review a change for security and privacy risks using a threat-informed checklist and record findings with severity and evidence. Use before release and for any auth, data or input change.
+    phases:
+      - security
+      - release
+    documents:
+      - SECURITY
+      - BACKEND
+      - DECISIONS
+    triggers:
+      - security
+      - auth
+      - permission
+      - secret
+      - injection
+      - vulnerability
+      - privacy
+    ide:
+      - qoder
+      - generic
+    dependencies:
+      - testing-validation
+    status: AVAILABLE
+    path: C:/Users/jerem/Desktop/stage_tracker/aidf/projets/stage-tracker/.qoder/skills/aidf-security-review/SKILL.md
+    hash: e2d0671437e89bed01fa4b26f50ad354b7d896f6e9fba7b26f49c55dde8174f0
+    errors:
+      - "Dependencies not ready: testing-validation"
+    warnings: []
+  - id: testing-validation
+    name: aidf-testing-validation
+    version: 1.0.0
+    source: builtin
+    description: Design and execute tests that prove the change, including failure paths, and record real command output as evidence. Use during implementation and before any phase exit.
+    phases:
+      - testing
+      - implementation
+    documents:
+      - CONVENTIONS
+      - PLAN
+    triggers:
+      - test
+      - coverage
+      - regression
+      - validation
+      - acceptance
+    ide:
+      - qoder
+      - generic
+    dependencies:
+      - requirements-engineering
+    status: AVAILABLE
+    path: C:/Users/jerem/Desktop/stage_tracker/aidf/projets/stage-tracker/.qoder/skills/aidf-testing-validation/SKILL.md
+    hash: 3470fabb81ebac449d09a6b3b29dd23b52262f38b8d9043a986c269f1e48f0dd
+    errors: []
+    warnings: []
+  - id: devops-engineering
+    name: aidf-devops-engineering
+    version: 1.0.0
+    source: builtin
+    description: Implement build, CI, deployment and observability changes with rollback and least privilege. Use for pipelines, containers, infrastructure and release automation.
+    phases:
+      - implementation
+      - release
+    documents:
+      - TRD
+      - SECURITY
+      - PLAN
+    triggers:
+      - CI
+      - pipeline
+      - deploy
+      - Docker
+      - infrastructure
+      - release
+    ide:
+      - qoder
+      - generic
+    dependencies:
+      - architecture-review
+    status: AVAILABLE
+    path: C:/Users/jerem/Desktop/stage_tracker/aidf/projets/stage-tracker/.qoder/skills/aidf-devops-engineering/SKILL.md
+    hash: c46c0cb034639a9e66449b39db3ae34d4373b22c775ea05bccf333f67d26d7d4
+    errors: []
+    warnings: []
+  - id: documentation-maintenance
+    name: aidf-documentation-maintenance
+    version: 1.0.0
+    source: builtin
+    description: Keep AIDF documents, decisions, changelog and traceability accurate after a change. Use at the end of every phase and when documentation drifts from code.
+    phases:
+      - release
+      - implementation
+    documents:
+      - CHANGELOG
+      - DECISIONS
+      - PRD
+      - TRD
+    triggers:
+      - documentation
+      - changelog
+      - ADR
+      - update docs
+      - drift
+    ide:
+      - qoder
+      - generic
+    dependencies:
+      - project-context
+    status: AVAILABLE
+    path: C:/Users/jerem/Desktop/stage_tracker/aidf/projets/stage-tracker/.qoder/skills/aidf-documentation-maintenance/SKILL.md
+    hash: 51ea5a3e839388b398625f905b1a0fce4ad2e7a304ee5b41379edfbd32ce4d1c
+    errors: []
+    warnings: []
+  - id: phase-transition
+    name: aidf-phase-transition
+    version: 1.0.0
+    source: builtin
+    description: Evaluate phase entry/exit gates, collect evidence and block transitions that are not demonstrated. Use before moving to another phase or declaring work complete.
+    phases:
+      - intake
+      - discovery
+      - specification
+      - planning
+      - implementation
+      - testing
+      - security
+      - release
+    documents:
+      - PLAN
+      - CHANGELOG
+    triggers:
+      - phase
+      - gate
+      - done
+      - next phase
+      - validate
+      - blocked
+    ide:
+      - qoder
+      - generic
+    dependencies:
+      - project-context
+      - testing-validation
+    status: AVAILABLE
+    path: C:/Users/jerem/Desktop/stage_tracker/aidf/projets/stage-tracker/.qoder/skills/aidf-phase-transition/SKILL.md
+    hash: 92c1da654c1e90f97ed1a5d5bae8b2c6f60c25a5052912d3ef36e918d8477723
+    errors: []
+    warnings: []
+summary:
+  DISCOVERED: 0
+  VALIDATED: 0
+  REGISTERED: 0
+  AVAILABLE: 13
+  BLOCKED: 0
+  INCOMPATIBLE: 0
+  total: 13

@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-11-04T06:26:08.213Z",
+  "lastHash": "4333e8a6921bb6db3926c088217ba987835419c72308dd94e53432d5791f0d14",
+  "entries": [
+    {
+      "id": "ev-2026-11-04T06-17-06-517Z-c9d381",
+      "type": "task-classification",
+      "status": "PASS",
+      "gate": null,
+      "phase": null,
+      "createdAt": "2026-11-04T06:17:06.517Z",
+      "humanApproval": false,
+      "approvedBy": null,
+      "file": ".aidf/evidence/2026-11-04T06-17-06-519Z-task-classification-b86fc5a5.json",
+      "hash": "b86fc5a5560bd4745e992c12724a8a8957bb968a528a6f57e80d62cf005eda99"
+    },
+    {
+      "id": "ev-2026-11-04T06-17-06-691Z-9c00bc",
+      "type": "gate-run",
+      "status": "PASS",
+      "gate": "intake-entry",
+      "phase": "intake",
+      "createdAt": "2026-11-04T06:17:06.691Z",
+      "humanApproval": false,
+      "approvedBy": null,
+      "file": ".aidf/evidence/2026-11-04T06-17-06-692Z-gate-run-57f11baf.json",
+      "hash": "57f11baffdb61eb530562666986618d09568c509dce98dcb41c1bdff83b5d3b1"
+    },
+    {
+      "id": "ev-2026-11-04T06-17-06-846Z-520271",
+      "type": "gate-run",
+      "status": "PASS",
+      "gate": "intake-exit",
+      "phase": "intake",
+      "createdAt": "2026-11-04T06:17:06.846Z",
+      "humanApproval": false,
+      "approvedBy": null,
+      "file": ".aidf/evidence/2026-11-04T06-17-06-847Z-gate-run-bbe18e89.json",
+      "hash": "bbe18e8931e0d69ec15c296174f5972d034437d2b1e017b19b86f80c87ca0ab5"
+    },
+    {
+      "id": "ev-2026-11-04T06-17-13-073Z-0babc4",
+      "type": "gate-run",
+      "status": "PASS",
+      "gate": "discovery-entry",
+      "phase": "discovery",
+      "createdAt": "2026-11-04T06:17:13.073Z",
+      "humanApproval": false,
+      "approvedBy": null,
+      "file": ".aidf/evidence/2026-11-04T06-17-13-074Z-gate-run-d59cb2ee.json",
+      "hash": "d59cb2ee0566cda2cb815eb02742df435bad315af01070551a89b06a18797be3"
+    },
+    {
+      "id": "ev-2026-11-04T06-17-15-799Z-c0a551",
+      "type": "project-scan",
+      "status": "PASS",
+      "gate": null,
+      "phase": null,
+      "createdAt": "2026-11-04T06:17:15.799Z",
+      "humanApproval": false,
+      "approvedBy": null,
+      "file": ".aidf/evidence/2026-11-04T06-17-15-799Z-project-scan-3e6c114a.json",
+      "hash": "3e6c114a058f130100950d142351cd5c9da7b7ba53da1f8839c3f72ca1563d5e"
+    },
+    {
+      "id": "ev-2026-11-04T06-17-16-021Z-393a4e",
+      "type": "gate-run",
+      "status": "PASS",
+      "gate": "discovery-exit",
+      "phase": "discovery",
+      "createdAt": "2026-11-04T06:17:16.021Z",
+      "humanApproval": false,
+      "approvedBy": null,
+      "file": ".aidf/evidence/2026-11-04T06-17-16-022Z-gate-run-ddd1ef32.json",
+      "hash": "ddd1ef320b861d9a124b7c9357636a5c1671daa659aef6729cbbdb091aacd701"
+    },
+    {
+      "id": "ev-2026-11-04T06-17-16-164Z-349c7a",
+      "type": "gate-run",
+      "status": "PASS",
+      "gate": "specification-entry",
+      "phase": "specification",
+      "createdAt": "2026-11-04T06:17:16.164Z",
+      "humanApproval": false,
+      "approvedBy": null,
+      "file": ".aidf/evidence/2026-11-04T06-17-16-165Z-gate-run-91fd5620.json",
+      "hash": "91fd5620e3af78a6661aef25faa0648e174013a6587f90a506ac2090f82c8e64"
+    },
+    {
+      "id": "ev-2026-11-04T06-26-07-849Z-94815a",
+      "type": "spec-validation",
+      "status": "PASS",
+      "gate": null,
+      "phase": null,
+      "createdAt": "2026-11-04T06:26:07.849Z",
+      "humanApproval": true,
+      "approvedBy": "Jeremy Ferrier",
+      "file": ".aidf/evidence/2026-11-04T06-26-07-850Z-spec-validation-07bb6991.json",
+      "hash": "07bb6991779c4c60348497012aa4f5b5c0a852192dbd94f2fc8e8029925d6ba7"
+    },
+    {
+      "id": "ev-2026-11-04T06-26-08-043Z-3d6fab",
+      "type": "gate-run",
+      "status": "PASS",
+      "gate": "specification-entry",
+      "phase": "specification",
+      "createdAt": "2026-11-04T06:26:08.043Z",
+      "humanApproval": false,
+      "approvedBy": null,
+      "file": ".aidf/evidence/2026-11-04T06-26-08-045Z-gate-run-8d7fb0a4.json",
+      "hash": "8d7fb0a4f140890067d7c17c42349c01b53f0c1b4b79ea6aa536d82c5a8b0443"
+    },
+    {
+      "id": "ev-2026-11-04T06-26-08-210Z-930bf9",
+      "type": "gate-run",
+      "status": "PASS",
+      "gate": "specification-exit",
+      "phase": "specification",
+      "createdAt": "2026-11-04T06:26:08.210Z",
+      "humanApproval": false,
+      "approvedBy": null,
+      "file": ".aidf/evidence/2026-11-04T06-26-08-210Z-gate-run-4333e8a6.json",
+      "hash": "4333e8a6921bb6db3926c088217ba987835419c72308dd94e53432d5791f0d14"
+    }
+  ]
+}

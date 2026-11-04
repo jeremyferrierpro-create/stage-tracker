@@ -1,0 +1,7 @@
+# AIDF local-only state
+cache/
+logs/
+backups/
+state/context/
+
+# Evidence and documents are intentionally committed.

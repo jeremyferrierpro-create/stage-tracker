@@ -1,0 +1,96 @@
+---
+doc: DECISIONS
+status: VALIDATED
+version: 1.0.0
+source: stage-tracker-specification
+updated: 2026-11-04
+validated_by: Jeremy Ferrier
+---
+
+# DECISIONS — Journal des décisions d'architecture (ADR)
+
+Format : identifiant, statut, date, décision, justification, conséquences.
+
+## DEC-ST-001 — Socle Laravel + PostgreSQL + Blade/Livewire
+- Statut : ACCEPTED (2026-11-04, approbation humaine D-ST-04)
+- Décision : monolithe modulaire Laravel 13.40.0, PostgreSQL 16, Blade +
+  Livewire + JavaScript ciblé, API REST versionnée.
+- Justification : authentification, autorisations, migrations, validation et
+  sécurité sont centrales ; les réimplémenter serait coûteux et risqué.
+- Conséquences : dépendance à l'écosystème Laravel ; pas de microservices.
+
+## DEC-ST-002 — Isolation multi-tenant par workspace
+- Statut : ACCEPTED (2026-11-04, prompt maître + D-ST-01)
+- Décision : toute donnée métier est rattachée à un workspace ; contrôle
+  serveur + contraintes SQL composites ; rôles contextualisés.
+- Justification : un utilisateur peut être stagiaire dans un espace et maître
+  de stage dans un autre ; l'isolation ne peut pas reposer sur l'interface.
+- Conséquences : complexité accrue des requêtes et des tests ; MT-01..MT-03 bloquants.
+
+## DEC-ST-003 — Référentiels génériques et versionnés
+- Statut : ACCEPTED (2026-11-04)
+- Décision : hiérarchie Référentiel → Version → Bloc → Compétence → Critère ;
+  version publiée immuable ; aucun référentiel codé en dur.
+- Justification : réutilisabilité multi-formations ; le DWWM n'est qu'un pilote.
+- Conséquences : modélisation plus abstraite ; tests de non-régression sur versions.
+
+## DEC-ST-004 — Trois niveaux de compétence distincts
+- Statut : ACCEPTED (2026-11-04)
+- Décision : `mobilized`, `documented`, `evaluated` sont des états distincts ;
+  aucune transition automatique vers `evaluated`.
+- Justification : éviter les bilans artificiellement positifs (INV-09).
+- Conséquences : workflows d'évaluation explicites ; UI dédiée.
+
+## DEC-ST-005 — Visibilité à trois niveaux
+- Statut : ACCEPTED (2026-11-04)
+- Décision : `private`, `stage`, `shared` ; vérification serveur à chaque accès,
+  téléchargement et export.
+- Justification : le stagiaire conserve la maîtrise de ses notes ; le maître de
+  stage n'accède qu'au partagé.
+- Conséquences : filtrage systématique des exports ; tests MT-07/MT-08.
+
+## DEC-ST-006 — Connecteur Git derrière une interface
+- Statut : ACCEPTED (2026-11-04)
+- Décision : `GitProviderInterface` → `GitHubConnector` en V1 ; import manuel,
+  idempotent, lecture seule, jeton chiffré côté serveur.
+- Justification : éviter la dépendance directe à l'API GitHub ; extensibilité.
+- Conséquences : `sync_runs`, unicité `(repository_id, sha)`, MT-06.
+
+## DEC-ST-007 — Stockage des preuves abstrait
+- Statut : ACCEPTED (2026-11-04)
+- Décision : `EvidenceStorageInterface` avec implémentation locale en V1,
+  évolution distante possible sans changer le domaine.
+- Justification : éviter le couplage au système de fichiers local.
+- Conséquences : métadonnées `storage_key` en base ; accès contrôlé.
+
+## DEC-ST-008 — PHP 8.5.12 + Laravel 13.40.0
+- Statut : ACCEPTED (2026-11-04, preuve de compatibilité enregistrée)
+- Décision : conserver le PHP installé (8.5.12 NTS) et Laravel 13.40.0.
+- Justification : `composer create-project` réussi, `artisan --version` OK,
+  contrainte `php: ^8.3` satisfaite.
+- Conséquences : surveiller les dépendances tierces lors des mises à jour ;
+  toute montée de version exige une nouvelle preuve.
+
+## DEC-ST-009 — PostgreSQL via Docker Compose
+- Statut : ACCEPTED (2026-11-04, approbation humaine D-ST-02)
+- Décision : `postgres:16-alpine` via `docker-compose.yml`, volume persistant.
+- Justification : aucune installation native ; image déjà présente ; reproductible.
+- Conséquences : Docker requis en développement ; port 5432 à libérer.
+
+## DEC-ST-010 — Emplacement du projet et install AIDF dédiée
+- Statut : ACCEPTED (2026-11-04, approbation humaine D-ST-01)
+- Décision : `projets/stage-tracker/` avec son propre `.aidf/` et ses 11 documents.
+- Justification : précédent `taskflow` ; séparation nette des projets gouvernés.
+- Conséquences : les gates se valident dans le projet, pas à la racine workspace.
+
+## DEC-ST-011 — Rapports configurables, trames non figées
+- Statut : ACCEPTED (2026-11-04)
+- Décision : modèles de rapports versionnés en base ; aucune trame ADRAR codée.
+- Justification : trames officielles indisponibles ; éviter le figeage.
+- Conséquences : versionnement des modèles ; exports dépendants des modèles.
+
+## DEC-ST-012 — Journal d'audit append-only
+- Statut : ACCEPTED (2026-11-04)
+- Décision : `audit_logs` en append-only pour les actions sensibles.
+- Justification : traçabilité et non-répudiation (SECURITY §2).
+- Conséquences : aucune mise à jour/suppression applicative des entrées.

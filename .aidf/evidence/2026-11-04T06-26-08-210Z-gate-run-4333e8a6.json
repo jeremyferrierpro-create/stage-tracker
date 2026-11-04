@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-04T06-26-08-210Z-930bf9",
+  "type": "gate-run",
+  "status": "PASS",
+  "gate": "specification-exit",
+  "phase": "specification",
+  "summary": "specification-exit (exit) -> PASS",
+  "note": "",
+  "createdBy": "aidf",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-04T06:26:08.210Z",
+  "checks": [
+    {
+      "id": "prd-validated",
+      "type": "doc-status",
+      "status": "PASS",
+      "reason": "PRD: PRD is VALIDATED. APPFLOW: APPFLOW is VALIDATED.",
+      "evidence": null
+    },
+    {
+      "id": "security-not-contradictory",
+      "type": "doc-status",
+      "status": "PASS",
+      "reason": "SECURITY: SECURITY is VALIDATED.",
+      "evidence": null
+    },
+    {
+      "id": "spec-human-validation",
+      "type": "evidence",
+      "status": "PASS",
+      "reason": "Found 1 matching evidence record(s).",
+      "evidence": [
+        ".aidf/evidence/2026-11-04T06-26-07-850Z-spec-validation-07bb6991.json"
+      ]
+    }
+  ],
+  "commands": [],
+  "files": [],
+  "limitations": [],
+  "previous": "8d7fb0a4f140890067d7c17c42349c01b53f0c1b4b79ea6aa536d82c5a8b0443",
+  "hash": "4333e8a6921bb6db3926c088217ba987835419c72308dd94e53432d5791f0d14"
+}

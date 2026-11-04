@@ -1,0 +1,35 @@
+schemaVersion: 1
+description: |
+  Skill dependency graph. A skill is AVAILABLE only when its dependencies are
+  themselves VALIDATED or AVAILABLE, or explicitly marked NOT_APPLICABLE with a
+  reason. Cycles are rejected by `aidf skills validate`.
+
+skills:
+  project-context:
+    requires: []
+  product-analysis:
+    requires: [project-context]
+  requirements-engineering:
+    requires: [product-analysis]
+  architecture-review:
+    requires: [project-context]
+  database-design:
+    requires: [architecture-review]
+  ui-ux-implementation:
+    requires: [requirements-engineering]
+  frontend-implementation:
+    requires: [ui-ux-implementation]
+  backend-implementation:
+    requires: [architecture-review]
+  testing-validation:
+    requires: [requirements-engineering]
+  security-review:
+    requires: [testing-validation]
+  devops-engineering:
+    requires: [architecture-review]
+  documentation-maintenance:
+    requires: [project-context]
+  phase-transition:
+    requires: [project-context, testing-validation]
+
+external: {}

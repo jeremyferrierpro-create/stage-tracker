@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-04T06-17-15-799Z-c0a551",
+  "type": "project-scan",
+  "status": "PASS",
+  "gate": null,
+  "phase": null,
+  "summary": "Project scan: unknown stack; no test runner detected.",
+  "note": "",
+  "createdBy": "aidf",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-04T06:17:15.799Z",
+  "checks": [
+    {
+      "id": "languages",
+      "status": "NOT_PROVEN",
+      "reason": ""
+    },
+    {
+      "id": "tests",
+      "status": "NOT_PROVEN",
+      "reason": ""
+    },
+    {
+      "id": "secrets",
+      "status": "PASS",
+      "reason": "No secret files detected at the scanned depth."
+    }
+  ],
+  "commands": [],
+  "files": [],
+  "limitations": [
+    "Detection is based on known marker files and manifests; absence is not proof that a technology is unused.",
+    "Secret detection reports file names only and is not exhaustive."
+  ],
+  "previous": "d59cb2ee0566cda2cb815eb02742df435bad315af01070551a89b06a18797be3",
+  "hash": "3e6c114a058f130100950d142351cd5c9da7b7ba53da1f8839c3f72ca1563d5e"
+}

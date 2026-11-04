@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-11-04T06:17:15.789Z",
+  "root": "C:\\Users\\jerem\\Desktop\\stage_tracker\\aidf\\projets\\stage-tracker",
+  "environment": {
+    "os": {
+      "platform": "win32",
+      "release": "10.0.26200",
+      "arch": "x64",
+      "version": "Windows 11 Pro for Workstations"
+    },
+    "shell": "C:\\WINDOWS\\system32\\cmd.exe",
+    "home": "C:\\Users\\jerem",
+    "tools": {
+      "node": "C:\\Program Files\\nodejs\\node.exe",
+      "npm": "C:\\Program Files\\nodejs\\npm",
+      "pnpm": null,
+      "yarn": null,
+      "bun": null,
+      "python": "C:\\Python314\\python.exe",
+      "uv": "C:\\Users\\jerem\\.local\\bin\\uv.exe",
+      "git": "C:\\Users\\jerem\\AppData\\Local\\Programs\\MinGit\\cmd\\git.exe",
+      "gh": null,
+      "specify": "C:\\Python314\\Scripts\\specify.exe",
+      "qodercli": null,
+      "docker": "C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker"
+    },
+    "node": {
+      "version": "24.21.0",
+      "execPath": "C:\\Program Files\\nodejs\\node.exe"
+    },
+    "ide": {
+      "qoder": {
+        "installed": true,
+        "home": "C:\\Users\\jerem\\.qoder",
+        "app": "C:\\Users\\jerem\\AppData\\Local\\Programs\\Qoder IDE",
+        "projectRules": ".qoder/rules",
+        "projectSkills": ".qoder/skills",
+        "projectAgents": ".qoder/agents",
+        "projectSettings": ".qoder/settings.json",
+        "agentsMd": true
+      }
+    },
+    "specKit": {
+      "cliPath": "C:\\Python314\\Scripts\\specify.exe",
+      "cliVersion": "specify 1.2.3"
+    }
+  },
+  "project": {
+    "root": "C:\\Users\\jerem\\Desktop\\stage_tracker\\aidf\\projets\\stage-tracker",
+    "languages": [],
+    "frameworks": [],
+    "packageJson": null,
+    "tests": {
+      "packageManager": null,
+      "scripts": {},
+      "directories": [],
+      "files": [],
+      "runners": []
+    },
+    "git": {
+      "repository": true,
+      "branch": null,
+      "head": null,
+      "dirty": 7
+    },
+    "aiConfig": {
+      "agentsMd": true,
+      "claudeMd": false,
+      "qoderRules": true,
+      "qoderSkills": true,
+      "qoderSettings": true,
+      "cursorRules": false,
+      "copilotInstructions": false,
+      "agentDir": false,
+      "specifyDir": false
+    },
+    "docs": {
+      "readme": true,
+      "docsDir": false,
+      "aidfDir": true
+    },
+    "ci": []
+  },
+  "secretFiles": []
+}

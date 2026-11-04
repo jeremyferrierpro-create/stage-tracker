@@ -1,0 +1,232 @@
+schemaVersion: 1
+description: |
+  Executable gate definitions. Status precedence: FAIL > BLOCKED > NOT_PROVEN >
+  PASS. A check marked NOT_APPLICABLE does not block, but its reason is recorded.
+  Command checks only run when the caller passes --allow-exec or the project
+  configuration sets security.allowCommandExecution=true.
+
+gates:
+  - id: intake-entry
+    phase: intake
+    kind: entry
+    description: AIDF is initialized and the constitution exists.
+    checks:
+      - id: manifest-present
+        type: file-exists
+        path: .aidf/manifest.json
+        blocking: true
+      - id: constitution-present
+        type: file-exists
+        path: .aidf/docs/constitution.md
+        blocking: true
+
+  - id: intake-exit
+    phase: intake
+    kind: exit
+    description: Task classified and context assembled.
+    checks:
+      - id: context-selected
+        type: file-exists
+        path: .aidf/state/context/latest.md
+        blocking: true
+      - id: task-classification
+        type: evidence
+        evidenceType: task-classification
+        blocking: true
+
+  - id: discovery-entry
+    phase: discovery
+    kind: entry
+    description: Intake gate passed.
+    checks:
+      - id: previous-intake
+        type: previous-gate
+        gate: intake-exit
+        blocking: true
+
+  - id: discovery-exit
+    phase: discovery
+    kind: exit
+    description: Project facts verified and recorded.
+    checks:
+      - id: project-scan
+        type: evidence
+        evidenceType: project-scan
+        blocking: true
+      - id: trd-not-blocked
+        type: doc-status
+        documents: [TRD]
+        disallowed: [BLOCKED, OUTDATED]
+        blocking: true
+
+  - id: specification-entry
+    phase: specification
+    kind: entry
+    description: Discovery gate passed.
+    checks:
+      - id: previous-discovery
+        type: previous-gate
+        gate: discovery-exit
+        blocking: true
+
+  - id: specification-exit
+    phase: specification
+    kind: exit
+    description: Specification validated by a human, with security impact identified.
+    checks:
+      - id: prd-validated
+        type: doc-status
+        documents: [PRD, APPFLOW]
+        allowed: [VALIDATED, NOT_APPLICABLE]
+        blocking: true
+      - id: security-not-contradictory
+        type: doc-status
+        documents: [SECURITY]
+        disallowed: [BLOCKED, OUTDATED]
+        blocking: true
+      - id: spec-human-validation
+        type: evidence
+        evidenceType: spec-validation
+        requireHumanApproval: true
+        blocking: true
+
+  - id: planning-entry
+    phase: planning
+    kind: entry
+    description: Specification gate passed.
+    checks:
+      - id: previous-specification
+        type: previous-gate
+        gate: specification-exit
+        blocking: true
+
+  - id: planning-exit
+    phase: planning
+    kind: exit
+    description: Technical plan approved by a human.
+    checks:
+      - id: trd-plan-validated
+        type: doc-status
+        documents: [TRD, PLAN]
+        allowed: [VALIDATED, NOT_APPLICABLE]
+        blocking: true
+      - id: backend-not-blocked
+        type: doc-status
+        documents: [BACKEND]
+        disallowed: [BLOCKED, OUTDATED]
+        blocking: true
+      - id: plan-human-approval
+        type: evidence
+        evidenceType: plan-approval
+        requireHumanApproval: true
+        blocking: true
+
+  - id: implementation-entry
+    phase: implementation
+    kind: entry
+    description: Plan approved.
+    checks:
+      - id: previous-planning
+        type: previous-gate
+        gate: planning-exit
+        blocking: true
+
+  - id: implementation-exit
+    phase: implementation
+    kind: exit
+    description: Changes implemented and captured.
+    checks:
+      - id: conventions-not-contradictory
+        type: doc-status
+        documents: [CONVENTIONS]
+        disallowed: [BLOCKED, OUTDATED]
+        blocking: true
+      - id: implementation-evidence
+        type: evidence
+        evidenceType: implementation-change
+        blocking: true
+
+  - id: testing-entry
+    phase: testing
+    kind: entry
+    description: Implementation gate passed.
+    checks:
+      - id: previous-implementation
+        type: previous-gate
+        gate: implementation-exit
+        blocking: true
+
+  - id: testing-exit
+    phase: testing
+    kind: exit
+    description: Real tests executed successfully.
+    checks:
+      - id: test-command
+        type: command
+        commandKey: test
+        blocking: true
+      - id: test-evidence
+        type: evidence
+        evidenceType: test-run
+        blocking: true
+
+  - id: security-entry
+    phase: security
+    kind: entry
+    description: Testing gate passed.
+    checks:
+      - id: previous-testing
+        type: previous-gate
+        gate: testing-exit
+        blocking: true
+
+  - id: security-exit
+    phase: security
+    kind: exit
+    description: Security reviewed and approved by a human.
+    checks:
+      - id: security-doc-validated
+        type: doc-status
+        documents: [SECURITY]
+        allowed: [VALIDATED, NOT_APPLICABLE]
+        blocking: true
+      - id: security-audit
+        type: command
+        commandKey: securityAudit
+        blocking: false
+        missing: NOT_APPLICABLE
+      - id: security-human-approval
+        type: evidence
+        evidenceType: security-review
+        requireHumanApproval: true
+        blocking: true
+
+  - id: release-entry
+    phase: release
+    kind: entry
+    description: Security gate passed.
+    checks:
+      - id: previous-security
+        type: previous-gate
+        gate: security-exit
+        blocking: true
+
+  - id: release-exit
+    phase: release
+    kind: exit
+    description: All prior gates passed and release approved by a human.
+    checks:
+      - id: prior-gates
+        type: previous-gate
+        gates: [intake-exit, discovery-exit, specification-exit, planning-exit, implementation-exit, testing-exit, security-exit]
+        blocking: true
+      - id: build-command
+        type: command
+        commandKey: build
+        blocking: false
+        missing: NOT_APPLICABLE
+      - id: release-human-approval
+        type: evidence
+        evidenceType: release-approval
+        requireHumanApproval: true
+        blocking: true

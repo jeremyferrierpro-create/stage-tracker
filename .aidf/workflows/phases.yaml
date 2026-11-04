@@ -1,0 +1,161 @@
+schemaVersion: 1
+description: |
+  AIDF development cycle. Each phase declares what must be true before entering
+  and before leaving. Gates are executable definitions in gates.yaml.
+
+phases:
+  - id: intake
+    name: Intake and classification
+    objective: Understand the request, classify it and assemble the minimum context.
+    requiredDocuments: [constitution, CONVENTIONS, PRD]
+    skills: [project-context, phase-transition]
+    inputs: [user request, repository state]
+    deliverables:
+      - classified task (feature, bug, refactor, security, docs, ops)
+      - context manifest
+    tests:
+      - context manifest exists and lists selected documents/skills
+    acceptance:
+      - the task type and affected areas are stated
+      - open questions are listed instead of guessed
+    exitGate: intake-exit
+    blockingConditions:
+      - the request contradicts the constitution or SECURITY.md
+      - a required secret or access is missing
+
+  - id: discovery
+    name: Discovery
+    objective: Establish verified facts about the project, constraints and resources.
+    requiredDocuments: [TRD, DECISIONS]
+    skills: [project-context, architecture-review]
+    inputs: [repository, git state, existing AI resources]
+    deliverables:
+      - project scan evidence
+      - verified facts vs open questions
+    tests:
+      - scan executed and recorded
+    acceptance:
+      - no architectural claim without a file reference
+    exitGate: discovery-exit
+    blockingConditions:
+      - the repository cannot be read
+      - a contradiction affects architecture or data ownership
+
+  - id: specification
+    name: Specification
+    objective: Define behaviour, flows, interface impact and acceptance criteria.
+    requiredDocuments: [PRD, APPFLOW, UI-UX, SECURITY]
+    skills: [product-analysis, requirements-engineering, ui-ux-implementation]
+    inputs: [classified task, context manifest, discovery findings]
+    deliverables:
+      - updated PRD/APPFLOW/UI-UX
+      - numbered acceptance criteria
+      - human validation of the specification
+    tests:
+      - every requirement has an acceptance criterion and verification method
+    acceptance:
+      - scope and non-goals are explicit
+      - security and data impacts are identified
+    exitGate: specification-exit
+    blockingConditions:
+      - unresolved product decision
+      - security or data contradiction
+
+  - id: planning
+    name: Planning
+    objective: Turn the specification into a technical plan, tasks and test strategy.
+    requiredDocuments: [TRD, PLAN, BACKEND]
+    skills: [architecture-review, database-design, requirements-engineering]
+    inputs: [validated specification]
+    deliverables:
+      - technical plan and task breakdown
+      - test strategy
+      - human approval of the plan
+    tests:
+      - each task has a dependency and acceptance criterion
+    acceptance:
+      - plan is consistent with TRD and SECURITY
+      - rollback path exists for data or deployment changes
+    exitGate: planning-exit
+    blockingConditions:
+      - unresolved architectural conflict
+      - missing contract or data model
+
+  - id: implementation
+    name: Implementation
+    objective: Implement the planned change in small, reviewable increments.
+    requiredDocuments: [CONVENTIONS, BACKEND, UI-UX]
+    skills: [frontend-implementation, backend-implementation, database-design, devops-engineering]
+    inputs: [approved plan, tasks]
+    deliverables:
+      - code and configuration changes
+      - updated tests
+      - implementation evidence (files changed)
+    tests:
+      - focused tests for changed behaviour
+    acceptance:
+      - code follows existing conventions and design system
+      - no unrelated refactor
+    exitGate: implementation-exit
+    blockingConditions:
+      - build or typecheck failure
+      - change requires an unapproved architecture decision
+
+  - id: testing
+    name: Testing and validation
+    objective: Prove the change with real execution, including failure paths.
+    requiredDocuments: [PLAN, CONVENTIONS]
+    skills: [testing-validation]
+    inputs: [implementation diff]
+    deliverables:
+      - executed test command with output hash
+      - list of untested paths and limitations
+    tests:
+      - project test command exits 0
+    acceptance:
+      - nominal and failure paths covered
+      - mocks are not presented as integrations
+    exitGate: testing-exit
+    blockingConditions:
+      - test command missing or not executable
+      - failing tests
+
+  - id: security
+    name: Security validation
+    objective: Review the change for security and privacy risk and record residual risk.
+    requiredDocuments: [SECURITY, BACKEND, DECISIONS]
+    skills: [security-review, testing-validation]
+    inputs: [diff, test evidence, threat model]
+    deliverables:
+      - security findings with severity and evidence
+      - human security approval
+    tests:
+      - configured audit command (if any) executed
+    acceptance:
+      - no unmitigated high-severity finding
+      - residual risks accepted by a human
+    exitGate: security-exit
+    blockingConditions:
+      - unmitigated high-severity finding
+      - missing human security approval
+
+  - id: release
+    name: Release and documentation
+    objective: Finalize documentation, changelog and release evidence.
+    requiredDocuments: [CHANGELOG, PLAN, DECISIONS]
+    skills: [documentation-maintenance, phase-transition, devops-engineering]
+    inputs: [all prior evidence]
+    deliverables:
+      - updated documents and changelog
+      - release report
+      - human release approval
+    tests:
+      - all prior exit gates PASS
+      - build command (if configured) exits 0
+    acceptance:
+      - no document claims an unverified behaviour
+      - rollback procedure documented
+    exitGate: release-exit
+    blockingConditions:
+      - any prior gate not PASS
+      - missing human release approval

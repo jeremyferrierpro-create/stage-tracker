@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-04T06-17-16-021Z-393a4e",
+  "type": "gate-run",
+  "status": "PASS",
+  "gate": "discovery-exit",
+  "phase": "discovery",
+  "summary": "discovery-exit (exit) -> PASS",
+  "note": "",
+  "createdBy": "aidf",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-04T06:17:16.021Z",
+  "checks": [
+    {
+      "id": "project-scan",
+      "type": "evidence",
+      "status": "PASS",
+      "reason": "Found 1 matching evidence record(s).",
+      "evidence": [
+        ".aidf/evidence/2026-11-04T06-17-15-799Z-project-scan-3e6c114a.json"
+      ]
+    },
+    {
+      "id": "trd-not-blocked",
+      "type": "doc-status",
+      "status": "PASS",
+      "reason": "TRD: TRD is DRAFT.",
+      "evidence": null
+    }
+  ],
+  "commands": [],
+  "files": [],
+  "limitations": [],
+  "previous": "3e6c114a058f130100950d142351cd5c9da7b7ba53da1f8839c3f72ca1563d5e",
+  "hash": "ddd1ef320b861d9a124b7c9357636a5c1671daa659aef6729cbbdb091aacd701"
+}

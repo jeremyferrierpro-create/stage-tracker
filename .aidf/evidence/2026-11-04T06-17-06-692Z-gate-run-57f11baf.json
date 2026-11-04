@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-04T06-17-06-691Z-9c00bc",
+  "type": "gate-run",
+  "status": "PASS",
+  "gate": "intake-entry",
+  "phase": "intake",
+  "summary": "intake-entry (entry) -> PASS",
+  "note": "",
+  "createdBy": "aidf",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-04T06:17:06.691Z",
+  "checks": [
+    {
+      "id": "manifest-present",
+      "type": "file-exists",
+      "status": "PASS",
+      "reason": ".aidf/manifest.json exists.",
+      "evidence": null
+    },
+    {
+      "id": "constitution-present",
+      "type": "file-exists",
+      "status": "PASS",
+      "reason": ".aidf/docs/constitution.md exists.",
+      "evidence": null
+    }
+  ],
+  "commands": [],
+  "files": [],
+  "limitations": [],
+  "previous": "b86fc5a5560bd4745e992c12724a8a8957bb968a528a6f57e80d62cf005eda99",
+  "hash": "57f11baffdb61eb530562666986618d09568c509dce98dcb41c1bdff83b5d3b1"
+}

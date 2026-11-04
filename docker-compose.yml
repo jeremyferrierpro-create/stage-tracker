@@ -1,0 +1,24 @@
+name: stage-tracker
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: stage-tracker-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-stage_tracker}
+      POSTGRES_USER: ${DB_USERNAME:-stage_tracker}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-stage_tracker} -d ${DB_DATABASE:-stage_tracker}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
+    name: stage-tracker-pgdata

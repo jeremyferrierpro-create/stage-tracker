@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-04T06-17-06-517Z-c9d381",
+  "type": "task-classification",
+  "status": "PASS",
+  "gate": null,
+  "phase": null,
+  "summary": "Mission SPECIFICATION Stage Tracker (feature, application multiutilisateur): produire les 11 documents AIDF projet + annexes techniques, valider specification-exit, STOP avant PLANNING. Aucune implementation applicative.",
+  "note": "Mission SPECIFICATION Stage Tracker (feature, application multiutilisateur): produire les 11 documents AIDF projet + annexes techniques, valider specification-exit, STOP avant PLANNING. Aucune implementation applicative.",
+  "createdBy": "agent",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-04T06:17:06.517Z",
+  "checks": [
+    {
+      "id": "manual-record",
+      "status": "NOT_PROVEN",
+      "reason": "Agent declaration only; not a human approval."
+    }
+  ],
+  "commands": [],
+  "files": [],
+  "limitations": [
+    "Agent-declared evidence is not human approval."
+  ],
+  "previous": null,
+  "hash": "b86fc5a5560bd4745e992c12724a8a8957bb968a528a6f57e80d62cf005eda99"
+}

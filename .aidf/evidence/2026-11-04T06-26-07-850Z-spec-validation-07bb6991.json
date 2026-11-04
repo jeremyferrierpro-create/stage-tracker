@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-04T06-26-07-849Z-94815a",
+  "type": "spec-validation",
+  "status": "PASS",
+  "gate": null,
+  "phase": null,
+  "summary": "Validation humaine de la specification Stage Tracker 0.1.0 (2026-11-04): 11 documents AIDF VALIDATED (constitution, PRD, TRD, APPFLOW, UI-UX, BACKEND, PLAN, SECURITY, CONVENTIONS, DECISIONS, CHANGELOG) + annexes (ADR-001/002, parcours, roles/permissions, MCD, MLD, dictionnaire, contrats API, INV-01..14, criteres d'acceptation, specs MT-01..12). Approbation prealable explicite du plan SPECIFICATION; aucun code applicatif produit.",
+  "note": "Validation humaine de la specification Stage Tracker 0.1.0 (2026-11-04): 11 documents AIDF VALIDATED (constitution, PRD, TRD, APPFLOW, UI-UX, BACKEND, PLAN, SECURITY, CONVENTIONS, DECISIONS, CHANGELOG) + annexes (ADR-001/002, parcours, roles/permissions, MCD, MLD, dictionnaire, contrats API, INV-01..14, criteres d'acceptation, specs MT-01..12). Approbation prealable explicite du plan SPECIFICATION; aucun code applicatif produit.",
+  "createdBy": "human",
+  "humanApproval": true,
+  "approvedBy": "Jeremy Ferrier",
+  "createdAt": "2026-11-04T06:26:07.849Z",
+  "checks": [
+    {
+      "id": "manual-record",
+      "status": "PASS",
+      "reason": "Approved by Jeremy Ferrier"
+    }
+  ],
+  "commands": [],
+  "files": [],
+  "limitations": [],
+  "previous": "91fd5620e3af78a6661aef25faa0648e174013a6587f90a506ac2090f82c8e64",
+  "hash": "07bb6991779c4c60348497012aa4f5b5c0a852192dbd94f2fc8e8029925d6ba7"
+}

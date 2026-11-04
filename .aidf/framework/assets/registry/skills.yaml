@@ -1,0 +1,528 @@
+schemaVersion: 1
+description: |
+  Catalog of AIDF's first-party skills. These skills are installed into the
+  project through the active IDE adapter. They are deliberately few: each one
+  must add a distinct capability that is not already covered by the project's
+  own skills or by GitHub Spec Kit.
+
+skills:
+  - id: project-context
+    name: aidf-project-context
+    version: 1.0.0
+    description: Discover the real project context (stack, structure, constraints, existing AI resources) before any change. Use at session start, when the stack is unknown, or when the task spans several areas.
+    capabilities:
+      - environment-and-stack-discovery
+      - resource-inventory
+      - context-selection
+    triggers:
+      - project context
+      - stack
+      - architecture overview
+      - where is
+      - session start
+    phases:
+      - intake
+      - discovery
+    documents:
+      - constitution
+      - CONVENTIONS
+      - TRD
+    rules:
+      - inspect-before-modify
+      - no-assumption-as-fact
+    dependsOn: []
+    prerequisites:
+      - AIDF installed (.aidf/manifest.json)
+    deliverables:
+      - context manifest with selected documents and skills
+      - list of verified facts vs open questions
+    tests:
+      - context selection includes constitution and CONVENTIONS
+      - no secret file content is read
+    ide:
+      - qoder
+      - generic
+    path: skills/aidf-project-context/SKILL.md
+    status: AVAILABLE
+
+  - id: product-analysis
+    name: aidf-product-analysis
+    version: 1.0.0
+    description: Turn a raw request into product goals, users, scope and measurable outcomes without inventing facts. Use for new features, ambiguous requests, or PRD updates.
+    capabilities:
+      - problem-framing
+      - persona-and-outcome-analysis
+      - scope-and-non-goals
+    triggers:
+      - new feature
+      - product requirement
+      - user story
+      - scope
+      - PRD
+    phases:
+      - intake
+      - specification
+    documents:
+      - PRD
+      - APPFLOW
+    rules:
+      - evidence-over-assertion
+      - explicit-open-questions
+    dependsOn:
+      - project-context
+    prerequisites:
+      - PRD exists
+    deliverables:
+      - updated PRD sections with assumptions labelled
+      - open questions with owners
+    tests:
+      - every requirement has an acceptance criterion and verification method
+    ide:
+      - qoder
+      - generic
+    path: skills/aidf-product-analysis/SKILL.md
+    status: AVAILABLE
+
+  - id: requirements-engineering
+    name: aidf-requirements-engineering
+    version: 1.0.0
+    description: Write precise, testable requirements and acceptance criteria, and trace them to design, tasks and tests. Use when specifying a feature or reviewing requirement quality.
+    capabilities:
+      - requirement-decomposition
+      - acceptance-criteria
+      - traceability
+    triggers:
+      - acceptance criteria
+      - requirement
+      - specify
+      - edge cases
+      - traceability
+    phases:
+      - specification
+      - planning
+    documents:
+      - PRD
+      - APPFLOW
+      - PLAN
+    rules:
+      - testable-requirements
+    dependsOn:
+      - product-analysis
+    prerequisites:
+      - PRD drafted
+    deliverables:
+      - numbered requirements with acceptance criteria
+      - traceability table
+    tests:
+      - each requirement maps to at least one verification method
+    ide:
+      - qoder
+      - generic
+    path: skills/aidf-requirements-engineering/SKILL.md
+    status: AVAILABLE
+
+  - id: architecture-review
+    name: aidf-architecture-review
+    version: 1.0.0
+    description: Review or document architecture against real code and constraints, including boundaries, data ownership, failure modes and trade-offs. Use before structural changes or when the TRD is stale.
+    capabilities:
+      - component-boundary-analysis
+      - trade-off-analysis
+      - adr-writing
+    triggers:
+      - architecture
+      - refactor
+      - module boundary
+      - TRD
+      - ADR
+    phases:
+      - discovery
+      - planning
+    documents:
+      - TRD
+      - DECISIONS
+      - CONVENTIONS
+    rules:
+      - project-owns-architecture
+      - inspect-before-modify
+    dependsOn:
+      - project-context
+    prerequisites:
+      - repository access
+    deliverables:
+      - architecture findings with file references
+      - ADR when a decision is required
+    tests:
+      - every architectural claim references a real file or decision
+    ide:
+      - qoder
+      - generic
+    path: skills/aidf-architecture-review/SKILL.md
+    status: AVAILABLE
+
+  - id: database-design
+    name: aidf-database-design
+    version: 1.0.0
+    description: Design or review schemas, migrations, indexes and data access with attention to integrity, performance and reversibility. Use for any persistent data change.
+    capabilities:
+      - schema-design
+      - migration-review
+      - query-and-index-review
+    triggers:
+      - schema
+      - migration
+      - SQL
+      - database
+      - index
+      - data model
+    phases:
+      - planning
+      - implementation
+    documents:
+      - BACKEND
+      - SECURITY
+      - TRD
+    rules:
+      - reversible-migrations
+      - least-privilege-data-access
+    dependsOn:
+      - architecture-review
+    prerequisites:
+      - data model location identified
+    deliverables:
+      - schema/migration plan
+      - rollback procedure
+    tests:
+      - migration applies and rolls back on a disposable database
+    ide:
+      - qoder
+      - generic
+    path: skills/aidf-database-design/SKILL.md
+    status: AVAILABLE
+
+  - id: frontend-implementation
+    name: aidf-frontend-implementation
+    version: 1.0.0
+    description: Implement frontend changes that respect the existing design system, component patterns, state model and accessibility requirements. Use for UI features and fixes.
+    capabilities:
+      - component-implementation
+      - state-management
+      - accessibility-aware-ui
+    triggers:
+      - UI
+      - component
+      - frontend
+      - React
+      - Vue
+      - page
+      - styling
+    phases:
+      - implementation
+    documents:
+      - UI-UX
+      - APPFLOW
+      - CONVENTIONS
+    rules:
+      - reuse-existing-design-system
+      - accessible-by-default
+    dependsOn:
+      - ui-ux-implementation
+    prerequisites:
+      - design system location known
+    deliverables:
+      - implementation diff
+      - screenshots or test evidence for states
+    tests:
+      - component tests for changed behaviour
+      - keyboard and focus check for interactive changes
+    ide:
+      - qoder
+      - generic
+    path: skills/aidf-frontend-implementation/SKILL.md
+    status: AVAILABLE
+
+  - id: backend-implementation
+    name: aidf-backend-implementation
+    version: 1.0.0
+    description: Implement backend services and APIs with explicit contracts, validation, error handling and tests. Use for endpoints, business rules, jobs and integrations.
+    capabilities:
+      - api-implementation
+      - business-logic
+      - integration-boundaries
+    triggers:
+      - API
+      - endpoint
+      - backend
+      - service
+      - webhook
+      - job
+    phases:
+      - implementation
+    documents:
+      - BACKEND
+      - SECURITY
+      - CONVENTIONS
+    rules:
+      - validate-at-boundary
+      - contract-first
+    dependsOn:
+      - architecture-review
+    prerequisites:
+      - contract location known
+    deliverables:
+      - implementation diff
+      - contract tests
+    tests:
+      - happy path and failure path tests
+    ide:
+      - qoder
+      - generic
+    path: skills/aidf-backend-implementation/SKILL.md
+    status: AVAILABLE
+
+  - id: ui-ux-implementation
+    name: aidf-ui-ux-implementation
+    version: 1.0.0
+    description: Translate flows and design intent into interface structure, states and copy while preserving the existing product surface. Use before frontend coding.
+    capabilities:
+      - flow-to-screen-mapping
+      - state-coverage
+      - microcopy
+    triggers:
+      - UX
+      - flow
+      - screen
+      - design
+      - empty state
+      - error state
+    phases:
+      - specification
+      - planning
+    documents:
+      - UI-UX
+      - APPFLOW
+    rules:
+      - preserve-existing-surface
+      - state-completeness
+    dependsOn:
+      - requirements-engineering
+    prerequisites:
+      - APPFLOW flow identified
+    deliverables:
+      - screen/state matrix
+      - interaction notes
+    tests:
+      - every screen lists loading, empty, error and success states
+    ide:
+      - qoder
+      - generic
+    path: skills/aidf-ui-ux-implementation/SKILL.md
+    status: AVAILABLE
+
+  - id: security-review
+    name: aidf-security-review
+    version: 1.0.0
+    description: Review a change for security and privacy risks using a threat-informed checklist and record findings with severity and evidence. Use before release and for any auth, data or input change.
+    capabilities:
+      - threat-review
+      - control-verification
+      - risk-recording
+    triggers:
+      - security
+      - auth
+      - permission
+      - secret
+      - injection
+      - vulnerability
+      - privacy
+    phases:
+      - security
+      - release
+    documents:
+      - SECURITY
+      - BACKEND
+      - DECISIONS
+    rules:
+      - least-privilege
+      - no-secret-in-output
+      - human-approval-for-sensitive
+    dependsOn:
+      - testing-validation
+    prerequisites:
+      - change scope known
+    deliverables:
+      - security findings with severity and evidence
+      - residual risk record
+    tests:
+      - each finding has a verification step or is marked NOT_PROVEN
+    ide:
+      - qoder
+      - generic
+    path: skills/aidf-security-review/SKILL.md
+    status: AVAILABLE
+
+  - id: testing-validation
+    name: aidf-testing-validation
+    version: 1.0.0
+    description: Design and execute tests that prove the change, including failure paths, and record real command output as evidence. Use during implementation and before any phase exit.
+    capabilities:
+      - test-design
+      - test-execution
+      - evidence-capture
+    triggers:
+      - test
+      - coverage
+      - regression
+      - validation
+      - acceptance
+    phases:
+      - testing
+      - implementation
+    documents:
+      - CONVENTIONS
+      - PLAN
+    rules:
+      - no-pass-without-evidence
+      - real-test-not-mock
+    dependsOn:
+      - requirements-engineering
+    prerequisites:
+      - test command identified
+    deliverables:
+      - test diff and execution record
+      - limitations for untested paths
+    tests:
+      - the project's real test command exits 0
+    ide:
+      - qoder
+      - generic
+    path: skills/aidf-testing-validation/SKILL.md
+    status: AVAILABLE
+
+  - id: devops-engineering
+    name: aidf-devops-engineering
+    version: 1.0.0
+    description: Implement build, CI, deployment and observability changes with rollback and least privilege. Use for pipelines, containers, infrastructure and release automation.
+    capabilities:
+      - ci-cd
+      - containerization
+      - observability
+      - rollback
+    triggers:
+      - CI
+      - pipeline
+      - deploy
+      - Docker
+      - infrastructure
+      - release
+    phases:
+      - implementation
+      - release
+    documents:
+      - TRD
+      - SECURITY
+      - PLAN
+    rules:
+      - least-privilege
+      - reversible-deployments
+    dependsOn:
+      - architecture-review
+    prerequisites:
+      - deployment target known
+    deliverables:
+      - pipeline/config diff
+      - rollback procedure
+    tests:
+      - pipeline validates on a branch
+      - rollback documented and testable
+    ide:
+      - qoder
+      - generic
+    path: skills/aidf-devops-engineering/SKILL.md
+    status: AVAILABLE
+
+  - id: documentation-maintenance
+    name: aidf-documentation-maintenance
+    version: 1.0.0
+    description: Keep AIDF documents, decisions, changelog and traceability accurate after a change. Use at the end of every phase and when documentation drifts from code.
+    capabilities:
+      - document-update
+      - decision-log
+      - changelog
+      - drift-detection
+    triggers:
+      - documentation
+      - changelog
+      - ADR
+      - update docs
+      - drift
+    phases:
+      - release
+      - implementation
+    documents:
+      - CHANGELOG
+      - DECISIONS
+      - PRD
+      - TRD
+    rules:
+      - documentation-reflects-reality
+    dependsOn:
+      - project-context
+    prerequisites:
+      - change completed
+    deliverables:
+      - updated documents with statuses
+      - changelog entry
+    tests:
+      - no document claims an unverified behaviour
+    ide:
+      - qoder
+      - generic
+    path: skills/aidf-documentation-maintenance/SKILL.md
+    status: AVAILABLE
+
+  - id: phase-transition
+    name: aidf-phase-transition
+    version: 1.0.0
+    description: Evaluate phase entry/exit gates, collect evidence and block transitions that are not demonstrated. Use before moving to another phase or declaring work complete.
+    capabilities:
+      - gate-evaluation
+      - evidence-collection
+      - blocker-reporting
+    triggers:
+      - phase
+      - gate
+      - done
+      - next phase
+      - validate
+      - blocked
+    phases:
+      - intake
+      - discovery
+      - specification
+      - planning
+      - implementation
+      - testing
+      - security
+      - release
+    documents:
+      - PLAN
+      - CHANGELOG
+    rules:
+      - no-pass-without-evidence
+      - explicit-blockers
+    dependsOn:
+      - project-context
+      - testing-validation
+    prerequisites:
+      - current phase known
+    deliverables:
+      - gate report with normalized statuses
+      - evidence references
+    tests:
+      - gate returns NOT_PROVEN when a check was not executed
+    ide:
+      - qoder
+      - generic
+    path: skills/aidf-phase-transition/SKILL.md
+    status: AVAILABLE
