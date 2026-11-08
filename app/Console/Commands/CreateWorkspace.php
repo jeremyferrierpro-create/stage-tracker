@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Domain\Audit\AuditLogger;
 use App\Domain\Identity\Models\User;
 use App\Domain\Identity\Models\Workspace;
 use App\Domain\Identity\Models\WorkspaceMember;
@@ -59,6 +60,17 @@ class CreateWorkspace extends Command
                 'status' => 'active',
                 'joined_at' => now(),
             ]);
+
+            app(AuditLogger::class)->record(
+                'workspace.created',
+                $workspace,
+                $workspace,
+                [
+                    'workspace_name' => $workspace->name,
+                    'status' => $workspace->status,
+                ],
+                $owner,
+            );
 
             return $workspace;
         });

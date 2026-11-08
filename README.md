@@ -63,11 +63,11 @@ Preuve → Compétence → Évaluation → Synthèse.
 
 | Élément | État |
 |---|---|
-| Phase AIDF | IMPLEMENTATION en cours — T-001 → T-006 livrés |
-| Code applicatif | socle Laravel 13.40.0 + authentification + isolation multi-tenant ; modules métier à venir |
+| Phase AIDF | IMPLEMENTATION en cours — T-001 → T-009 livrés |
+| Code applicatif | socle Laravel 13.40.0 + authentification + isolation + invitations + organisations + audit ; modules métier restants à venir |
 | Base de données | PostgreSQL 16.15 (conteneur Docker `stage-tracker-postgres`) |
-| Tests | `php artisan test` → 29 tests PASS (85 assertions) ; `pint --test` → PASS |
-| Sécurité | Argon2id, rate limiting 5/15 min (429), sessions en base, messages neutres |
+| Tests | `php artisan test` → 59 tests PASS (230 assertions) ; `pint --test` → PASS |
+| Sécurité | Argon2id, rate limiting 5/15 min (429), sessions en base, messages neutres, audit append-only (trigger PostgreSQL) |
 | Documents de référence | `.aidf/docs/` (11 documents validés) |
 | Annexes techniques | `docs/` (MCD, MLD, API, invariants, tests, planning) |
 | Preuves | `.aidf/evidence/` (chaîne de preuves SHA-256) |
@@ -157,8 +157,9 @@ Exécuté : conteneur `stage-tracker-postgres` démarré, healthcheck `healthy`.
 php artisan migrate
 ```
 
-Exécuté : tables `users`, `sessions`, `cache`, `jobs`, `workspaces` et
-`workspace_members` créées (T-004 → T-006).
+Exécuté : tables `users`, `sessions`, `cache`, `jobs`, `workspaces`,
+`workspace_members`, `invitations`, `organizations`, `organization_members` et
+`audit_logs` créées (T-004 → T-009).
 
 > Les seeders sont réservés aux environnements `local` et `test` ; ils ne
 > contiennent aucune donnée réelle.
@@ -176,7 +177,7 @@ php artisan db:show         # PostgreSQL 16.15, connexion pgsql
 
 ## 5. Premier lancement
 
-> **Disponible** depuis T-004 → T-006 (vérifié le 2026-11-04).
+> **Disponible** depuis T-004 → T-009 (vérifié le 2026-11-04).
 
 ### 5.1 Créer le premier compte
 
@@ -213,6 +214,9 @@ connexion, « Mes espaces » liste les espaces dont vous êtes membre actif.
 2. Ouvrir un espace depuis « Mes espaces ».
 3. L'URL `/w/{workspace}/dashboard` est refusée (403) si vous n'êtes pas membre
    actif de cet espace.
+4. En tant que propriétaire ou administrateur, les liens « Membres et
+   invitations », « Organisations » et « Journal d'audit » sont disponibles
+   depuis le tableau de bord.
 
 ### 5.5 Sécurité de connexion
 
@@ -221,7 +225,9 @@ connexion, « Mes espaces » liste les espaces dont vous êtes membre actif.
 - Message d'erreur identique pour un compte inconnu, un mot de passe faux ou un
   compte désactivé (aucune fuite d'existence).
 - Sessions stockées en base ; identifiant de session régénéré à la connexion.
-- `last_login_at` mis à jour à chaque connexion réussie (table d'audit en T-009).
+- `last_login_at` mis à jour à chaque connexion réussie.
+- Connexion, déconnexion, échecs et blocages enregistrés dans le journal
+  d'audit persistant (§10.6).
 
 *Statut : `DISPONIBLE` — vérifié le 2026-11-04.*
 
@@ -269,7 +275,8 @@ Sections prévues :
 
 ## 8. Guide du maître de stage
 
-> `À VENIR — livré par T-007, T-050 → T-054`.
+> `À VENIR — livré par T-050 → T-054` (les invitations d'espace de travail sont
+> déjà disponibles, voir §10.4).
 
 Sections prévues :
 - accepter une invitation ;
@@ -296,18 +303,19 @@ Sections prévues :
 
 ## 10. Guide de l'administrateur
 
-> **Partiel** — base livrée par T-006 ; complété par T-009, T-021, T-062.
+> **Partiel** — base livrée par T-006, invitations (T-007), organisations
+> (T-008) et journal d'audit (T-009) disponibles ; complété par T-021, T-062.
 
 ### 10.1 Rôles d'un espace de travail
 
-| Rôle | Consulter | Modifier l'espace | Gérer les membres | Supprimer |
-|---|---|---|---|---|
-| `owner` | oui | oui | oui | oui |
-| `admin` | oui | oui | oui | non |
-| `trainee` | oui | non | non | non |
-| `supervisor` | oui | non | non | non |
-| `tutor` | oui | non | non | non |
-| `viewer` | oui | non | non | non |
+| Rôle | Consulter | Modifier l'espace | Gérer les membres | Gérer les organisations | Consulter l'audit | Supprimer |
+|---|---|---|---|---|---|---|
+| `owner` | oui | oui | oui | oui | oui | oui |
+| `admin` | oui | oui | oui | oui | oui | non |
+| `trainee` | oui | non | non | non | non | non |
+| `supervisor` | oui | non | non | non | non | non |
+| `tutor` | oui | non | non | non | non | non |
+| `viewer` | oui | non | non | non | non | non |
 
 Un membre `suspended`, `invited` ou `removed` n'a aucun accès. Les rôles sont
 contextualisés : un utilisateur peut être `owner` dans un espace et `trainee`
@@ -330,20 +338,80 @@ php artisan app:create-workspace "Nom de l'espace" --owner=email@example.test --
 
 ### 10.4 Inviter des participants
 
-`À VENIR — T-021` (invitations, rôles, suspension).
+Page **Membres et invitations** (`/w/{workspace}/members`), réservée aux rôles
+`owner` et `admin` :
 
-### 10.5 Référentiels et organisations
+1. Saisir l'adresse e-mail et choisir le rôle proposé.
+2. Le lien d'invitation est envoyé par e-mail et expire après **7 jours**.
+   En local, le mail est écrit dans `storage/logs/laravel.log` (`MAIL_MAILER=log`).
+3. L'invité ouvre le lien puis :
+   - s'il possède déjà un compte → il se connecte et accepte (ou refuse) ;
+   - sinon → il crée son compte directement depuis la page d'invitation
+     (mot de passe de 12 caractères minimum).
+4. L'appartenance créée a **exactement** le rôle proposé (aucune élévation).
 
-`À VENIR — T-012 → T-018`.
+Règles de rôles proposables :
+
+| Inviteur | Rôles proposables |
+|---|---|
+| `owner` | `admin`, `trainee`, `supervisor`, `tutor`, `viewer` |
+| `admin` | `trainee`, `supervisor`, `tutor`, `viewer` (pas `owner` ni `admin`) |
+| autre | aucun |
+
+Autres règles :
+
+- une seule invitation en attente par adresse et par espace ;
+- le propriétaire de l'espace ne peut pas être changé par invitation ;
+- l'invitation peut être annulée par un administrateur ;
+- refus ou expiration → aucun accès créé, l'événement reste dans l'audit ;
+- visiter le lien après acceptation → page « 410 Invitation indisponible » ;
+- seul le hash SHA-256 du token est stocké en base.
+
+### 10.5 Organisations
+
+Page **Organisations** (`/w/{workspace}/organizations`) : consulter pour tous
+les membres, créer/modifier/archiver pour `owner` et `admin`.
+
+| Type | Libellé | Usage |
+|---|---|---|
+| `company` | Entreprise d'accueil | entreprise qui accueille le stagiaire |
+| `association` | Association | structure associative d'accueil |
+| `training_center` | Organisme de formation | centre qui délivre le référentiel |
+| `partner` | Partenaire | autre structure partenaire |
+
+- Les organisations d'accueil et les organismes de formation sont des entités
+  distinctes du même objet, différenciées par leur type (FR-3.1).
+- Aucune suppression physique : **archivage** (`archived_at`), les
+  organisations archivées restent consultables en bas de page.
+- Chaque organisation appartient à un workspace ; une organisation d'un autre
+  espace est inatteignable par identifiant (404).
 
 ### 10.6 Journal d'audit
 
-`À VENIR — T-009`. Les connexions sont journalisées de façon transitoire dans
-`storage/logs/laravel.log` (`auth.login`, `auth.logout`, `auth.login.failed`,
-`auth.login.throttled`).
+Page **Journal d'audit** (`/w/{workspace}/audit`), réservée à `owner` et
+`admin`. Chaque entrée contient : horodatage, action, acteur (ou « Système »),
+cible, métadonnées filtrées et IP.
 
-*Statut : `PARTIEL` — matrice des rôles et création de comptes/espaces vérifiées
-le 2026-11-04.*
+Actions journalisées à ce stade : `auth.login`, `auth.logout`,
+`auth.login.failed`, `auth.login.throttled`, `workspace.created`,
+`workspace.access.denied` (403 membre non actif), `user.created`,
+`invitation.created/accepted/declined/cancelled`,
+`organization.created/updated/archived`.
+
+Garanties :
+
+- **Append-only** : toute mise à jour ou suppression est refusée par le modèle
+  **et** par un trigger PostgreSQL (même une requête directe en base échoue).
+- Les métadonnées passent par une **liste blanche** de clés : aucun mot de
+  passe, token ou secret ne peut être journalisé.
+- L'adresse e-mail n'est jamais stockée en clair dans l'audit (uniquement son
+  empreinte SHA-256).
+- Les échecs de connexion sont rattachés à l'acteur si le compte existe, sans
+  jamais contenir le mot de passe tenté.
+
+*Statut : `PARTIEL` — rôles, création de comptes/espaces, invitations,
+organisations et journal d'audit vérifiés le 2026-11-08 ; gestion fine des
+membres et référentiels `À VENIR`.*
 
 ---
 
@@ -432,11 +500,15 @@ Faits déjà observés sur l'environnement de développement :
 .aidf/            gouvernance AIDF, documents, preuves, workflow
 docs/             architecture, base de données, fonctionnel, tests, planning
 app/Console/      commandes artisan (comptes, espaces)
-app/Domain/Identity/  utilisateurs, workspaces, appartenances, contexte courant
-app/Domain/       autres domaines métier (Organization, Training, Framework,
-                  Internship, Project, Journal, Evidence, Evaluation,
-                  Reporting, Collaboration, Audit)
+app/Domain/Identity/  utilisateurs, workspaces, appartenances, invitations,
+                  contexte courant
+app/Domain/Organization/  organisations d'accueil et organismes de formation
+app/Domain/Audit/ journal d'audit (modèle append-only, service d'écriture)
+app/Domain/       autres domaines métier (Training, Framework, Internship,
+                  Project, Journal, Evidence, Evaluation, Reporting,
+                  Collaboration)
 app/Http/         contrôleurs, middlewares, requêtes de formulaire
+app/Mail/         e-mails transactionnels (invitation)
 app/Integrations/ Git, GitHub, Storage
 app/Models/Concerns/  traits transverses (BelongsToWorkspace)
 app/Policies/     autorisations par ressource
@@ -457,8 +529,8 @@ phpunit.xml
 ### 16.2 Commandes de qualité
 
 ```bash
-vendor/bin/pint --test      # style — PASS le 2026-11-04
-php artisan test            # tests PHPUnit — 29 tests PASS (85 assertions) le 2026-11-04
+vendor/bin/pint --test      # style — PASS le 2026-11-08
+php artisan test            # tests PHPUnit — 59 tests PASS (230 assertions) le 2026-11-08
 npx playwright test         # navigateur — à activer en T-046/T-066
 ```
 
@@ -488,8 +560,10 @@ Créer `.env.testing` à partir de `.env` avec `APP_ENV=testing` et
 
 | Limite | Statut |
 |---|---|
-| Fonctionnalités métier | non implémentées — authentification et isolation disponibles (T-004 → T-006) |
+| Modules métier suite | non implémentés — formations, référentiel, stages, journal, preuves, évaluations à venir |
 | Frontend (Vite/npm) | non installé — livré avec T-011 |
+| Envoi réel d'e-mails | non configuré — `MAIL_MAILER=log` (le lien d'invitation va dans le log) |
+| Suspension / changement de rôle des membres | livré par T-021 |
 | Conformité RGPD | **NOT_PROVEN** — analyse juridique requise |
 | Playwright sous Windows | non vérifié (IN-07) |
 | Trames officielles de rapports | indisponibles — modèles configurables |

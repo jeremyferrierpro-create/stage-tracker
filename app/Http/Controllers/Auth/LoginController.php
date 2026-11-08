@@ -2,16 +2,19 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Domain\Audit\AuditLogger;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class LoginController extends Controller
 {
+    public function __construct(private readonly AuditLogger $audit) {}
+
     public function create(): View
     {
         return view('auth.login');
@@ -27,28 +30,34 @@ class LoginController extends Controller
         $user = $request->user();
         $user->forceFill(['last_login_at' => now()])->save();
 
-        // Journalisation transitoire ; la table d'audit arrive en T-009.
-        Log::info('auth.login', [
-            'user_id' => $user->id,
-            'ip' => $request->ip(),
-        ]);
+        $this->audit->record(
+            'auth.login',
+            null,
+            $user,
+            ['status' => 'success'],
+            $user,
+        );
 
-        return redirect()->intended(route('workspaces.index'));
+        $redirect = $request->query('redirect');
+        $fallback = is_string($redirect)
+            && Str::startsWith($redirect, '/')
+            && ! Str::startsWith($redirect, '//')
+                ? $redirect
+                : route('workspaces.index');
+
+        return redirect()->intended($fallback);
     }
 
     public function destroy(Request $request): RedirectResponse
     {
         $user = $request->user();
 
+        $this->audit->record('auth.logout', null, $user, [], $user);
+
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-
-        Log::info('auth.logout', [
-            'user_id' => $user?->id,
-            'ip' => $request->ip(),
-        ]);
 
         return redirect()->route('login');
     }

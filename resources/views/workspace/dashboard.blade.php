@@ -16,10 +16,28 @@
         </p>
 
         <p class="muted">
-            Les modules métier (organisations, stages, référentiels, journal,
-            preuves, évaluations, rapports) arrivent dans les tâches suivantes.
+            Les autres modules métier (stages, référentiels, journal, preuves,
+            évaluations, rapports) arrivent dans les tâches suivantes.
         </p>
 
-        <a class="button" href="{{ route('workspaces.index') }}">Changer d'espace</a>
+        <div class="actions">
+            <a class="button" href="{{ route('workspace.organizations.index', $workspace) }}">
+                Organisations
+            </a>
+
+            @can('manageMembers', $workspace)
+                <a class="button secondary" href="{{ route('workspace.members.index', $workspace) }}">
+                    Membres et invitations
+                </a>
+            @endcan
+
+            @can('viewAudit', $workspace)
+                <a class="button secondary" href="{{ route('workspace.audit.index', $workspace) }}">
+                    Journal d'audit
+                </a>
+            @endcan
+
+            <a class="button secondary" href="{{ route('workspaces.index') }}">Changer d'espace</a>
+        </div>
     </div>
 @endsection

@@ -45,13 +45,35 @@
         h1 { font-size: 1.55rem; margin-top: 0; }
         h2 { font-size: 1.15rem; margin-top: 0; }
         label { display: block; font-weight: 600; margin: 1rem 0 .35rem; }
-        input[type="email"], input[type="password"], input[type="text"] {
+        input[type="email"], input[type="password"], input[type="text"], select, textarea {
             width: 100%;
             padding: .6rem .7rem;
             border: 1px solid var(--line);
             border-radius: 6px;
             font: inherit;
+            background: #fff;
         }
+        textarea { min-height: 110px; resize: vertical; }
+        table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+        th, td { text-align: left; padding: .55rem .45rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+        th { color: var(--muted); font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; }
+        pre {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: .8rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: .78rem;
+            white-space: pre-wrap;
+        }
+        .button.secondary { background: #fff; color: var(--accent); border: 1px solid var(--accent); }
+        button.danger { background: #b91c1c; }
+        button.small, .button.small { margin-top: 0; padding: .35rem .7rem; font-size: .85rem; }
+        .inline { display: inline; }
+        .inline form { display: inline; }
+        .pagination { margin-top: 1rem; }
+        .pagination svg { width: 1rem; height: 1rem; }
+        .actions { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; }
         button, .button {
             display: inline-block;
             margin-top: 1.1rem;

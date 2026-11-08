@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Domain\Audit\AuditLogger;
 use App\Domain\Identity\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
@@ -54,6 +55,16 @@ class CreateUser extends Command
             'password_hash' => $password,
             'status' => 'active',
         ]);
+
+        app(AuditLogger::class)->record(
+            'user.created',
+            null,
+            $user,
+            [
+                'email_hash' => hash('sha256', $user->email),
+                'status' => $user->status,
+            ],
+        );
 
         $this->info("Compte créé : {$user->email} (id {$user->id}).");
 

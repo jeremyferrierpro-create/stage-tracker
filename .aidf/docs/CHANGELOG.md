@@ -3,7 +3,7 @@ doc: CHANGELOG
 status: VALIDATED
 version: 1.0.0
 source: stage-tracker-specification
-updated: 2026-11-04
+updated: 2026-11-08
 validated_by: Jeremy Ferrier
 ---
 
@@ -15,10 +15,56 @@ versionnement [SemVer](https://semver.org/lang/fr/).
 ## [Unreleased]
 
 ### À venir
-- Modules métier : organisations, formations, référentiels, stages, activités.
+- Modules métier : formations, référentiel, stages, activités.
 - Frontend Vite/Tailwind (T-011).
-- Invitations et gestion des membres (T-021).
-- Journal d'audit persistant (T-009).
+- Gestion fine des membres : rôles, suspension (T-021).
+
+## [0.4.0] — 2026-11-08 — Invitations, organisations, audit (T-007 → T-009)
+
+### Ajouté
+- Migrations `invitations` (token haché SHA-256, expiration 7 jours, index
+  partiel d'unicité des invitations en attente) et `organizations` /
+  `organization_members` (FK composite `(organization_id, workspace_id)`).
+- Migration `audit_logs` append-only : trigger PostgreSQL refusant tout
+  `UPDATE`/`DELETE`, index `(workspace_id, created_at DESC)`.
+- Service `InvitationService` : création/renouvellement, acceptation avec le rôle
+  exact proposé, refus, annulation ; e-mail `WorkspaceInvitationMail`.
+- Parcours d'invitation : page publique `/invitations/{token}` (200/404/410),
+  acceptation/refus authentifiés avec vérification de l'adresse, création de
+  compte possible depuis l'invitation (aucune inscription publique ouverte).
+- Règles de rôles proposables : `owner` → admin/trainee/supervisor/tutor/viewer ;
+  `admin` → non-administrateur uniquement ; rôle `owner` jamais proposable.
+- CRUD organisations : liste, création, modification, archivage (aucune
+  suppression physique), résolution par workspace (isolation).
+- Service `AuditLogger` : liste blanche des clés de métadonnées, IP, user-agent,
+  acteurs, cible ; aucune donnée sensible en audit (e-mail → empreinte).
+- Journalisation : `auth.login`, `auth.logout`, `auth.login.failed`,
+  `auth.login.throttled`, `workspace.created`, `workspace.access.denied`,
+  `user.created`, `invitation.*`, `organization.*`.
+- Policies `Workspace` étendues : `manageOrganizations`, `viewAudit`.
+- Page membres `/w/{workspace}/members` (invite + liste + annulation),
+  page organisations `/w/{workspace}/organizations`, page audit
+  `/w/{workspace}/audit` (pagination, 50 entrées).
+- Lien « Connexion pour accepter l'invitation » avec redirection locale sûre
+  (`/…` uniquement, pas de redirect ouvert).
+
+### Vérifié
+- `php artisan test` → 59 tests PASS, 230 assertions (30 nouveaux :
+  InvitationTest, OrganizationTest, AuditLogTest).
+- `vendor/bin/pint --test` → PASS.
+- `php artisan migrate` → 9 migrations DONE sur PostgreSQL 16.15.
+- Trigger append-only prouvé hors application : `UPDATE`/`DELETE` direct en psql
+  → `ERROR: audit_logs est append-only` (ligne de contrôle ensuite neutralisée
+  en désactivant le trigger, puis réactivé).
+- Smoke HTTP : `/login` 200, `/` 302 → `/login`.
+- Base de développement propre : 0 utilisateur, 0 espace, 0 invitation,
+  0 organisation, 0 ligne d'audit.
+
+### Limites
+- Gestion fine des membres (changement de rôle, suspension) à venir (T-021).
+- Envoi réel d'e-mails non configuré (`MAIL_MAILER=log` en local).
+- L'audit visible par espace ; pas de vue d'audit globale transverse.
+- Frontend Vite/npm non installé (T-011).
 
 ## [0.3.0] — 2026-11-04 — Authentification et isolation (T-004 → T-006)
 

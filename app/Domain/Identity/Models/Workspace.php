@@ -2,6 +2,7 @@
 
 namespace App\Domain\Identity\Models;
 
+use App\Domain\Organization\Models\Organization;
 use Database\Factories\WorkspaceFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -68,6 +69,22 @@ class Workspace extends Model
         return $this->belongsToMany(User::class, 'workspace_members')
             ->withPivot(['role', 'status', 'joined_at'])
             ->withTimestamps();
+    }
+
+    /**
+     * @return HasMany<Invitation, $this>
+     */
+    public function invitations(): HasMany
+    {
+        return $this->hasMany(Invitation::class);
+    }
+
+    /**
+     * @return HasMany<Organization, $this>
+     */
+    public function organizations(): HasMany
+    {
+        return $this->hasMany(Organization::class);
     }
 
     public function membershipFor(User $user): ?WorkspaceMember

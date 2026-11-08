@@ -2,10 +2,11 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Domain\Audit\AuditLogger;
+use App\Domain\Identity\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -51,10 +52,18 @@ class LoginRequest extends FormRequest
         if (! Auth::attempt($credentials, $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey(), self::DECAY_SECONDS);
 
-            Log::warning('auth.login.failed', [
-                'email_hash' => hash('sha256', $credentials['email']),
-                'ip' => $this->ip(),
-            ]);
+            $attemptedUser = User::where('email', $credentials['email'])->first();
+
+            app(AuditLogger::class)->record(
+                'auth.login.failed',
+                null,
+                $attemptedUser,
+                [
+                    'email_hash' => hash('sha256', $credentials['email']),
+                    'reason' => 'invalid_credentials',
+                ],
+                $attemptedUser,
+            );
 
             // Message identique pour mot de passe faux, compte inconnu ou désactivé.
             throw ValidationException::withMessages([
@@ -76,10 +85,18 @@ class LoginRequest extends FormRequest
 
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
-        Log::warning('auth.login.throttled', [
-            'email_hash' => hash('sha256', Str::lower((string) $this->input('email'))),
-            'ip' => $this->ip(),
-        ]);
+        $attemptedUser = User::where('email', Str::lower((string) $this->input('email')))->first();
+
+        app(AuditLogger::class)->record(
+            'auth.login.throttled',
+            null,
+            $attemptedUser,
+            [
+                'email_hash' => hash('sha256', Str::lower((string) $this->input('email'))),
+                'reason' => 'throttled',
+            ],
+            $attemptedUser,
+        );
 
         throw new ThrottleRequestsException(
             'Trop de tentatives de connexion. Réessayez dans '.$seconds.' secondes.',

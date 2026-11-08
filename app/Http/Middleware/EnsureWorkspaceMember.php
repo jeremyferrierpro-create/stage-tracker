@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Domain\Audit\AuditLogger;
 use App\Domain\Identity\Models\Workspace;
 use App\Domain\Identity\WorkspaceContext;
 use Closure;
@@ -14,6 +15,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class EnsureWorkspaceMember
 {
+    public function __construct(private readonly AuditLogger $audit) {}
+
     public function handle(Request $request, Closure $next): Response
     {
         $workspace = $request->route('workspace');
@@ -30,10 +33,20 @@ class EnsureWorkspaceMember
 
         $membership = $workspace->members()
             ->where('user_id', $user->id)
-            ->where('status', 'active')
             ->first();
 
-        if ($membership === null) {
+        if ($membership === null || $membership->status !== 'active') {
+            $this->audit->record(
+                'workspace.access.denied',
+                $workspace,
+                $workspace,
+                [
+                    'reason' => $membership === null ? 'not_member' : 'inactive_member',
+                    'status' => $membership?->status ?? 'none',
+                ],
+                $user,
+            );
+
             abort(403);
         }
 

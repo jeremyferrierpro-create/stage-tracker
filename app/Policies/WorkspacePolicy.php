@@ -28,6 +28,16 @@ class WorkspacePolicy
         return in_array($workspace->roleFor($user), self::MANAGEMENT_ROLES, true);
     }
 
+    public function manageOrganizations(User $user, Workspace $workspace): bool
+    {
+        return in_array($workspace->roleFor($user), self::MANAGEMENT_ROLES, true);
+    }
+
+    public function viewAudit(User $user, Workspace $workspace): bool
+    {
+        return in_array($workspace->roleFor($user), self::MANAGEMENT_ROLES, true);
+    }
+
     public function delete(User $user, Workspace $workspace): bool
     {
         return $workspace->owner_id === $user->id;
