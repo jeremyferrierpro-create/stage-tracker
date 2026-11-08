@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-08T14-34-42-856Z-4c1043",
+  "type": "implementation-change",
+  "status": "PASS",
+  "gate": null,
+  "phase": null,
+  "summary": "DEC-ST-014 ACCEPTED par decision proprietaire : installation manuelle livewire/livewire v4.4.8 (composer validate OK, composer audit 0 vuln, 76 tests PASS/358 assertions apres installation)",
+  "note": "DEC-ST-014 ACCEPTED par decision proprietaire : installation manuelle livewire/livewire v4.4.8 (composer validate OK, composer audit 0 vuln, 76 tests PASS/358 assertions apres installation)",
+  "createdBy": "aidf",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-08T14:34:42.856Z",
+  "checks": [
+    {
+      "id": "files-captured",
+      "status": "PASS",
+      "reason": "3 file(s) from git"
+    }
+  ],
+  "commands": [],
+  "files": [
+    ".aidf/docs/DECISIONS.md",
+    "composer.json",
+    "composer.lock"
+  ],
+  "limitations": [
+    "File list is not a review of the content or quality of the change."
+  ],
+  "previous": "687041d4d7519921d3e77516b3e9387f69218adfb4cc8c067dc8950d07e1a0b6",
+  "hash": "e52147347c7735a2d326f17614aff7f3b0478575c0549d664293d5d275fa0794"
+}

@@ -116,20 +116,21 @@ Format : identifiant, statut, date, décision, justification, conséquences.
   utilisateur, justification obligatoire).
 
 ## DEC-ST-014 — Version Livewire (baseline TRD 3.x vs recommandation 4.x)
-- Statut : DRAFT — décision humaine requise avant T-020 (premier composant
-  interactif).
-- Contexte (2026-11-08, T-011) : la TRD impose Livewire 3.x ; aucun composant
-  Livewire n'existe encore dans le code.
-  Les versions 3.x publiées sont refusées à l'installation par Packagist à
-  cause des avis de sécurité PKSA-bgw4-5zmg-2njg et PKSA-g5js-3ypd-k2kr
-  (CVE contre Livewire 3.6.0) ; la branche 4.4 est propre
-  (`composer audit` : 0 vulnérabilité après mise à jour symfony/*).
-- Décision reportée : installer `livewire/livewire` à la première tâche qui
-  exige un composant interactif, après arbitrage humain 3.x (conforme à la
-  licence mais non maintenu / bloqué sécurité) vs 4.x (maintenu, écart à la
-  baseline TRD à faire valider).
-- Conséquences : toutes les interfaces livrées à ce stade sont en Blade pur ;
-  le point d'entrée `resources/js/app.js` reste volontairement sans Livewire
-  tant que la décision n'est pas prise ; l'écart TRD devra être enregistré
-  comme décision ACCEPTED/BLOCKED avec preuve humaine avant T-020.
+- Statut : ACCEPTED (2026-11-08, décision propriétaire)
+- Contexte (2026-11-08, T-011) : la TRD imposait Livewire 3.x. Les versions 3.x
+  publiées sont refusées à l'installation par Packagist à cause des avis de
+  sécurité PKSA-bgw4-5zmg-2njg et PKSA-g5js-3ypd-k2kr (CVE contre Livewire
+  3.6.0) ; aucune version 3.x installable ne reste disponible.
+- Décision : installation de `livewire/livewire` **v4.4.8** par le propriétaire
+  du projet le 2026-11-08 (requête `composer require livewire/livewire`
+  exécutée manuellement), résoluant l'arbitrage en faveur de 4.x.
+- Vérifications : `composer validate` OK ; `composer audit` 0 vulnérabilité ;
+  `php artisan test` 76 tests PASS / 358 assertions après installation ;
+  `package:discover` enregistre le paquet sans configuration requise.
+- Conséquences : le TRD §Livewire « 3.x » doit être relu comme « Livewire 3.x
+  à la rédaction, remplacée par 4.4.8 après arbitrage propriétaire » ; la
+  première révision du TRD corrigera la baseline. Aucun composant Livewire
+  n'est encore utilisé (interfaces en Blade pur jusqu'à T-020+) ; le point
+  d'entrée `resources/js/app.js` sera branché quand le premier composant
+  interactif sera livré.
 
