@@ -16,8 +16,52 @@ versionnement [SemVer](https://semver.org/lang/fr/).
 
 ### À venir
 - Modules métier : formations, référentiel, stages, activités.
-- Frontend Vite/Tailwind (T-011).
 - Gestion fine des membres : rôles, suspension (T-021).
+
+## [0.5.0] — 2026-11-08 — Données de test, interface navigable, campagne multi-tenant (T-010 → T-012)
+
+### Ajouté
+- Factory `OrganizationMemberFactory` (workspace synchronisé avec
+  l'organisation) et trait `HasFactory` sur le modèle.
+- Seeder `DemoSeeder` neutre et idempotent : « Espace Démo » avec 4 comptes de
+  démonstration (`@example.test`), 4 appartenances (owner/trainee/supervisor/
+  tutor) et 2 organisations fictives ; aucun élément COAB ; aucune entrée
+  d'audit écrite par le seed (vérifié `migrate:fresh --seed --env=testing`).
+- Garde d'environnement : le seeding est refusé en dehors de `local`/`testing`
+  (RuntimeException), couvert par un test.
+- Ossature d'interface (T-011) : layout Blade unique avec barre supérieure
+  (Mes espaces, compte, déconnexion), navigation latérale par espace
+  (Tableau de bord, Organisations, Membres/audit selon rôle, sections
+  « à venir » non cliquables), sélecteur « Espace actif » listant les autres
+  espaces avec leur rôle, fil d'Ariane `<x-breadcrumb>`, lien « Aller au
+  contenu », menu mobile repliable, styles d'imbrication `aria-current`.
+- Build frontend : `package.json` + `vite.config.js` (vite 6.4.5,
+  laravel-vite-plugin 1.3.0), sources `resources/css/app.css` (design system
+  CSS maison conforme UI-UX) et `resources/js/app.js` ; `npm run build`
+  vérifié. Fallback `public/css/app.css` servi lorsque le build Vite est absent
+  (suite de tests sans Node).
+- Campagne de tests multi-tenant (T-012) :
+  `tests/Feature/Tenant/MultiTenantCampaignTest.php` couvrant MT-01 (member
+  of A never sees B), MT-02 (authenticated non-member: 403 partout, aucune
+  fuite d'existence, aucune écriture), MT-03 (rôles non-admin sans écriture,
+  admin opérationnel) et MT-10 (revocation: accès perdu, aucune cascade,
+  audit consultable et append-only).
+
+### Modifié
+- Vues espace reprenant le `<x-breadcrumb>` (tableau de bord, organisations,
+  membres, audit).
+- Vérifications CSRF prouvées hors PHPUnit (le framework ignore la vérification
+  en milieu de test) : `POST /login` sans jeton → HTTP 419 en runtime.
+- `composer audit` : 0 vulnérabilité après mise à jour dirigée
+  symfony/http-foundation, http-kernel, routing.
+- Décision DEC-ST-014 (DRAFT) : version Livewire reportée à arbitrage humain
+  avant T-020 ; interfaces actuelles en Blade pur.
+- README : §2 (statuts), §4 (installation frontend + jeu de démo), §5.4
+  (navigation), §6 (concepts), §16 (structure + commandes), §17 (limites).
+
+### Sécurité
+- Aucune donnée réelle dans les seeders ; garde anti-seed-production testée.
+- `composer audit` : aucun avis de sécurité restant.
 
 ## [0.4.0] — 2026-11-08 — Invitations, organisations, audit (T-007 → T-009)
 

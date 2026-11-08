@@ -2,6 +2,13 @@
 
 @section('title', $workspace->name)
 
+@section('breadcrumb')
+    <x-breadcrumb :items="[
+        ['label' => 'Mes espaces', 'url' => route('workspaces.index')],
+        ['label' => $workspace->name],
+    ]"/>
+@endsection
+
 @section('content')
     <div class="card">
         <h1>{{ $workspace->name }}</h1>

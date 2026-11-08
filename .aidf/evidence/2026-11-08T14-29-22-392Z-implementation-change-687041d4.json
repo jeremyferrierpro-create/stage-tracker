@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-08T14-29-22-390Z-64c7aa",
+  "type": "implementation-change",
+  "status": "PASS",
+  "gate": null,
+  "phase": null,
+  "summary": "T-010/T-011/T-012 : factory OrganizationMember + seeders neutres avec garde d'environnement (migrate:fresh --seed verifie), layout Blade avec navigation laterale/selecteur de workspace/fil d'Ariane/skip-link (Vite 6.4.5 + laravel-vite-plugin 1.3.0, npm run build verifie, fallback public/css/app.css), campagne multi-tenant MT-01/MT-02/MT-03/MT-10 (testimonial : 76 tests PASS / 358 assertions, pint PASS), CSRF 419 prouve hors PHPUnit, composer audit 0 vuln, DEC-ST-014 DRAFT (Livewire 3.x bloque securite vs 4.4), README 0.5.0",
+  "note": "T-010/T-011/T-012 : factory OrganizationMember + seeders neutres avec garde d'environnement (migrate:fresh --seed verifie), layout Blade avec navigation laterale/selecteur de workspace/fil d'Ariane/skip-link (Vite 6.4.5 + laravel-vite-plugin 1.3.0, npm run build verifie, fallback public/css/app.css), campagne multi-tenant MT-01/MT-02/MT-03/MT-10 (testimonial : 76 tests PASS / 358 assertions, pint PASS), CSRF 419 prouve hors PHPUnit, composer audit 0 vuln, DEC-ST-014 DRAFT (Livewire 3.x bloque securite vs 4.4), README 0.5.0",
+  "createdBy": "aidf",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-08T14:29:22.389Z",
+  "checks": [
+    {
+      "id": "files-captured",
+      "status": "PASS",
+      "reason": "26 file(s) from git"
+    }
+  ],
+  "commands": [],
+  "files": [
+    ".aidf/docs/CHANGELOG.md",
+    ".aidf/docs/DECISIONS.md",
+    "README.md",
+    "app/Domain/Organization/Models/OrganizationMember.php",
+    "composer.lock",
+    "database/seeders/DatabaseSeeder.php",
+    "package-lock.json",
+    "resources/views/layouts/app.blade.php",
+    "resources/views/organizations/create.blade.php",
+    "resources/views/organizations/edit.blade.php",
+    "resources/views/organizations/index.blade.php",
+    "resources/views/workspace/audit.blade.php",
+    "resources/views/workspace/dashboard.blade.php",
+    "resources/views/workspace/members.blade.php",
+    "database/factories/OrganizationMemberFactory.php",
+    "database/seeders/DemoSeeder.php",
+    "package.json",
+    "public/css/app.css",
+    "resources/css/app.css",
+    "resources/js/app.js",
+    "resources/views/components/breadcrumb.blade.php",
+    "tests/Feature/Database/FactoryTest.php",
+    "tests/Feature/Database/SeederTest.php",
+    "tests/Feature/Layout/LayoutTest.php",
+    "tests/Feature/Tenant/MultiTenantCampaignTest.php",
+    "vite.config.js"
+  ],
+  "limitations": [
+    "File list is not a review of the content or quality of the change."
+  ],
+  "previous": "8b4cf9cd328bb3ac670c3653886530c7459bae316470afc1dc469366a9e3b797",
+  "hash": "687041d4d7519921d3e77516b3e9387f69218adfb4cc8c067dc8950d07e1a0b6"
+}

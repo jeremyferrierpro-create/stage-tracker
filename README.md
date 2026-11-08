@@ -63,10 +63,10 @@ Preuve → Compétence → Évaluation → Synthèse.
 
 | Élément | État |
 |---|---|
-| Phase AIDF | IMPLEMENTATION en cours — T-001 → T-009 livrés |
-| Code applicatif | socle Laravel 13.40.0 + authentification + isolation + invitations + organisations + audit ; modules métier restants à venir |
+| Phase AIDF | IMPLEMENTATION en cours — T-001 → T-012 livrés |
+| Code applicatif | socle Laravel 13.40.0 + authentification + isolation + invitations + organisations + audit + squelette d'interface (layout, navigation, niveaux de rôle) ; modules métier restants à venir |
 | Base de données | PostgreSQL 16.15 (conteneur Docker `stage-tracker-postgres`) |
-| Tests | `php artisan test` → 59 tests PASS (230 assertions) ; `pint --test` → PASS |
+| Tests | `php artisan test` → 76 tests PASS (358 assertions) ; `pint --test` → PASS ; campagne MT-01/MT-02/MT-03/MT-10 en `tests/Feature/Tenant/MultiTenantCampaignTest.php` |
 | Sécurité | Argon2id, rate limiting 5/15 min (429), sessions en base, messages neutres, audit append-only (trigger PostgreSQL) |
 | Documents de référence | `.aidf/docs/` (11 documents validés) |
 | Annexes techniques | `docs/` (MCD, MLD, API, invariants, tests, planning) |
@@ -113,8 +113,8 @@ développement du projet :
 
 ## 4. Installation
 
-> **Backend vérifié le 2026-11-04** (T-001 → T-003). La partie frontend
-> (Vite/npm) sera ajoutée avec T-011.
+> **Backend vérifié le 2026-11-04** (T-001 → T-003). Le frontend est livré
+> depuis T-011 (vérifié le 2026-11-08).
 
 ### 4.1 Cloner le dépôt
 
@@ -162,16 +162,40 @@ Exécuté : tables `users`, `sessions`, `cache`, `jobs`, `workspaces`,
 `audit_logs` créées (T-004 → T-009).
 
 > Les seeders sont réservés aux environnements `local` et `test` ; ils ne
-> contiennent aucune donnée réelle.
+> contiennent aucune donnée réelle. Jeu de démonstration (optionnel, à la fin) :
+>
+> ```bash
+> php artisan db:seed
+> ```
+>
+> Crée « Espace Démo » avec 4 comptes de démonstration (`admin@example.test`,
+> `stagiaire@example.test`, `maitre-de-stage@example.test`, `tuteur@example.test`,
+> mot de passe `mot-de-passe-demo-2026`) et 2 organisations neutres.
+> Le seeder refuse de tourner en dehors de `local`/`testing` et est idempotent
+> (T-010, vérifié le 2026-11-08).
 
-### 4.6 Vérifier que le socle fonctionne
+### 4.6 Construire les assets frontend
+
+```bash
+npm install     # vite 6.4.5 + laravel-vite-plugin 1.3.0
+npm run build   # génère public/build/manifest.json + assets hachés
+```
+
+- `npm run dev` sert les assets avec rechargement automatique pendant le
+  développement (Vite tourne alors sur `http://localhost:5173`).
+- Le layout utilise le build Vite quand `public/build/manifest.json` existe ;
+  en absence de build (ex. suite de tests PHPUnit sans Node), une feuille de
+  style de secours `public/css/app.css` est servie pour que l'application
+  reste utilisable.
+
+### 4.7 Vérifier que le socle fonctionne
 
 ```bash
 php artisan --version       # Laravel Framework 13.40.0
 php artisan db:show         # PostgreSQL 16.15, connexion pgsql
 ```
 
-*Statut : `DISPONIBLE` — vérifié le 2026-11-04.*
+*Statut : `DISPONIBLE` — backend vérifié le 2026-11-04, frontend vérifié le 2026-11-08.*
 
 ---
 
@@ -214,9 +238,21 @@ connexion, « Mes espaces » liste les espaces dont vous êtes membre actif.
 2. Ouvrir un espace depuis « Mes espaces ».
 3. L'URL `/w/{workspace}/dashboard` est refusée (403) si vous n'êtes pas membre
    actif de cet espace.
-4. En tant que propriétaire ou administrateur, les liens « Membres et
-   invitations », « Organisations » et « Journal d'audit » sont disponibles
-   depuis le tableau de bord.
+4. À l'intérieur d'un espace (T-011) :
+   - la barre supérieure porte le nom du produit, « Mes espaces », votre nom et
+     la déconnexion ;
+   - la navigation latérale regroupe « Tableau de bord », « Organisations »,
+     puis, uniquement pour les propriétaires et administrateurs, « Membres et
+     invitations » et « Journal d'audit » (les sections non encore livrées
+     apparaissent grisées avec la mention « à venir » et ne sont pas cliquables) ;
+   - le sélecteur « Espace actif » liste tous vos espaces avec leur rôle et
+     permet de basculer directement vers leur tableau de bord ;
+   - un fil d'Ariane rappelle l'emplacement (Mes espaces › Espace › Page) ;
+   - un lien « Aller au contenu » (premier élément au clavier avec Tab) saute
+     directement au contenu principal.
+5. Sur mobile (< 900 px), la navigation latérale se replie derrière un bouton
+   « ☰ Menu ». La navigation complète au clavier fait l'objet de l'audit
+   d'accessibilité prévu en T-066 (Playwright).
 
 ### 5.5 Sécurité de connexion
 
@@ -235,14 +271,16 @@ connexion, « Mes espaces » liste les espaces dont vous êtes membre actif.
 
 ## 6. Concepts clés
 
-> `À VENIR — livré par T-023 → T-027` (les concepts seront illustrés par les
-> écrans réels).
+> Les concepts **workspace**, **rôles** et **organisations** sont déjà visibles
+> dans l'interface (§10). Les autres concepts seront illustrés par les écrans
+> réels à leur livraison (`À VENIR — livré par T-023 → T-027`).
 
 Définitions déjà stabilisées par la spécification :
 
 | Concept | Définition |
 |---|---|
 | **Workspace** | espace de travail isolé (personnel, associatif, professionnel, pédagogique) |
+| **Organisation** | entreprise ou organisme de formation rattaché à précisément un workspace, distingué par son type et archivable plutôt que supprimable |
 | **Stage** | période de stage rattachée à un workspace, un stagiaire, une organisation d'accueil et une version de référentiel |
 | **Projet** | travail mené pendant le stage, contenant des activités |
 | **Activité** | unité de travail documentée (fonctionnalité, correction, étude, conception, recherche, maintenance, amélioration) |
@@ -252,7 +290,7 @@ Définitions déjà stabilisées par la spécification :
 | **Compétence** | élément d'une version de référentiel ; peut être mobilisée, documentée ou évaluée |
 | **Référentiel** | cadre de compétences versionné (ex. DWWM en pilote) |
 
-*Statut : `DISPONIBLE` (définitions) — détails et captures `À VENIR`.*
+*Statut : `DISPONIBLE` (définitions ; interfaces workspace/organisations livrées) — les autres captures `À VENIR`.*
 
 ---
 
@@ -515,11 +553,14 @@ app/Policies/     autorisations par ressource
 bootstrap/        démarrage de l'application
 config/           configuration
 database/         migrations, factories, seeders
-public/           point d'entrée web (index.php)
-resources/        vues, styles, scripts
+public/           point d'entrée web (index.php), css/app.css (secours sans npm),
+                  build/ (assets Vite produits, ignoré par Git)
+resources/        vues Blade, css/app.css (source), js/app.js
 routes/           web.php (api.php à ajouter avec l'API)
 storage/          logs, cache, fichiers privés
-tests/            Feature, Unit, Support
+tests/            Feature, Support
+vite.config.js    configuration des assets (vite 6.4.5)
+package.json      dépendances Node de build
 vendor/           dépendances PHP (ignoré par Git)
 docker-compose.yml
 .env.example
@@ -530,7 +571,9 @@ phpunit.xml
 
 ```bash
 vendor/bin/pint --test      # style — PASS le 2026-11-08
-php artisan test            # tests PHPUnit — 59 tests PASS (230 assertions) le 2026-11-08
+php artisan test            # tests PHPUnit — 76 tests PASS (358 assertions) le 2026-11-08
+php artisan migrate:fresh --seed --env=testing   # jeu de démo neutre — vérifié le 2026-11-08
+npm run build               # assets Vite — vérifié le 2026-11-08
 npx playwright test         # navigateur — à activer en T-046/T-066
 ```
 
@@ -552,7 +595,7 @@ Créer `.env.testing` à partir de `.env` avec `APP_ENV=testing` et
 - Aucun secret dans Git ; `.env` ignoré.
 - Aucune fonctionnalité déclarée terminée sans test exécuté et preuve AIDF.
 
-*Statut : `DISPONIBLE` — Pint et PHPUnit activés et vérifiés le 2026-11-04.*
+*Statut : `DISPONIBLE` — Pint, PHPUnit et build Vite activés et vérifiés le 2026-11-08.*
 
 ---
 
@@ -561,7 +604,8 @@ Créer `.env.testing` à partir de `.env` avec `APP_ENV=testing` et
 | Limite | Statut |
 |---|---|
 | Modules métier suite | non implémentés — formations, référentiel, stages, journal, preuves, évaluations à venir |
-| Frontend (Vite/npm) | non installé — livré avec T-011 |
+| Navigation clavier complète + parcours Playwright (dont « Navigation clavier ») | `À VENIR` — audit d'accessibilité en T-066 |
+| Version Livewire | décision humaine requise avant T-020 (DEC-ST-014) : l'interface actuelle est en Blade pur |
 | Envoi réel d'e-mails | non configuré — `MAIL_MAILER=log` (le lien d'invitation va dans le log) |
 | Suspension / changement de rôle des membres | livré par T-021 |
 | Conformité RGPD | **NOT_PROVEN** — analyse juridique requise |

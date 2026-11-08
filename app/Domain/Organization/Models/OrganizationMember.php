@@ -4,6 +4,8 @@ namespace App\Domain\Organization\Models;
 
 use App\Domain\Identity\Models\User;
 use App\Models\Concerns\BelongsToWorkspace;
+use Database\Factories\OrganizationMemberFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -12,7 +14,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class OrganizationMember extends Model
 {
-    use BelongsToWorkspace;
+    use BelongsToWorkspace, HasFactory;
+
+    protected static function newFactory(): OrganizationMemberFactory
+    {
+        return OrganizationMemberFactory::new();
+    }
 
     /**
      * @var list<string>

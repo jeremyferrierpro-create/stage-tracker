@@ -2,9 +2,16 @@
 
 @section('title', 'Nouvelle organisation — '.$workspace->name)
 
-@section('content')
-    <p><a href="{{ route('workspace.organizations.index', $workspace) }}">← Organisations</a></p>
+@section('breadcrumb')
+    <x-breadcrumb :items="[
+        ['label' => 'Mes espaces', 'url' => route('workspaces.index')],
+        ['label' => $workspace->name, 'url' => route('workspace.dashboard', $workspace)],
+        ['label' => 'Organisations', 'url' => route('workspace.organizations.index', $workspace)],
+        ['label' => 'Nouvelle organisation'],
+    ]"/>
+@endsection
 
+@section('content')
     <div class="card">
         <h1>Nouvelle organisation</h1>
 
