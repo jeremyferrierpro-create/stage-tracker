@@ -18,6 +18,19 @@ versionnement [SemVer](https://semver.org/lang/fr/).
 - Modules métier : formations, référentiel, stages, activités.
 - Gestion fine des membres : rôles, suspension (T-021).
 
+## [0.9.0] — 2026-11-13 — Tableau de bord consolidé (T-029)
+
+### Ajouté
+- `WorkspaceController::dashboard()` enrichi : indicateurs (stages total/en cours/terminés,
+  activités par statut Kanban, journées récentes, référentiels appliqués aux
+  stages de l'espace) et raccourcis (Stages, Formations, Organisations, Membres,
+  Audit).
+- Vue `workspace/dashboard.blade.php` réécrite avec cartes d'indicateurs.
+- README : §2, §16.
+
+### Modifié
+- Aucune migration.
+
 ## [0.8.0] — 2026-11-13 — Tâches Kanban, journal quotidien et clôture (T-026 → T-028)
 
 ### Ajouté

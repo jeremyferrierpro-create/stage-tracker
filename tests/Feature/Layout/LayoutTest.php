@@ -94,7 +94,7 @@ class LayoutTest extends TestCase
         $content = strtolower((string) $response->getContent());
 
         $this->assertStringContainsString('à venir', $content);
-        foreach (['stages', 'activités', 'kanban', 'preuves', 'rapports'] as $section) {
+        foreach (['preuves', 'rapports'] as $section) {
             $this->assertStringNotContainsString(">{$section}</a>", (string) $content);
         }
     }

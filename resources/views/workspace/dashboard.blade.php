@@ -10,41 +10,122 @@
 @endsection
 
 @section('content')
-    <div class="card">
-        <h1>{{ $workspace->name }}</h1>
-        <p>
-            <span class="badge">{{ $workspace->typeLabel() }}</span>
+    <h1>{{ $workspace->name }}</h1>
+    <p>
+        <span class="badge">{{ $workspace->typeLabel() }}</span>
+        @if ($membership)
             <span class="badge">{{ \App\Domain\Identity\Models\Workspace::roleLabel($membership->role) }}</span>
-        </p>
+        @endif
+    </p>
 
-        <p>
-            Vous êtes membre actif de cet espace. Toutes les données affichées ici
-            sont filtrées par le serveur sur ce workspace (isolation multi-tenant).
-        </p>
+    <p class="muted">
+        Vous êtes membre actif de cet espace. Toutes les données affichées ici
+        sont filtrées par le serveur sur ce workspace (isolation multi-tenant).
+    </p>
 
-        <p class="muted">
-            Les autres modules métier (stages, référentiels, journal, preuves,
-            évaluations, rapports) arrivent dans les tâches suivantes.
-        </p>
+    <div class="grid">
+        <div class="card">
+            <h2>Stages</h2>
+            <p><strong>{{ $internships->count() }}</strong> stage(s) au total —
+                {{ $internships->where('status', 'active')->count() }} en cours,
+                {{ $internships->where('status', 'completed')->count() }} terminé(s).
+            </p>
+            @if ($internships->isNotEmpty())
+                <ul>
+                    @foreach ($internships->take(5) as $internship)
+                        <li>
+                            <a href="{{ route('workspace.internships.show', [$workspace, $internship]) }}">
+                                {{ $internship->title }}
+                            </a>
+                            <span class="muted">— {{ $internship->trainee->name }}</span>
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
+            <p>
+                <a class="button secondary small" href="{{ route('workspace.internships.index', $workspace) }}">Voir les stages</a>
+            </p>
+        </div>
 
+        <div class="card">
+            <h2>Activités</h2>
+            <p><strong>{{ $totalActivities }}</strong> activité(s) au total.</p>
+            <ul>
+                @foreach (\App\Domain\Project\Models\Activity::STATUSES as $status)
+                    <li>
+                        {{ \App\Domain\Project\Models\Activity::STATUS_LABELS[$status] }} :
+                        <strong>{{ $activityCounts[$status] ?? 0 }}</strong>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Journées récentes</h2>
+        @if ($recentLogs->isEmpty())
+            <p class="muted">Aucune journée saisie pour le moment.</p>
+        @else
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Stage</th>
+                        <th>Auteur</th>
+                        <th>Statut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($recentLogs as $log)
+                        <tr>
+                            <td>
+                                <a href="{{ route('workspace.internships.daily_logs.show', [$workspace, $log->internship, $log]) }}">
+                                    {{ $log->work_date->format('d/m/Y') }}
+                                </a>
+                            </td>
+                            <td>{{ $log->internship->title }}</td>
+                            <td>{{ $log->author->name }}</td>
+                            <td><span class="badge">{{ $log->statusLabel() }}</span></td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endif
+    </div>
+
+    <div class="card">
+        <h2>Référentiels appliqués</h2>
+        @if ($referencedVersions->isEmpty())
+            <p class="muted">Aucun référentiel appliqué aux stages de cet espace pour le moment.</p>
+        @else
+            <ul>
+                @foreach ($referencedVersions as $version)
+                    <li>
+                        {{ $version->framework->name }} — {{ $version->version }}
+                        <span class="badge">{{ $version->statusLabel() }}</span>
+                    </li>
+                @endforeach
+            </ul>
+        @endif
+        @can('manage', \App\Domain\Framework\Models\CompetencyFramework::class)
+            <p>
+                <a class="button secondary small" href="{{ route('frameworks.index') }}">Gérer les référentiels</a>
+            </p>
+        @endcan
+    </div>
+
+    <div class="card">
+        <h2>Raccourcis</h2>
         <div class="actions">
-            <a class="button" href="{{ route('workspace.organizations.index', $workspace) }}">
-                Organisations
-            </a>
-
+            <a class="button" href="{{ route('workspace.internships.index', $workspace) }}">Stages</a>
+            <a class="button" href="{{ route('workspace.training.index', $workspace) }}">Formations</a>
+            <a class="button secondary" href="{{ route('workspace.organizations.index', $workspace) }}">Organisations</a>
             @can('manageMembers', $workspace)
-                <a class="button secondary" href="{{ route('workspace.members.index', $workspace) }}">
-                    Membres et invitations
-                </a>
+                <a class="button secondary" href="{{ route('workspace.members.index', $workspace) }}">Membres et invitations</a>
             @endcan
-
             @can('viewAudit', $workspace)
-                <a class="button secondary" href="{{ route('workspace.audit.index', $workspace) }}">
-                    Journal d'audit
-                </a>
+                <a class="button secondary" href="{{ route('workspace.audit.index', $workspace) }}">Journal d'audit</a>
             @endcan
-
-            <a class="button secondary" href="{{ route('workspaces.index') }}">Changer d'espace</a>
         </div>
     </div>
 @endsection

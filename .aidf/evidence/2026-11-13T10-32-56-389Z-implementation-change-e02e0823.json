@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-13T10-32-56-387Z-4d7745",
+  "type": "implementation-change",
+  "status": "PASS",
+  "gate": null,
+  "phase": null,
+  "summary": "T-029 : tableau de bord consolide (indicateurs stages/activites/journees/referentiels + raccourcis), 98 tests PASS (426 assertions), pint PASS",
+  "note": "T-029 : tableau de bord consolide (indicateurs stages/activites/journees/referentiels + raccourcis), 98 tests PASS (426 assertions), pint PASS",
+  "createdBy": "aidf",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-13T10:32:56.387Z",
+  "checks": [
+    {
+      "id": "files-captured",
+      "status": "PASS",
+      "reason": "7 file(s) from git"
+    }
+  ],
+  "commands": [],
+  "files": [
+    ".aidf/docs/CHANGELOG.md",
+    "README.md",
+    "app/Http/Controllers/InternshipController.php",
+    "app/Http/Controllers/WorkspaceController.php",
+    "resources/views/workspace/dashboard.blade.php",
+    "tests/Feature/Layout/LayoutTest.php",
+    "tests/Feature/Phase2/Phase2CampaignTest.php"
+  ],
+  "limitations": [
+    "File list is not a review of the content or quality of the change."
+  ],
+  "previous": "fe090fd26bed70e1ebf88c47d2a2244bedb23f10fdf768c49209616e00609abf",
+  "hash": "e02e0823d01b5aa709ba7f91ec17ddf099805191ce6ff1aae1f197258537ddd2"
+}

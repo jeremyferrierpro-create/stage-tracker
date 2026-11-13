@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Domain\Audit\AuditLogger;
 use App\Domain\Framework\Models\CompetencyFramework;
+use App\Domain\Framework\Models\FrameworkVersion;
 use App\Domain\Identity\Models\User;
 use App\Domain\Identity\Models\Workspace;
 use App\Domain\Internship\Models\Internship;
@@ -54,7 +55,18 @@ class InternshipController extends Controller
             'trainee_id' => ['required', 'exists:users,id'],
             'host_organization_id' => ['required', 'uuid'],
             'training_program_id' => ['nullable', 'uuid'],
-            'framework_version_id' => ['required', 'uuid', 'exists:framework_versions,id'],
+            'framework_version_id' => [
+                'required',
+                'uuid',
+                'exists:framework_versions,id',
+                function (string $attribute, mixed $value, \Closure $fail): void {
+                    $version = FrameworkVersion::query()->find($value);
+
+                    if ($version !== null && $version->status !== 'published') {
+                        $fail('Le stage doit être lié à une version de référentiel publiée.');
+                    }
+                },
+            ],
             'start_date' => ['required', 'date'],
             'end_date' => ['required', 'date', 'after_or_equal:start_date'],
             'objectives' => ['nullable', 'string', 'max:5000'],
@@ -119,7 +131,18 @@ class InternshipController extends Controller
             'title' => ['required', 'string', 'max:160'],
             'host_organization_id' => ['required', 'uuid'],
             'training_program_id' => ['nullable', 'uuid'],
-            'framework_version_id' => ['required', 'uuid', 'exists:framework_versions,id'],
+            'framework_version_id' => [
+                'required',
+                'uuid',
+                'exists:framework_versions,id',
+                function (string $attribute, mixed $value, \Closure $fail): void {
+                    $version = FrameworkVersion::query()->find($value);
+
+                    if ($version !== null && $version->status !== 'published') {
+                        $fail('Le stage doit être lié à une version de référentiel publiée.');
+                    }
+                },
+            ],
             'start_date' => ['required', 'date'],
             'end_date' => ['required', 'date', 'after_or_equal:start_date'],
             'objectives' => ['nullable', 'string', 'max:5000'],
