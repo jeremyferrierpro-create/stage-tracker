@@ -18,6 +18,52 @@ versionnement [SemVer](https://semver.org/lang/fr/).
 - Modules métier : formations, référentiel, stages, activités.
 - Gestion fine des membres : rôles, suspension (T-021).
 
+## [0.6.0] — 2026-11-13 — Formations, référentiels versionnés et publication immuable (T-020 → T-022)
+
+### Ajouté
+- Migrations `training_programs` et `training_enrollments` (FK composites,
+  contrainte d'unicité `(user_id, training_program_id)`, statuts
+  `active/completed/withdrawn`).
+- Domaine `Training` : `TrainingProgram`, `TrainingEnrollment`, controllers,
+  requêtes, vues (`training/index`, `create`, `edit` avec gestion des
+  inscriptions et changement de statut).
+- Migrations `competency_frameworks`, `framework_versions`, `competency_blocks`,
+  `competencies`, `competency_criteria` (statuts, contraintes d'unicité,
+  CHECK `published ⇒ published_at`).
+- Domaine `Framework` : modèles, `FrameworkVersionService` (publication
+  atomique `draft → published`), controllers, requêtes, vues (`frameworks/index`,
+  `create`, `edit`, `show` avec édition de la hiérarchie blocs/compétences/
+  critères et publication).
+- Trigger PostgreSQL d'immuabilité T-022 : refus de tout `UPDATE`/`DELETE`
+  sur une version publiée et sur son contenu (blocs, compétences, critères),
+  y compris en accès SQL direct (INV-08). Preuve PHPUnit + erreur PostgreSQL
+  observée.
+- Politique `CompetencyFrameworkPolicy` : administration réservée aux
+  propriétaires/administrateurs d'un espace actif (DEC-ST-015).
+- Jeu de démonstration étendu : programme « Formation Démo (DWWM) »,
+  inscription du stagiaire, référentiel « Référentiel Démo (pilote) » v1
+  avec bloc/compétence/critère.
+- 11 tests (T-020/T-021/T-022) : création, isolation, unicité d'inscription,
+  rejet des non-membres, hiérarchie, doublons, immuabilité HTTP et SQL,
+  MT-05 (v1 publiée intacte lors de la publication de v2).
+- README : §2, §4, §5.4, §6, §10.7/10.8, §16, §17.
+
+### Modifié
+- `WorkspacePolicy` : ajout de `manageTraining` (propriétaires/administrateurs).
+- `AuditLogger` : liste blanche étendue (`training_program_id`,
+  `training_program_name`, `enrollment_id`, `framework_id`, `framework_name`,
+  `version`).
+- Navigation : lien « Formations » dans la barre latérale, lien
+  « Référentiels » dans la barre supérieure (selon rôle).
+- `composer audit` : 0 vulnérabilité (Livewire 4.4.8 installé, DEC-ST-014
+  ACCEPTED).
+
+### Sécurité
+- Aucune écriture possible sur une version publiée, y compris via SQL direct
+  (trigger PostgreSQL + garde applicative).
+- Isolation multi-tenant maintenue sur les programmes de formation (FK
+  composite + résolution par workspace).
+
 ## [0.5.0] — 2026-11-08 — Données de test, interface navigable, campagne multi-tenant (T-010 → T-012)
 
 ### Ajouté

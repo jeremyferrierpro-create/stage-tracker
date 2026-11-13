@@ -3,6 +3,7 @@
 namespace App\Domain\Identity\Models;
 
 use App\Domain\Organization\Models\Organization;
+use App\Domain\Training\Models\TrainingProgram;
 use Database\Factories\WorkspaceFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -85,6 +86,14 @@ class Workspace extends Model
     public function organizations(): HasMany
     {
         return $this->hasMany(Organization::class);
+    }
+
+    /**
+     * @return HasMany<TrainingProgram, $this>
+     */
+    public function trainingPrograms(): HasMany
+    {
+        return $this->hasMany(TrainingProgram::class);
     }
 
     public function membershipFor(User $user): ?WorkspaceMember

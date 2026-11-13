@@ -63,10 +63,10 @@ Preuve → Compétence → Évaluation → Synthèse.
 
 | Élément | État |
 |---|---|
-| Phase AIDF | IMPLEMENTATION en cours — T-001 → T-012 livrés |
-| Code applicatif | socle Laravel 13.40.0 + authentification + isolation + invitations + organisations + audit + squelette d'interface (layout, navigation, niveaux de rôle) ; modules métier restants à venir |
+| Phase AIDF | IMPLEMENTATION en cours — T-001 → T-022 livrés |
+| Code applicatif | socle Laravel 13.40.0 + authentification + isolation + invitations + organisations + audit + squelette d'interface + formations (programmes, inscriptions) + référentiels versionnés et publication immuable ; modules métier restants à venir |
 | Base de données | PostgreSQL 16.15 (conteneur Docker `stage-tracker-postgres`) |
-| Tests | `php artisan test` → 76 tests PASS (358 assertions) ; `pint --test` → PASS ; campagne MT-01/MT-02/MT-03/MT-10 en `tests/Feature/Tenant/MultiTenantCampaignTest.php` |
+| Tests | `php artisan test` → 87 tests PASS (397 assertions) ; `pint --test` → PASS ; campagnes MT-01/MT-02/MT-03/MT-05/MT-10 |
 | Sécurité | Argon2id, rate limiting 5/15 min (429), sessions en base, messages neutres, audit append-only (trigger PostgreSQL) |
 | Documents de référence | `.aidf/docs/` (11 documents validés) |
 | Annexes techniques | `docs/` (MCD, MLD, API, invariants, tests, planning) |
@@ -158,8 +158,10 @@ php artisan migrate
 ```
 
 Exécuté : tables `users`, `sessions`, `cache`, `jobs`, `workspaces`,
-`workspace_members`, `invitations`, `organizations`, `organization_members` et
-`audit_logs` créées (T-004 → T-009).
+`workspace_members`, `invitations`, `organizations`, `organization_members`,
+`audit_logs`, `training_programs`, `training_enrollments`,
+`competency_frameworks`, `framework_versions`, `competency_blocks`,
+`competencies` et `competency_criteria` créées (T-004 → T-022).
 
 > Les seeders sont réservés aux environnements `local` et `test` ; ils ne
 > contiennent aucune donnée réelle. Jeu de démonstration (optionnel, à la fin) :
@@ -240,11 +242,13 @@ connexion, « Mes espaces » liste les espaces dont vous êtes membre actif.
    actif de cet espace.
 4. À l'intérieur d'un espace (T-011) :
    - la barre supérieure porte le nom du produit, « Mes espaces », votre nom et
-     la déconnexion ;
+     la déconnexion ; depuis T-021, les propriétaires et administrateurs y
+     trouvent aussi le lien « Référentiels » (ressource partagée) ;
    - la navigation latérale regroupe « Tableau de bord », « Organisations »,
-     puis, uniquement pour les propriétaires et administrateurs, « Membres et
-     invitations » et « Journal d'audit » (les sections non encore livrées
-     apparaissent grisées avec la mention « à venir » et ne sont pas cliquables) ;
+     « Formations » (T-020), puis, uniquement pour les propriétaires et
+     administrateurs, « Membres et invitations » et « Journal d'audit » (les
+     sections non encore livrées apparaissent grisées avec la mention
+     « à venir » et ne sont pas cliquables) ;
    - le sélecteur « Espace actif » liste tous vos espaces avec leur rôle et
      permet de basculer directement vers leur tableau de bord ;
    - un fil d'Ariane rappelle l'emplacement (Mes espaces › Espace › Page) ;
@@ -281,6 +285,12 @@ Définitions déjà stabilisées par la spécification :
 |---|---|
 | **Workspace** | espace de travail isolé (personnel, associatif, professionnel, pédagogique) |
 | **Organisation** | entreprise ou organisme de formation rattaché à précisément un workspace, distingué par son type et archivable plutôt que supprimable |
+| **Formation** | programme de formation rattaché à un workspace et à un organisme de formation (T-020) |
+| **Programme** | instance d'une formation avec ses dates et ses inscriptions uniques (utilisateur, programme) |
+| **Référentiel** | cadre de compétences versionné, ressource partagée entre tous les espaces (T-021, DEC-ST-003) |
+| **Version** | état d'un référentiel ; une fois publiée, immuable (INV-08) |
+| **Compétence** | élément d'une version, rattachable à un bloc et à une compétence parente |
+| **Critère** | élément évaluable d'une compétence |
 | **Stage** | période de stage rattachée à un workspace, un stagiaire, une organisation d'accueil et une version de référentiel |
 | **Projet** | travail mené pendant le stage, contenant des activités |
 | **Activité** | unité de travail documentée (fonctionnalité, correction, étude, conception, recherche, maintenance, amélioration) |
@@ -451,6 +461,28 @@ Garanties :
 organisations et journal d'audit vérifiés le 2026-11-08 ; gestion fine des
 membres et référentiels `À VENIR`.*
 
+### 10.7 Formations (T-020)
+
+Dans un espace, le lien « Formations » (navigation latérale) ouvre la liste
+des programmes de formation. Propriétaires et administrateurs peuvent créer
+un programme (nom, organisme de formation de l'espace, certification, dates)
+et y inscrire des membres actifs de l'espace (une inscription par
+utilisateur et programme, dates de début/fin obligatoires). Le statut
+d'inscription peut être passé à `Terminée` ou `Abandon`.
+
+### 10.8 Référentiels (T-021, T-022)
+
+Lien « Référentiels » dans la barre supérieure (propriétaires et
+administrateurs d'un espace actif uniquement) : création d'un référentiel
+(nom, organisme émetteur, description), puis de versions (numéro, date
+d'effet), puis de blocs, compétences (rattachables à un bloc et à une
+compétence parente) et critères. La publication d'une version est
+définitive : son contenu devient immuable (refus applicatif HTTP 403 et
+trigger PostgreSQL). Toute tentative d'écriture sur une version publiée
+est rejetée, y compris en SQL direct.
+
+*Statut : `DISPONIBLE` (formations + référentiels) — vérifié le 2026-11-13.*
+
 ---
 
 ## 11. Connecteur GitHub
@@ -540,6 +572,9 @@ docs/             architecture, base de données, fonctionnel, tests, planning
 app/Console/      commandes artisan (comptes, espaces)
 app/Domain/Identity/  utilisateurs, workspaces, appartenances, invitations,
                   contexte courant
+app/Domain/Training/  programmes de formation et inscriptions (T-020)
+app/Domain/Framework/ référentiels, versions, blocs, compétences, critères
+                  (T-021/T-022)
 app/Domain/Organization/  organisations d'accueil et organismes de formation
 app/Domain/Audit/ journal d'audit (modèle append-only, service d'écriture)
 app/Domain/       autres domaines métier (Training, Framework, Internship,
@@ -571,7 +606,7 @@ phpunit.xml
 
 ```bash
 vendor/bin/pint --test      # style — PASS le 2026-11-08
-php artisan test            # tests PHPUnit — 76 tests PASS (358 assertions) le 2026-11-08
+php artisan test            # tests PHPUnit — 87 tests PASS (397 assertions) le 2026-11-13
 php artisan migrate:fresh --seed --env=testing   # jeu de démo neutre — vérifié le 2026-11-08
 npm run build               # assets Vite — vérifié le 2026-11-08
 npx playwright test         # navigateur — à activer en T-046/T-066
@@ -603,7 +638,7 @@ Créer `.env.testing` à partir de `.env` avec `APP_ENV=testing` et
 
 | Limite | Statut |
 |---|---|
-| Modules métier suite | non implémentés — formations, référentiel, stages, journal, preuves, évaluations à venir |
+| Modules métier suite | non implémentés — stages, journal, preuves, évaluations à venir (formations et référentiels livrés en T-020 → T-022) |
 | Navigation clavier complète + parcours Playwright (dont « Navigation clavier ») | `À VENIR` — audit d'accessibilité en T-066 |
 | Version Livewire | décision humaine requise avant T-020 (DEC-ST-014) : l'interface actuelle est en Blade pur |
 | Envoi réel d'e-mails | non configuré — `MAIL_MAILER=log` (le lien d'invitation va dans le log) |

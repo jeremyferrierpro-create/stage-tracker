@@ -28,6 +28,9 @@
         <nav aria-label="Navigation principale">
             @auth
                 <a href="{{ route('workspaces.index') }}">Mes espaces</a>
+                @can('manage', \App\Domain\Framework\Models\CompetencyFramework::class)
+                    <a href="{{ route('frameworks.index') }}">Référentiels</a>
+                @endcan
                 <span class="user">{{ auth()->user()->name }}</span>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
@@ -87,6 +90,11 @@
                             <a href="{{ route('workspace.organizations.index', $workspace) }}"
                                @if (str_starts_with((string) $currentRoute, 'workspace.organizations')) aria-current="page" @endif>
                                 Organisations
+                            </a>
+
+                            <a href="{{ route('workspace.training.index', $workspace) }}"
+                               @if (str_starts_with((string) $currentRoute, 'workspace.training')) aria-current="page" @endif>
+                                Formations
                             </a>
 
                             @can('manageMembers', $workspace)

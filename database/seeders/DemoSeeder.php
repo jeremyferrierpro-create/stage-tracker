@@ -2,10 +2,17 @@
 
 namespace Database\Seeders;
 
+use App\Domain\Framework\Models\Competency;
+use App\Domain\Framework\Models\CompetencyBlock;
+use App\Domain\Framework\Models\CompetencyCriterion;
+use App\Domain\Framework\Models\CompetencyFramework;
+use App\Domain\Framework\Models\FrameworkVersion;
 use App\Domain\Identity\Models\User;
 use App\Domain\Identity\Models\Workspace;
 use App\Domain\Identity\Models\WorkspaceMember;
 use App\Domain\Organization\Models\Organization;
+use App\Domain\Training\Models\TrainingEnrollment;
+use App\Domain\Training\Models\TrainingProgram;
 use Illuminate\Database\Seeder;
 
 /**
@@ -63,6 +70,62 @@ class DemoSeeder extends Seeder
             'contact_email' => 'contact@centre-formation-demo.test',
             'contact_phone' => '+33 1 00 00 00 01',
             'address' => '2 Allée Exemple, 75000 Ville Imaginaire',
+        ]);
+
+        $program = TrainingProgram::create([
+            'workspace_id' => $workspace->id,
+            'organization_id' => Organization::query()
+                ->where('workspace_id', $workspace->id)
+                ->where('type', 'training_center')
+                ->value('id'),
+            'name' => 'Formation Démo (DWWM)',
+            'certification' => 'DWWM — Développeur Web et Web Mobile',
+            'start_date' => now()->startOfDay()->subMonth(),
+            'end_date' => now()->startOfDay()->addMonths(8),
+        ]);
+
+        TrainingEnrollment::create([
+            'user_id' => $trainee->id,
+            'training_program_id' => $program->id,
+            'workspace_id' => $workspace->id,
+            'start_date' => now()->startOfDay()->subMonth(),
+            'end_date' => now()->startOfDay()->addMonths(8),
+            'status' => 'active',
+        ]);
+
+        $framework = CompetencyFramework::create([
+            'name' => 'Référentiel Démo (pilote)',
+            'issuing_authority' => 'Centre de Formation Démo',
+            'description' => 'Référentiel fictif de démonstration (aucune donnée réelle).',
+            'status' => 'draft',
+        ]);
+
+        $version = FrameworkVersion::create([
+            'framework_id' => $framework->id,
+            'version' => 'v1.0.0',
+            'effective_date' => now()->startOfDay(),
+            'status' => 'draft',
+        ]);
+
+        $blockCommunication = CompetencyBlock::create([
+            'framework_version_id' => $version->id,
+            'code' => 'B1',
+            'title' => 'Communication professionnelle',
+            'position' => 1,
+        ]);
+
+        $competency = Competency::create([
+            'framework_version_id' => $version->id,
+            'block_id' => $blockCommunication->id,
+            'code' => 'C1.1',
+            'title' => 'Rédiger un message professionnel',
+            'position' => 1,
+        ]);
+
+        CompetencyCriterion::create([
+            'competency_id' => $competency->id,
+            'label' => 'Le message est clair et structuré.',
+            'position' => 1,
         ]);
 
         $this->command?->line(

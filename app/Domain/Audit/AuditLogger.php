@@ -36,6 +36,12 @@ final class AuditLogger
         'from',
         'to',
         'count',
+        'training_program_id',
+        'training_program_name',
+        'enrollment_id',
+        'framework_id',
+        'framework_name',
+        'version',
         'subject',
     ];
 
