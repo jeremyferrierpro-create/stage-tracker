@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\FrameworkBlockController;
@@ -7,9 +8,11 @@ use App\Http\Controllers\FrameworkCompetencyController;
 use App\Http\Controllers\FrameworkController;
 use App\Http\Controllers\FrameworkCriterionController;
 use App\Http\Controllers\FrameworkVersionController;
+use App\Http\Controllers\InternshipController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\OrganizationController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TrainingEnrollmentController;
 use App\Http\Controllers\TrainingProgramController;
 use App\Http\Controllers\WorkspaceController;
@@ -25,8 +28,8 @@ Route::get('/', function () {
 |--------------------------------------------------------------------------
 | Invitations (T-007)
 |--------------------------------------------------------------------------
-| Le token en clair circule uniquement dans le lien envoyÃ© par e-mail.
-| Seul son hash SHA-256 est stockÃ© en base.
+| Le token en clair circule uniquement dans le lien envoyÃƒÂ© par e-mail.
+| Seul son hash SHA-256 est stockÃƒÂ© en base.
 */
 Route::get('/invitations/{token}', [InvitationController::class, 'show'])
     ->where('token', '[A-Za-z0-9]{32,64}')
@@ -122,8 +125,88 @@ Route::middleware('auth')->group(function (): void {
                 ->whereUuid('program')
                 ->whereNumber('enrollment')
                 ->name('workspace.training.enrollments.status');
+            // Stages (T-023).
+            Route::get('/internships', [InternshipController::class, 'index'])
+                ->name('workspace.internships.index');
+            Route::get('/internships/create', [InternshipController::class, 'create'])
+                ->name('workspace.internships.create');
+            Route::post('/internships', [InternshipController::class, 'store'])
+                ->name('workspace.internships.store');
+            Route::get('/internships/{internship}', [InternshipController::class, 'show'])
+                ->whereUuid('internship')
+                ->name('workspace.internships.show');
+            Route::get('/internships/{internship}/edit', [InternshipController::class, 'edit'])
+                ->whereUuid('internship')
+                ->name('workspace.internships.edit');
+            Route::put('/internships/{internship}', [InternshipController::class, 'update'])
+                ->whereUuid('internship')
+                ->name('workspace.internships.update');
+            Route::post('/internships/{internship}/participants', [InternshipController::class, 'storeParticipant'])
+                ->whereUuid('internship')
+                ->name('workspace.internships.participants.store');
+            Route::delete('/internships/{internship}/participants/{participant}', [InternshipController::class, 'destroyParticipant'])
+                ->whereUuid('internship')
+                ->whereNumber('participant')
+                ->name('workspace.internships.participants.destroy');
+
+            // Projets (T-024).
+            Route::get('/internships/{internship}/projects', [ProjectController::class, 'index'])
+                ->whereUuid('internship')
+                ->name('workspace.internships.projects.index');
+            Route::get('/internships/{internship}/projects/create', [ProjectController::class, 'create'])
+                ->whereUuid('internship')
+                ->name('workspace.internships.projects.create');
+            Route::post('/internships/{internship}/projects', [ProjectController::class, 'store'])
+                ->whereUuid('internship')
+                ->name('workspace.internships.projects.store');
+            Route::get('/internships/{internship}/projects/{project}', [ProjectController::class, 'show'])
+                ->whereUuid('internship')
+                ->whereUuid('project')
+                ->name('workspace.internships.projects.show');
+            Route::get('/internships/{internship}/projects/{project}/edit', [ProjectController::class, 'edit'])
+                ->whereUuid('internship')
+                ->whereUuid('project')
+                ->name('workspace.internships.projects.edit');
+            Route::put('/internships/{internship}/projects/{project}', [ProjectController::class, 'update'])
+                ->whereUuid('internship')
+                ->whereUuid('project')
+                ->name('workspace.internships.projects.update');
+
+            // Activités (T-025).
+            Route::get('/internships/{internship}/projects/{project}/activities', [ActivityController::class, 'index'])
+                ->whereUuid('internship')
+                ->whereUuid('project')
+                ->name('workspace.internships.projects.activities.index');
+            Route::get('/internships/{internship}/projects/{project}/activities/create', [ActivityController::class, 'create'])
+                ->whereUuid('internship')
+                ->whereUuid('project')
+                ->name('workspace.internships.projects.activities.create');
+            Route::post('/internships/{internship}/projects/{project}/activities', [ActivityController::class, 'store'])
+                ->whereUuid('internship')
+                ->whereUuid('project')
+                ->name('workspace.internships.projects.activities.store');
+            Route::get('/internships/{internship}/projects/{project}/activities/{activity}', [ActivityController::class, 'show'])
+                ->whereUuid('internship')
+                ->whereUuid('project')
+                ->whereUuid('activity')
+                ->name('workspace.internships.projects.activities.show');
+            Route::get('/internships/{internship}/projects/{project}/activities/{activity}/edit', [ActivityController::class, 'edit'])
+                ->whereUuid('internship')
+                ->whereUuid('project')
+                ->whereUuid('activity')
+                ->name('workspace.internships.projects.activities.edit');
+            Route::put('/internships/{internship}/projects/{project}/activities/{activity}', [ActivityController::class, 'update'])
+                ->whereUuid('internship')
+                ->whereUuid('project')
+                ->whereUuid('activity')
+                ->name('workspace.internships.projects.activities.update');
+            Route::post('/internships/{internship}/projects/{project}/activities/{activity}/archive', [ActivityController::class, 'archive'])
+                ->whereUuid('internship')
+                ->whereUuid('project')
+                ->whereUuid('activity')
+                ->name('workspace.internships.projects.activities.archive');
         });
-    // RÃ©fÃ©rentiels (T-021/T-022) â€” ressource globale, administration par propriÃ©taires/admins actifs.
+    // RÃƒÂ©fÃƒÂ©rentiels (T-021/T-022) Ã¢â‚¬â€ ressource globale, administration par propriÃƒÂ©taires/admins actifs.
     Route::middleware('auth')->group(function (): void {
         Route::get('/frameworks', [FrameworkController::class, 'index'])
             ->name('frameworks.index');

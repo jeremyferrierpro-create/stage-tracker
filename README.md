@@ -63,10 +63,10 @@ Preuve → Compétence → Évaluation → Synthèse.
 
 | Élément | État |
 |---|---|
-| Phase AIDF | IMPLEMENTATION en cours — T-001 → T-022 livrés |
-| Code applicatif | socle Laravel 13.40.0 + authentification + isolation + invitations + organisations + audit + squelette d'interface + formations (programmes, inscriptions) + référentiels versionnés et publication immuable ; modules métier restants à venir |
+| Phase AIDF | IMPLEMENTATION en cours — T-001 → T-025 livrés |
+| Code applicatif | socle Laravel 13.40.0 + authentification + isolation + invitations + organisations + audit + squelette d'interface + formations (programmes, inscriptions) + référentiels versionnés et publication immuable + stages (stagiaires, participants, projets, activités) ; modules métier restants à venir |
 | Base de données | PostgreSQL 16.15 (conteneur Docker `stage-tracker-postgres`) |
-| Tests | `php artisan test` → 87 tests PASS (397 assertions) ; `pint --test` → PASS ; campagnes MT-01/MT-02/MT-03/MT-05/MT-10 |
+| Tests | `php artisan test` → 91 tests PASS (408 assertions) ; `pint --test` → PASS ; campagnes MT-01/MT-02/MT-03/MT-04/MT-05/MT-10 |
 | Sécurité | Argon2id, rate limiting 5/15 min (429), sessions en base, messages neutres, audit append-only (trigger PostgreSQL) |
 | Documents de référence | `.aidf/docs/` (11 documents validés) |
 | Annexes techniques | `docs/` (MCD, MLD, API, invariants, tests, planning) |
@@ -161,7 +161,9 @@ Exécuté : tables `users`, `sessions`, `cache`, `jobs`, `workspaces`,
 `workspace_members`, `invitations`, `organizations`, `organization_members`,
 `audit_logs`, `training_programs`, `training_enrollments`,
 `competency_frameworks`, `framework_versions`, `competency_blocks`,
-`competencies` et `competency_criteria` créées (T-004 → T-022).
+`competencies`, `competency_criteria`, `internships`,
+`internship_participants`, `projects` et `activities` créées
+(T-004 → T-025).
 
 > Les seeders sont réservés aux environnements `local` et `test` ; ils ne
 > contiennent aucune donnée réelle. Jeu de démonstration (optionnel, à la fin) :
@@ -245,7 +247,8 @@ connexion, « Mes espaces » liste les espaces dont vous êtes membre actif.
      la déconnexion ; depuis T-021, les propriétaires et administrateurs y
      trouvent aussi le lien « Référentiels » (ressource partagée) ;
    - la navigation latérale regroupe « Tableau de bord », « Organisations »,
-     « Formations » (T-020), puis, uniquement pour les propriétaires et
+     « Formations » (T-020), « Stages » (T-023, avec ses projets et
+     activités), puis, uniquement pour les propriétaires et
      administrateurs, « Membres et invitations » et « Journal d'audit » (les
      sections non encore livrées apparaissent grisées avec la mention
      « à venir » et ne sont pas cliquables) ;
@@ -286,6 +289,9 @@ Définitions déjà stabilisées par la spécification :
 | **Workspace** | espace de travail isolé (personnel, associatif, professionnel, pédagogique) |
 | **Organisation** | entreprise ou organisme de formation rattaché à précisément un workspace, distingué par son type et archivable plutôt que supprimable |
 | **Formation** | programme de formation rattaché à un workspace et à un organisme de formation (T-020) |
+| **Stage** | période de stage rattachée à un workspace, un stagiaire, une organisation d'accueil et une version de référentiel publiée (T-023) |
+| **Projet** | travail mené pendant le stage, contenant des activités (T-024) |
+| **Activité** | unité de travail documentée (fonctionnalité, correction, étude, conception, recherche, maintenance, amélioration) avec objectifs, résultats, difficultés et solutions (T-025) |
 | **Programme** | instance d'une formation avec ses dates et ses inscriptions uniques (utilisateur, programme) |
 | **Référentiel** | cadre de compétences versionné, ressource partagée entre tous les espaces (T-021, DEC-ST-003) |
 | **Version** | état d'un référentiel ; une fois publiée, immuable (INV-08) |
@@ -481,7 +487,28 @@ définitive : son contenu devient immuable (refus applicatif HTTP 403 et
 trigger PostgreSQL). Toute tentative d'écriture sur une version publiée
 est rejetée, y compris en SQL direct.
 
-*Statut : `DISPONIBLE` (formations + référentiels) — vérifié le 2026-11-13.*
+*Statut : `DISPONIBLE` (référentiels) — vérifié le 2026-11-13.*
+
+### 10.9 Stages (T-023)
+
+Dans un espace, le lien « Stages » liste les stages (titre, stagiaire,
+organisation d'accueil, période, statut). Propriétaires et administrateurs
+peuvent créer un stage (stagiaire membre actif de l'espace, organisation
+d'accueil, programme de formation optionnel, version de référentiel
+**publiée**, dates, objectifs, statut). La fiche de stage permet d'ajouter
+des participants (stagiaire, maître de stage, tuteur) et d'accéder aux
+projets. Le stagiaire concerné peut aussi modifier son stage.
+
+### 10.10 Projets et activités (T-024, T-025)
+
+Depuis la fiche d'un stage, « Projets » liste et crée des projets (nom,
+description, statut, période). La fiche d'un projet liste ses activités et
+permet d'en créer de nouvelles (titre, type, statut Kanban, priorité,
+période, objectifs, résultats, difficultés, solutions). Chaque activité peut
+être modifiée et archivée. Les activités sont rattachées à un seul projet ;
+deux stages d'un même stagiaire restent strictement séparés (MT-04).
+
+*Statut : `DISPONIBLE` (stages, projets, activités) — vérifié le 2026-11-13.*
 
 ---
 
@@ -575,6 +602,8 @@ app/Domain/Identity/  utilisateurs, workspaces, appartenances, invitations,
 app/Domain/Training/  programmes de formation et inscriptions (T-020)
 app/Domain/Framework/ référentiels, versions, blocs, compétences, critères
                   (T-021/T-022)
+app/Domain/Internship/ stages, participants (T-023)
+app/Domain/Project/   projets et activités (T-024/T-025)
 app/Domain/Organization/  organisations d'accueil et organismes de formation
 app/Domain/Audit/ journal d'audit (modèle append-only, service d'écriture)
 app/Domain/       autres domaines métier (Training, Framework, Internship,
@@ -606,7 +635,7 @@ phpunit.xml
 
 ```bash
 vendor/bin/pint --test      # style — PASS le 2026-11-08
-php artisan test            # tests PHPUnit — 87 tests PASS (397 assertions) le 2026-11-13
+php artisan test            # tests PHPUnit — 91 tests PASS (408 assertions) le 2026-11-13
 php artisan migrate:fresh --seed --env=testing   # jeu de démo neutre — vérifié le 2026-11-08
 npm run build               # assets Vite — vérifié le 2026-11-08
 npx playwright test         # navigateur — à activer en T-046/T-066
@@ -638,7 +667,7 @@ Créer `.env.testing` à partir de `.env` avec `APP_ENV=testing` et
 
 | Limite | Statut |
 |---|---|
-| Modules métier suite | non implémentés — stages, journal, preuves, évaluations à venir (formations et référentiels livrés en T-020 → T-022) |
+| Modules métier suite | non implémentés — journal quotidien, Kanban, preuves, évaluations, rapports à venir (formations, référentiels, stages, projets, activités livrés en T-020 → T-025) |
 | Navigation clavier complète + parcours Playwright (dont « Navigation clavier ») | `À VENIR` — audit d'accessibilité en T-066 |
 | Version Livewire | décision humaine requise avant T-020 (DEC-ST-014) : l'interface actuelle est en Blade pur |
 | Envoi réel d'e-mails | non configuré — `MAIL_MAILER=log` (le lien d'invitation va dans le log) |

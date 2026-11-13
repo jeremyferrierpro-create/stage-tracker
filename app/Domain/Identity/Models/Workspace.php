@@ -2,6 +2,7 @@
 
 namespace App\Domain\Identity\Models;
 
+use App\Domain\Internship\Models\Internship;
 use App\Domain\Organization\Models\Organization;
 use App\Domain\Training\Models\TrainingProgram;
 use Database\Factories\WorkspaceFactory;
@@ -94,6 +95,14 @@ class Workspace extends Model
     public function trainingPrograms(): HasMany
     {
         return $this->hasMany(TrainingProgram::class);
+    }
+
+    /**
+     * @return HasMany<Internship, $this>
+     */
+    public function internships(): HasMany
+    {
+        return $this->hasMany(Internship::class);
     }
 
     public function membershipFor(User $user): ?WorkspaceMember

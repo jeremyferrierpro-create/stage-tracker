@@ -18,6 +18,38 @@ versionnement [SemVer](https://semver.org/lang/fr/).
 - Modules métier : formations, référentiel, stages, activités.
 - Gestion fine des membres : rôles, suspension (T-021).
 
+## [0.7.0] — 2026-11-13 — Stages, projets et activités (T-023 → T-025)
+
+### Ajouté
+- Migrations `internships`, `internship_participants`, `projects`, `activities`
+  (FK composites, contraintes de statut/type/priorité, `UNIQUE` par
+  workspace).
+- Domaine `Internship` : `Internship`, `InternshipParticipant`, controllers,
+  vues (index/create/show/edit) ; ajout de participants (stagiaire, maître de
+  stage, tuteur) avec retrait ; permission de modification partagée entre
+  propriétaires/administrateurs et stagiaire concerné.
+- Domaine `Project` : `Project`, `Activity`, controllers, vues (index/create/
+  show/edit) ; activités avec type, statut Kanban, priorité, période,
+  objectifs, résultats, difficultés, solutions et archivage.
+- Navigation : lien « Stages » dans la barre latérale (retiré de la liste
+  « à venir »).
+- Jeu de démonstration étendu : stage « Stage Démo — Développeur Web »,
+  participant superviseur, projet « Site vitrine » et deux activités.
+- 4 tests (T-023/T-024/T-025) : création, refus pour un stagiaire, isolation
+  inter-workspaces, MT-04 (deux stages d'un même stagiaire restent
+  strictement séparés).
+- README : §2, §4, §5.4, §6, §10.9/10.10, §16, §17.
+
+### Modifié
+- `Workspace` : relation `internships()`.
+- `AuditLogger` : métadonnées `subject`, `status`, `type`, `changed` déjà
+  autorisées (réutilisées pour les nouveaux événements `internship.*`,
+  `project.*`, `activity.*`).
+
+### Sécurité
+- Isolation multi-tenant maintenue sur stages/projets/activités (FK composites
+  + résolution par workspace).
+
 ## [0.6.0] — 2026-11-13 — Formations, référentiels versionnés et publication immuable (T-020 → T-022)
 
 ### Ajouté
