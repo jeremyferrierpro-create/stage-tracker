@@ -99,6 +99,7 @@ class ActivityController extends Controller
             'internship' => $internship,
             'project' => $project,
             'activity' => $activity,
+            'tasks' => $activity->tasks()->orderBy('position')->get(),
         ]);
     }
 

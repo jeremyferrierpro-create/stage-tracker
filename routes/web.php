@@ -3,6 +3,7 @@
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\DailyLogController;
 use App\Http\Controllers\FrameworkBlockController;
 use App\Http\Controllers\FrameworkCompetencyController;
 use App\Http\Controllers\FrameworkController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TrainingEnrollmentController;
 use App\Http\Controllers\TrainingProgramController;
 use App\Http\Controllers\WorkspaceController;
@@ -28,8 +30,8 @@ Route::get('/', function () {
 |--------------------------------------------------------------------------
 | Invitations (T-007)
 |--------------------------------------------------------------------------
-| Le token en clair circule uniquement dans le lien envoyÃƒÂ© par e-mail.
-| Seul son hash SHA-256 est stockÃƒÂ© en base.
+| Le token en clair circule uniquement dans le lien envoyÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â© par e-mail.
+| Seul son hash SHA-256 est stockÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â© en base.
 */
 Route::get('/invitations/{token}', [InvitationController::class, 'show'])
     ->where('token', '[A-Za-z0-9]{32,64}')
@@ -172,7 +174,7 @@ Route::middleware('auth')->group(function (): void {
                 ->whereUuid('project')
                 ->name('workspace.internships.projects.update');
 
-            // Activités (T-025).
+            // ActivitÃƒÂ©s (T-025).
             Route::get('/internships/{internship}/projects/{project}/activities', [ActivityController::class, 'index'])
                 ->whereUuid('internship')
                 ->whereUuid('project')
@@ -205,8 +207,44 @@ Route::middleware('auth')->group(function (): void {
                 ->whereUuid('project')
                 ->whereUuid('activity')
                 ->name('workspace.internships.projects.activities.archive');
+            // TÃ¢ches Kanban (T-026).
+            Route::post('/internships/{internship}/projects/{project}/activities/{activity}/tasks', [TaskController::class, 'store'])
+                ->whereUuid('internship')->whereUuid('project')->whereUuid('activity')
+                ->name('workspace.tasks.store');
+            Route::put('/internships/{internship}/projects/{project}/activities/{activity}/tasks/{task}', [TaskController::class, 'update'])
+                ->whereUuid('internship')->whereUuid('project')->whereUuid('activity')->whereUuid('task')
+                ->name('workspace.tasks.update');
+            Route::delete('/internships/{internship}/projects/{project}/activities/{activity}/tasks/{task}', [TaskController::class, 'destroy'])
+                ->whereUuid('internship')->whereUuid('project')->whereUuid('activity')->whereUuid('task')
+                ->name('workspace.tasks.destroy');
+
+            // Journal quotidien (T-027/T-028).
+            Route::get('/internships/{internship}/daily-logs', [DailyLogController::class, 'index'])
+                ->whereUuid('internship')
+                ->name('workspace.internships.daily_logs.index');
+            Route::get('/internships/{internship}/daily-logs/create', [DailyLogController::class, 'create'])
+                ->whereUuid('internship')
+                ->name('workspace.internships.daily_logs.create');
+            Route::post('/internships/{internship}/daily-logs', [DailyLogController::class, 'store'])
+                ->whereUuid('internship')
+                ->name('workspace.internships.daily_logs.store');
+            Route::get('/internships/{internship}/daily-logs/{log}', [DailyLogController::class, 'show'])
+                ->whereUuid('internship')->whereUuid('log')
+                ->name('workspace.internships.daily_logs.show');
+            Route::get('/internships/{internship}/daily-logs/{log}/edit', [DailyLogController::class, 'edit'])
+                ->whereUuid('internship')->whereUuid('log')
+                ->name('workspace.internships.daily_logs.edit');
+            Route::put('/internships/{internship}/daily-logs/{log}', [DailyLogController::class, 'update'])
+                ->whereUuid('internship')->whereUuid('log')
+                ->name('workspace.internships.daily_logs.update');
+            Route::post('/internships/{internship}/daily-logs/{log}/close', [DailyLogController::class, 'close'])
+                ->whereUuid('internship')->whereUuid('log')
+                ->name('workspace.internships.daily_logs.close');
+            Route::post('/internships/{internship}/daily-logs/{log}/activities', [DailyLogController::class, 'linkActivity'])
+                ->whereUuid('internship')->whereUuid('log')
+                ->name('workspace.internships.daily_logs.link_activity');
         });
-    // RÃƒÂ©fÃƒÂ©rentiels (T-021/T-022) Ã¢â‚¬â€ ressource globale, administration par propriÃƒÂ©taires/admins actifs.
+    // RÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©fÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©rentiels (T-021/T-022) ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ressource globale, administration par propriÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©taires/admins actifs.
     Route::middleware('auth')->group(function (): void {
         Route::get('/frameworks', [FrameworkController::class, 'index'])
             ->name('frameworks.index');

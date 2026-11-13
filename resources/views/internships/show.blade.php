@@ -39,6 +39,7 @@
     @else
         <p>
             <a class="button secondary" href="{{ route('workspace.internships.projects.index', [$workspace, $internship]) }}">Projets</a>
+            <a class="button secondary" href="{{ route('workspace.internships.daily_logs.index', [$workspace, $internship]) }}">Journal</a>
         </p>
     @endcan
 

@@ -116,7 +116,7 @@
                                 </a>
                             @endcan
 
-                            @foreach (['Journal', 'Activités', 'Kanban', 'Preuves', 'Rapports'] as $coming)
+                            @foreach (['Preuves', 'Rapports'] as $coming)
                                 <span class="soon">{{ $coming }} <em>à venir</em></span>
                             @endforeach
                         </nav>

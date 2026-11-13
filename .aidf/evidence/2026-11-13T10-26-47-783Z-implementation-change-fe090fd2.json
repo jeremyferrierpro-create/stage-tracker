@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-13T10-26-47-781Z-95b890",
+  "type": "implementation-change",
+  "status": "PASS",
+  "gate": null,
+  "phase": null,
+  "summary": "T-026/T-027/T-028 : taches Kanban (statut persiste, position), journal quotidien (creation, liaison activites, cloture lecture seule), 4 tests DailyLogTest, 95 tests PASS (416 assertions), pint PASS, migrate:fresh --seed OK",
+  "note": "T-026/T-027/T-028 : taches Kanban (statut persiste, position), journal quotidien (creation, liaison activites, cloture lecture seule), 4 tests DailyLogTest, 95 tests PASS (416 assertions), pint PASS, migrate:fresh --seed OK",
+  "createdBy": "aidf",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-13T10:26:47.781Z",
+  "checks": [
+    {
+      "id": "files-captured",
+      "status": "PASS",
+      "reason": "24 file(s) from git"
+    }
+  ],
+  "commands": [],
+  "files": [
+    ".aidf/docs/CHANGELOG.md",
+    "README.md",
+    "app/Domain/Internship/Models/Internship.php",
+    "app/Domain/Project/Models/Activity.php",
+    "app/Http/Controllers/ActivityController.php",
+    "resources/views/activities/show.blade.php",
+    "resources/views/internships/show.blade.php",
+    "resources/views/layouts/app.blade.php",
+    "routes/web.php",
+    "app/Domain/Journal/Models/DailyLog.php",
+    "app/Domain/Journal/Models/DailyLogActivity.php",
+    "app/Domain/Project/Models/Task.php",
+    "app/Http/Controllers/DailyLogController.php",
+    "app/Http/Controllers/TaskController.php",
+    "database/factories/DailyLogFactory.php",
+    "database/factories/TaskFactory.php",
+    "database/migrations/2026_11_13_140000_create_tasks_table.php",
+    "database/migrations/2026_11_13_140100_create_daily_logs_table.php",
+    "database/migrations/2026_11_13_140200_create_daily_log_activities_table.php",
+    "resources/views/daily_logs/create.blade.php",
+    "resources/views/daily_logs/edit.blade.php",
+    "resources/views/daily_logs/index.blade.php",
+    "resources/views/daily_logs/show.blade.php",
+    "tests/Feature/Journal/DailyLogTest.php"
+  ],
+  "limitations": [
+    "File list is not a review of the content or quality of the change."
+  ],
+  "previous": "f86eadeed1cf8fabfcedbdef8213dc7074d23323a4559c941964d698a8c2e3f1",
+  "hash": "fe090fd26bed70e1ebf88c47d2a2244bedb23f10fdf768c49209616e00609abf"
+}

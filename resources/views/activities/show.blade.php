@@ -40,6 +40,82 @@
         @endforeach
     </div>
 
+    <div class="card">
+        <h2>Tâches (Kanban)</h2>
+
+        <form method="POST" action="{{ route('workspace.tasks.store', [$workspace, $internship, $project, $activity]) }}" class="actions" style="margin-bottom: 1rem;">
+            @csrf
+            <div>
+                <label>Titre</label>
+                <input type="text" name="title" required maxlength="200" placeholder="Nouvelle tâche">
+            </div>
+            <div>
+                <label>Priorité</label>
+                <select name="priority">
+                    @foreach (\App\Domain\Project\Models\Task::PRIORITIES as $priority)
+                        <option value="{{ $priority }}">{{ \App\Domain\Project\Models\Task::PRIORITY_LABELS[$priority] }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div>
+                <label>Statut</label>
+                <select name="status">
+                    @foreach (\App\Domain\Project\Models\Task::STATUSES as $status)
+                        <option value="{{ $status }}">{{ \App\Domain\Project\Models\Task::STATUS_LABELS[$status] }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div style="align-self: end;">
+                <button type="submit" class="small">Ajouter</button>
+            </div>
+        </form>
+
+        @if ($tasks->isEmpty())
+            <p class="muted">Aucune tâche.</p>
+        @else
+            <table>
+                <thead>
+                    <tr>
+                        <th>Titre</th>
+                        <th>Statut</th>
+                        <th>Priorité</th>
+                        <th>Échéance</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($tasks as $task)
+                        <tr>
+                            <td>{{ $task->title }}</td>
+                            <td>
+                                <form method="POST" action="{{ route('workspace.tasks.update', [$workspace, $internship, $project, $activity, $task]) }}" class="inline">
+                                    @csrf
+                                    @method('PUT')
+                                    <select name="status" onchange="this.form.submit()">
+                                        @foreach (\App\Domain\Project\Models\Task::STATUSES as $status)
+                                            <option value="{{ $status }}" @selected($task->status === $status)>
+                                                {{ \App\Domain\Project\Models\Task::STATUS_LABELS[$status] }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </form>
+                            </td>
+                            <td>{{ $task->priorityLabel() }}</td>
+                            <td>{{ $task->due_date?->format('d/m/Y') ?? '—' }}</td>
+                            <td>
+                                <form method="POST" action="{{ route('workspace.tasks.destroy', [$workspace, $internship, $project, $activity, $task]) }}" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="danger small">Supprimer</button>
+                                </form>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endif
+    </div>
+
     <div class="actions">
         <a class="button secondary" href="{{ route('workspace.internships.projects.activities.edit', [$workspace, $internship, $project, $activity]) }}">Modifier</a>
         <form method="POST" action="{{ route('workspace.internships.projects.activities.archive', [$workspace, $internship, $project, $activity]) }}" class="inline">

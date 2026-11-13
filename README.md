@@ -63,10 +63,10 @@ Preuve → Compétence → Évaluation → Synthèse.
 
 | Élément | État |
 |---|---|
-| Phase AIDF | IMPLEMENTATION en cours — T-001 → T-025 livrés |
-| Code applicatif | socle Laravel 13.40.0 + authentification + isolation + invitations + organisations + audit + squelette d'interface + formations (programmes, inscriptions) + référentiels versionnés et publication immuable + stages (stagiaires, participants, projets, activités) ; modules métier restants à venir |
+| Phase AIDF | IMPLEMENTATION en cours — T-001 → T-028 livrés |
+| Code applicatif | socle Laravel 13.40.0 + authentification + isolation + invitations + organisations + audit + squelette d'interface + formations (programmes, inscriptions) + référentiels versionnés et publication immuable + stages (stagiaires, participants, projets, activités) + tâches Kanban + journal quotidien (clôture) ; modules métier restants à venir |
 | Base de données | PostgreSQL 16.15 (conteneur Docker `stage-tracker-postgres`) |
-| Tests | `php artisan test` → 91 tests PASS (408 assertions) ; `pint --test` → PASS ; campagnes MT-01/MT-02/MT-03/MT-04/MT-05/MT-10 |
+| Tests | `php artisan test` → 95 tests PASS (416 assertions) ; `pint --test` → PASS ; campagnes MT-01/MT-02/MT-03/MT-04/MT-05/MT-10 |
 | Sécurité | Argon2id, rate limiting 5/15 min (429), sessions en base, messages neutres, audit append-only (trigger PostgreSQL) |
 | Documents de référence | `.aidf/docs/` (11 documents validés) |
 | Annexes techniques | `docs/` (MCD, MLD, API, invariants, tests, planning) |
@@ -162,8 +162,8 @@ Exécuté : tables `users`, `sessions`, `cache`, `jobs`, `workspaces`,
 `audit_logs`, `training_programs`, `training_enrollments`,
 `competency_frameworks`, `framework_versions`, `competency_blocks`,
 `competencies`, `competency_criteria`, `internships`,
-`internship_participants`, `projects` et `activities` créées
-(T-004 → T-025).
+`internship_participants`, `projects`, `activities`, `tasks`, `daily_logs`
+et `daily_log_activities` créées (T-004 → T-028).
 
 > Les seeders sont réservés aux environnements `local` et `test` ; ils ne
 > contiennent aucune donnée réelle. Jeu de démonstration (optionnel, à la fin) :
@@ -292,6 +292,8 @@ Définitions déjà stabilisées par la spécification :
 | **Stage** | période de stage rattachée à un workspace, un stagiaire, une organisation d'accueil et une version de référentiel publiée (T-023) |
 | **Projet** | travail mené pendant le stage, contenant des activités (T-024) |
 | **Activité** | unité de travail documentée (fonctionnalité, correction, étude, conception, recherche, maintenance, amélioration) avec objectifs, résultats, difficultés et solutions (T-025) |
+| **Tâche** | élément du Kanban rattaché à une activité, avec statut et position (T-026) |
+| **Journal** | saisie quotidienne des travaux, difficultés, solutions et résultats, clôturable et révisable avant clôture (T-027/T-028) |
 | **Programme** | instance d'une formation avec ses dates et ses inscriptions uniques (utilisateur, programme) |
 | **Référentiel** | cadre de compétences versionné, ressource partagée entre tous les espaces (T-021, DEC-ST-003) |
 | **Version** | état d'un référentiel ; une fois publiée, immuable (INV-08) |
@@ -508,7 +510,26 @@ période, objectifs, résultats, difficultés, solutions). Chaque activité peut
 être modifiée et archivée. Les activités sont rattachées à un seul projet ;
 deux stages d'un même stagiaire restent strictement séparés (MT-04).
 
-*Statut : `DISPONIBLE` (stages, projets, activités) — vérifié le 2026-11-13.*
+*Statut : `DISPONIBLE` (projets, activités) — vérifié le 2026-11-13.*
+
+### 10.11 Tâches et Kanban (T-026)
+
+Depuis la fiche d'une activité, la section « Tâches (Kanban) » liste les
+tâches avec leur statut, priorité et échéance. Il est possible d'ajouter une
+tâche (titre, priorité, statut) et de changer son statut via la liste
+déroulante (sauvegarde immédiate). Les tâches peuvent être supprimées.
+L'ordre est conservé par une position.
+
+### 10.12 Journal quotidien (T-027, T-028)
+
+Depuis la fiche d'un stage, le lien « Journal » liste les journées saisies
+(date, auteur, durée, statut). Une journée contient les horaires, la durée,
+les objectifs, les travaux réalisés, les difficultés, les solutions, les
+résultats, le reste à faire et des notes privées. Il est possible de lier
+des activités du stage à la journée avec une contribution. Une journée
+brouillon peut être modifiée ; la clôture la rend en lecture seule.
+
+*Statut : `DISPONIBLE` (tâches, Kanban, journal, clôture) — vérifié le 2026-11-13.*
 
 ---
 
@@ -635,7 +656,7 @@ phpunit.xml
 
 ```bash
 vendor/bin/pint --test      # style — PASS le 2026-11-08
-php artisan test            # tests PHPUnit — 91 tests PASS (408 assertions) le 2026-11-13
+php artisan test            # tests PHPUnit — 95 tests PASS (416 assertions) le 2026-11-13
 php artisan migrate:fresh --seed --env=testing   # jeu de démo neutre — vérifié le 2026-11-08
 npm run build               # assets Vite — vérifié le 2026-11-08
 npx playwright test         # navigateur — à activer en T-046/T-066
@@ -667,7 +688,7 @@ Créer `.env.testing` à partir de `.env` avec `APP_ENV=testing` et
 
 | Limite | Statut |
 |---|---|
-| Modules métier suite | non implémentés — journal quotidien, Kanban, preuves, évaluations, rapports à venir (formations, référentiels, stages, projets, activités livrés en T-020 → T-025) |
+| Modules métier suite | non implémentés — preuves, évaluations, rapports à venir (formations, référentiels, stages, projets, activités, tâches Kanban et journal quotidien livrés en T-020 → T-028) |
 | Navigation clavier complète + parcours Playwright (dont « Navigation clavier ») | `À VENIR` — audit d'accessibilité en T-066 |
 | Version Livewire | décision humaine requise avant T-020 (DEC-ST-014) : l'interface actuelle est en Blade pur |
 | Envoi réel d'e-mails | non configuré — `MAIL_MAILER=log` (le lien d'invitation va dans le log) |

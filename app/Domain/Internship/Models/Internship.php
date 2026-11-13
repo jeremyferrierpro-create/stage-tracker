@@ -4,6 +4,7 @@ namespace App\Domain\Internship\Models;
 
 use App\Domain\Framework\Models\FrameworkVersion;
 use App\Domain\Identity\Models\User;
+use App\Domain\Journal\Models\DailyLog;
 use App\Domain\Organization\Models\Organization;
 use App\Domain\Project\Models\Project;
 use App\Domain\Training\Models\TrainingProgram;
@@ -110,6 +111,14 @@ class Internship extends Model
     public function projects(): HasMany
     {
         return $this->hasMany(Project::class);
+    }
+
+    /**
+     * @return HasMany<DailyLog, $this>
+     */
+    public function dailyLogs(): HasMany
+    {
+        return $this->hasMany(DailyLog::class);
     }
 
     public function statusLabel(): string

@@ -18,6 +18,38 @@ versionnement [SemVer](https://semver.org/lang/fr/).
 - Modules métier : formations, référentiel, stages, activités.
 - Gestion fine des membres : rôles, suspension (T-021).
 
+## [0.8.0] — 2026-11-13 — Tâches Kanban, journal quotidien et clôture (T-026 → T-028)
+
+### Ajouté
+- Migrations `tasks`, `daily_logs`, `daily_log_activities` (FK composites,
+  contraintes de statut/type/priorité, durées, unicité
+  `(internship, auteur, date)`).
+- Domaine `Project` : modèle `Task` + `TaskController` (création, changement
+  de statut via liste déroulante, suppression, position) ; Kanban dans la
+  fiche d'activité.
+- Domaine `Journal` : `DailyLog`, `DailyLogActivity`, `DailyLogController`
+  (création, modification, clôture, liaison d'activités avec contribution).
+- Clôture d'une journée : passage `draft → closed` avec `closed_at` ; une
+  journée clôturée devient en lecture seule (HTTP 403 sur édition).
+- Vues : `daily_logs/*` (index, create, show, edit), section Kanban dans
+  `activities/show`.
+- Lien « Journal » depuis la fiche d'un stage.
+- 4 tests (`DailyLogTest`) : création, unicité, lecture seule après clôture,
+  clôture effective.
+- README : §2, §4, §5.4, §6, §10.11/10.12, §16, §17.
+
+### Modifié
+- `Internship` : relation `dailyLogs()`.
+- `Activity` : relation `tasks()` + méthode `priorityLabel()`.
+- `Workspace` : (pas de changement de relation ; les tâches/journaux sont
+  accessibles via le stage).
+- `AuditLogger` : réutilisation des clés `subject`, `status`, `changed`.
+
+### Sécurité
+- Isolation multi-tenant maintenue sur tâches et journaux (FK composites +
+  résolution par workspace).
+- Une journée clôturée ne peut plus être modifiée (garde applicative).
+
 ## [0.7.0] — 2026-11-13 — Stages, projets et activités (T-023 → T-025)
 
 ### Ajouté
