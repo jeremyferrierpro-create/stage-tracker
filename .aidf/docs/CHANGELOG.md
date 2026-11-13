@@ -18,6 +18,18 @@ versionnement [SemVer](https://semver.org/lang/fr/).
 - Modules métier : formations, référentiel, stages, activités.
 - Gestion fine des membres : rôles, suspension (T-021).
 
+## [1.0.0] — 2026-11-13 — Phase 2 complète : stages et suivi (T-023 → T-030)
+
+### Ajouté
+- Campagne de tests phase 2 (T-030) : vérification consolidée des invariants
+  MT-03, MT-04, MT-05 ; 98 tests PASS / 426 assertions au total.
+- Tableau de bord consolidé (T-029) : indicateurs stages/activités/journées/
+  référentiels et raccourcis.
+- README : §2 (Phase 2 complète).
+
+### Modifié
+- Aucune migration nouvelle dans ce lot (consolidation).
+
 ## [0.9.0] — 2026-11-13 — Tableau de bord consolidé (T-029)
 
 ### Ajouté

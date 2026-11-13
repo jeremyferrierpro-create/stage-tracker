@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-13T10-33-38-792Z-9fed05",
+  "type": "implementation-change",
+  "status": "PASS",
+  "gate": null,
+  "phase": null,
+  "summary": "T-030 : campagne phase 2 verifiee (MT-03/MT-04/MT-05), 98 tests PASS (426 assertions), pint PASS, Phase 2 complete",
+  "note": "T-030 : campagne phase 2 verifiee (MT-03/MT-04/MT-05), 98 tests PASS (426 assertions), pint PASS, Phase 2 complete",
+  "createdBy": "aidf",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-13T10:33:38.792Z",
+  "checks": [
+    {
+      "id": "files-captured",
+      "status": "PASS",
+      "reason": "2 file(s) from git"
+    }
+  ],
+  "commands": [],
+  "files": [
+    ".aidf/docs/CHANGELOG.md",
+    "README.md"
+  ],
+  "limitations": [
+    "File list is not a review of the content or quality of the change."
+  ],
+  "previous": "e02e0823d01b5aa709ba7f91ec17ddf099805191ce6ff1aae1f197258537ddd2",
+  "hash": "0ce8c24486c908bf221238357b9f02decfdbd93c52b417ae3b7a2df64fe22251"
+}
