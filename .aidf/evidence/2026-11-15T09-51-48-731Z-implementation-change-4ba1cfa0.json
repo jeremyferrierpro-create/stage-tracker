@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-15T09-51-48-730Z-c60d81",
+  "type": "implementation-change",
+  "status": "PASS",
+  "gate": null,
+  "phase": null,
+  "summary": "T-043/T-044/T-045 : depots Git + connecteur GitHub (jeton chiffre, jamais expose), import idempotent des commits (INV-05), fichiers de commits et association commit-activite ; 113 tests PASS / 497 assertions ; pint PASS ; README §11 + CHANGELOG 1.2.0",
+  "note": "T-043/T-044/T-045 : depots Git + connecteur GitHub (jeton chiffre, jamais expose), import idempotent des commits (INV-05), fichiers de commits et association commit-activite ; 113 tests PASS / 497 assertions ; pint PASS ; README §11 + CHANGELOG 1.2.0",
+  "createdBy": "aidf",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-15T09:51:48.729Z",
+  "checks": [
+    {
+      "id": "files-captured",
+      "status": "PASS",
+      "reason": "30 file(s) from git"
+    }
+  ],
+  "commands": [],
+  "files": [
+    ".aidf/docs/CHANGELOG.md",
+    "README.md",
+    "app/Domain/Audit/AuditLogger.php",
+    "app/Domain/Project/Models/Project.php",
+    "app/Http/Controllers/ProjectController.php",
+    "app/Providers/AppServiceProvider.php",
+    "database/seeders/DemoSeeder.php",
+    "resources/views/projects/show.blade.php",
+    "routes/web.php",
+    "app/Domain/Git/Models/ActivityCommit.php",
+    "app/Domain/Git/Models/Commit.php",
+    "app/Domain/Git/Models/CommitFile.php",
+    "app/Domain/Git/Models/Repository.php",
+    "app/Domain/Git/Models/SyncRun.php",
+    "app/Domain/Git/Services/CommitImportService.php",
+    "app/Http/Controllers/RepositoryController.php",
+    "app/Integrations/Git/GitProviderInterface.php",
+    "app/Integrations/GitHub/GitHubProvider.php",
+    "database/factories/CommitFactory.php",
+    "database/factories/RepositoryFactory.php",
+    "database/migrations/2026_11_15_090000_create_repositories_table.php",
+    "database/migrations/2026_11_15_090100_create_commits_table.php",
+    "database/migrations/2026_11_15_090200_create_commit_files_table.php",
+    "database/migrations/2026_11_15_090300_create_activity_commits_table.php",
+    "database/migrations/2026_11_15_090400_create_sync_runs_table.php",
+    "resources/views/repositories/create.blade.php",
+    "resources/views/repositories/show.blade.php",
+    "tests/Feature/Git/CommitImportTest.php",
+    "tests/Feature/Git/RepositoryTest.php",
+    "tests/Support/FakeGitProvider.php"
+  ],
+  "limitations": [
+    "File list is not a review of the content or quality of the change."
+  ],
+  "previous": "93fa1dcac13011c66b8b832b6657327b7bb705b7e425587cc66e94d71ce905f1",
+  "hash": "4ba1cfa0295f8c490eab0c0b5709e3dc75b45033069e38f8acf78eecd8c8baaf"
+}

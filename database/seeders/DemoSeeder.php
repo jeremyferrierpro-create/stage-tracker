@@ -2,13 +2,16 @@
 
 namespace Database\Seeders;
 
+use App\Domain\Evidence\Models\ActivityEvidence;
+use App\Domain\Evidence\Models\Evidence;
 use App\Domain\Framework\Models\Competency;
 use App\Domain\Framework\Models\CompetencyBlock;
 use App\Domain\Framework\Models\CompetencyCriterion;
 use App\Domain\Framework\Models\CompetencyFramework;
 use App\Domain\Framework\Models\FrameworkVersion;
-use App\Domain\Evidence\Models\ActivityEvidence;
-use App\Domain\Evidence\Models\Evidence;
+use App\Domain\Git\Models\ActivityCommit;
+use App\Domain\Git\Models\Commit;
+use App\Domain\Git\Models\Repository;
 use App\Domain\Identity\Models\User;
 use App\Domain\Identity\Models\Workspace;
 use App\Domain\Identity\Models\WorkspaceMember;
@@ -213,9 +216,50 @@ class DemoSeeder extends Seeder
             'note' => 'Documente la maquette validée.',
         ]);
 
+        $demoRepository = Repository::create([
+            'project_id' => $project->id,
+            'workspace_id' => $workspace->id,
+            'provider' => 'github',
+            'external_id' => 'demo/stage-tracker-vitrine',
+            'name' => 'Dépôt Démo — Site vitrine',
+            'repository_url' => 'https://github.com/demo/stage-tracker-vitrine',
+            'default_branch' => 'main',
+            'token_encrypted' => null,
+            'last_synced_at' => now(),
+        ]);
+
+        $demoCommits = [];
+        foreach ([
+            ['sha' => str_repeat('a', 40), 'message' => 'feat: maquette de la page d\'accueil', 'days' => 12],
+            ['sha' => str_repeat('b', 40), 'message' => 'feat: intégration HTML/CSS responsive', 'days' => 6],
+            ['sha' => str_repeat('c', 40), 'message' => 'fix: correctif d\'accessibilité des liens', 'days' => 2],
+        ] as $entry) {
+            $demoCommits[] = Commit::create([
+                'repository_id' => $demoRepository->id,
+                'workspace_id' => $workspace->id,
+                'sha' => $entry['sha'],
+                'author_name' => 'Stagiaire Démo',
+                'author_email' => 'stagiaire@example.test',
+                'committed_at' => now()->startOfDay()->subDays($entry['days'])->setTime(14, 30),
+                'message' => $entry['message'],
+                'branch' => 'main',
+                'url' => 'https://github.com/demo/stage-tracker-vitrine/commit/'.$entry['sha'],
+                'imported_at' => now(),
+            ]);
+        }
+
+        ActivityCommit::create([
+            'activity_id' => $mockupActivity->id,
+            'commit_id' => $demoCommits[0]->id,
+            'workspace_id' => $workspace->id,
+            'linked_by' => $trainee->id,
+            'linked_at' => now(),
+        ]);
+
         $this->command?->line(
             'Jeu de démonstration créé : utilisateurs (mot de passe « '.self::DEMO_PASSWORD.' »),'
-            .' espace « Espace Démo », formations, référentiel publié, stage, projet démo et deux preuves (une partagée, une privée).'
+            .' espace « Espace Démo », formations, référentiel publié, stage, projet démo,'
+            .' deux preuves (une partagée, une privée) et dépôt Git démo avec 3 commits.'
         );
     }
 

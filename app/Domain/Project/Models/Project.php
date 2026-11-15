@@ -2,6 +2,7 @@
 
 namespace App\Domain\Project\Models;
 
+use App\Domain\Git\Models\Repository;
 use App\Domain\Internship\Models\Internship;
 use App\Models\Concerns\BelongsToWorkspace;
 use Database\Factories\ProjectFactory;
@@ -69,6 +70,14 @@ class Project extends Model
     public function activities(): HasMany
     {
         return $this->hasMany(Activity::class);
+    }
+
+    /**
+     * @return HasMany<Repository, $this>
+     */
+    public function repositories(): HasMany
+    {
+        return $this->hasMany(Repository::class);
     }
 
     public function statusLabel(): string

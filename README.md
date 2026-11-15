@@ -175,7 +175,9 @@ Exécuté : tables `users`, `sessions`, `cache`, `jobs`, `workspaces`,
 >
 > Crée « Espace Démo » avec 4 comptes de démonstration (`admin@example.test`,
 > `stagiaire@example.test`, `maitre-de-stage@example.test`, `tuteur@example.test`,
-> mot de passe `mot-de-passe-demo-2026`) et 2 organisations neutres.
+> mot de passe `mot-de-passe-demo-2026`) et 2 organisations neutres ; y compris
+> un stage, un projet démo, deux preuves (une partagée, une privée) et un dépôt
+> Git démo avec 3 commits dont un lié à l'activité maquette (§11.5).
 > Le seeder refuse de tourner en dehors de `local`/`testing` et est idempotent
 > (T-010, vérifié le 2026-11-08).
 
@@ -551,19 +553,81 @@ pas le domaine.
 
 ## 11. Connecteur GitHub
 
-> `À VENIR — livré par T-043 → T-045`.
+*Statut : `DISPONIBLE` (dépôts, import idempotent des commits, fichiers et
+liaison aux activités) — vérifié le 2026-11-15.*
 
-Sections prévues :
-- créer un jeton GitHub en lecture seule ;
-- associer un dépôt à un projet ;
-- lancer une synchronisation ;
-- vérifier l'absence de doublons (import idempotent) ;
-- associer des commits à une activité.
+### 11.1 Associer un dépôt à un projet
 
-> Le jeton est stocké côté serveur, chiffré, et n'est jamais exposé au
-> navigateur.
+Depuis la fiche d'un projet, cliquer sur **Dépôts Git** puis renseigner :
 
-*Statut : `À VENIR`.*
+| Champ | Rôle |
+|---|---|
+| Fournisseur | `GitHub` (par défaut), `GitLab` ou `Autre` |
+| Identifiant externe | `propriétaire/dépôt` — unique par fournisseur |
+| Nom affiché | nom lisible dans l'application |
+| URL du dépôt | ex. `https://github.com/mon-compte/mon-depot` |
+| Branche par défaut | `main` par défaut |
+| Jeton d'accès | **optionnel** — voir §11.2 |
+
+Qui peut gérer : propriétaire, administrateur ou stagiaire du stage. Un
+tuteur ou observateur peut consulter la fiche dépôt mais pas synchroniser
+ni dissocier.
+
+### 11.2 Jeton GitHub (sécurité)
+
+- Recommandation : créer un *fine-grained personal access token* en
+  **lecture seule** sur les dépôts concernés.
+- Le jeton est **chiffré côté serveur** (Laravel `Crypt`, clé `APP_KEY`)
+  et stocké dans la colonne `token_encrypted` de la table `repositories`.
+- Il n'est **jamais** renvoyé au navigateur : l'attribut est masqué au
+  sérialiseur du modèle (`$hidden`) et absent de toutes les vues.
+- Il n'apparaît jamais dans le journal d'audit (liste blanche des
+  métadonnées, T-009).
+- Sans jeton, GitHub limite l'API à 60 requêtes/heure ; avec jeton,
+  5 000/heure.
+
+Le formulaire propose aussi un **tester de connexion** qui vérifie
+l'accès au dépôt avant l'association (erreur claire en cas d'échec :
+URL invalide, dépôt privé sans droits, jeton invalide ou limite d'API).
+
+### 11.3 Synchroniser les commits
+
+Sur la fiche du dépôt, **Synchroniser maintenant** importe jusqu'à
+3 pages de 30 commits depuis la branche par défaut (connecteur GitHub
+REST v3). Chaque exécution est tracée dans `sync_runs` :
+
+| Statut | Signification |
+|---|---|
+| `success` | import complet |
+| `partial` | import partiel (erreurs sur certains commits) |
+| `failed` | exécution en échec (message d'erreur conservé) |
+
+### 11.4 Import idempotent (INV-05)
+
+- Unicité `(repository_id, sha)` : relancer une synchronisation
+  **ne crée aucun doublon**.
+- La date d'import (`imported_at`) d'un commit déjà présent n'est pas
+  remontée — la provenance est conservée.
+- Les associations commit ↔ activité déjà créées survivent aux
+  synchronisations suivantes.
+- Les fichiers modifiés par un commit (`commit_files`, unicité
+  `(commit_id, path)`) sont mis à jour sans doublon.
+
+### 11.5 Lier des commits à une activité
+
+Sur la fiche du dépôt, chaque commit propose un sélecteur d'activités du
+projet et un bouton **Lier**. Plusieurs commits peuvent être liés à une
+même activité ; lier deux fois le même commit est sans effet (unicité
+`activity_id + commit_id`). Le lien est interdit entre espaces de travail
+différents (clé étrangère composite).
+
+### 11.6 Dissocier un dépôt
+
+**Dissocier** supprime le dépôt **et** ses commits importés (et les liens
+d'activité) par cascade — les activités et preuves sont
+conservées.
+
+*Statut : `DISPONIBLE`.*
 
 ---
 
@@ -672,7 +736,7 @@ phpunit.xml
 
 ```bash
 vendor/bin/pint --test      # style — PASS le 2026-11-08
-php artisan test            # tests PHPUnit — 104 tests PASS (449 assertions) le 2026-11-13
+php artisan test            # tests PHPUnit - 113 tests PASS (497 assertions) le 2026-11-15
 php artisan migrate:fresh --seed --env=testing   # jeu de démo neutre — vérifié le 2026-11-08
 npm run build               # assets Vite — vérifié le 2026-11-08
 npx playwright test         # navigateur — à activer en T-046/T-066

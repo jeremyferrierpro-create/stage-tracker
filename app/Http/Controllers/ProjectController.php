@@ -84,7 +84,7 @@ class ProjectController extends Controller
         return view('projects.show', [
             'workspace' => $workspace,
             'internship' => $internship,
-            'project' => $project->load('activities'),
+            'project' => $project->load(['activities', 'repositories']),
         ]);
     }
 

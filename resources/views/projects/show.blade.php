@@ -22,10 +22,26 @@
 
     <div class="actions">
         <a class="button secondary" href="{{ route('workspace.internships.projects.activities.index', [$workspace, $internship, $project]) }}">Activités</a>
+        <a class="button secondary" href="{{ route('workspace.internships.projects.repositories.create', [$workspace, $internship, $project]) }}">Dépôts Git</a>
         @can('manageInternships', $workspace)
             <a class="button secondary" href="{{ route('workspace.internships.projects.edit', [$workspace, $internship, $project]) }}">Modifier le projet</a>
         @endcan
     </div>
+
+    @if ($project->repositories->isNotEmpty())
+        <div class="card">
+            <h2>Dépôts Git</h2>
+            <ul>
+                @foreach ($project->repositories as $repository)
+                    <li>
+                        <a href="{{ route('workspace.internships.projects.repositories.show', [$workspace, $internship, $project, $repository]) }}">{{ $repository->name }}</a>
+                        <span class="badge">{{ $repository->provider }}</span>
+                        <span class="muted">{{ $repository->repository_url }}</span>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
     <div class="card">
         <h2>Activités</h2>

@@ -15,6 +15,7 @@ use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\RepositoryController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TrainingEnrollmentController;
 use App\Http\Controllers\TrainingProgramController;
@@ -174,6 +175,29 @@ Route::middleware('auth')->group(function (): void {
                 ->whereUuid('internship')
                 ->whereUuid('project')
                 ->name('workspace.internships.projects.update');
+
+            // Dépôts Git et connecteur GitHub (T-043 → T-045).
+            Route::get('/internships/{internship}/projects/{project}/repositories/create', [RepositoryController::class, 'create'])
+                ->whereUuid('internship')->whereUuid('project')
+                ->name('workspace.internships.projects.repositories.create');
+            Route::post('/internships/{internship}/projects/{project}/repositories', [RepositoryController::class, 'store'])
+                ->whereUuid('internship')->whereUuid('project')
+                ->name('workspace.internships.projects.repositories.store');
+            Route::post('/internships/{internship}/projects/{project}/repositories/test-connection', [RepositoryController::class, 'testConnection'])
+                ->whereUuid('internship')->whereUuid('project')
+                ->name('workspace.internships.projects.repositories.test_connection');
+            Route::get('/internships/{internship}/projects/{project}/repositories/{repository}', [RepositoryController::class, 'show'])
+                ->whereUuid('internship')->whereUuid('project')->whereUuid('repository')
+                ->name('workspace.internships.projects.repositories.show');
+            Route::post('/internships/{internship}/projects/{project}/repositories/{repository}/sync', [RepositoryController::class, 'sync'])
+                ->whereUuid('internship')->whereUuid('project')->whereUuid('repository')
+                ->name('workspace.internships.projects.repositories.sync');
+            Route::post('/internships/{internship}/projects/{project}/repositories/{repository}/commits/{commit}/link-activity', [RepositoryController::class, 'linkActivity'])
+                ->whereUuid('internship')->whereUuid('project')->whereUuid('repository')->whereUuid('commit')
+                ->name('workspace.internships.projects.repositories.link_activity');
+            Route::delete('/internships/{internship}/projects/{project}/repositories/{repository}', [RepositoryController::class, 'destroy'])
+                ->whereUuid('internship')->whereUuid('project')->whereUuid('repository')
+                ->name('workspace.internships.projects.repositories.destroy');
 
             // ActivitÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©s (T-025).
             Route::get('/internships/{internship}/projects/{project}/activities', [ActivityController::class, 'index'])

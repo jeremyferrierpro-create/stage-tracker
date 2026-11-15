@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Domain\Identity\WorkspaceContext;
+use App\Integrations\Git\GitProviderInterface;
+use App\Integrations\GitHub\GitHubProvider;
 use App\Integrations\Storage\EvidenceStorageInterface;
 use App\Integrations\Storage\LocalEvidenceStorage;
 use Illuminate\Support\ServiceProvider;
@@ -18,6 +20,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             EvidenceStorageInterface::class,
             LocalEvidenceStorage::class,
+        );
+        $this->app->bind(
+            GitProviderInterface::class,
+            GitHubProvider::class,
         );
     }
 

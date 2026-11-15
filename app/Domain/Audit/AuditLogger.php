@@ -43,6 +43,9 @@ final class AuditLogger
         'framework_name',
         'version',
         'subject',
+        'repository_name',
+        'commit_sha',
+        'items_imported',
     ];
 
     /**

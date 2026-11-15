@@ -15,8 +15,39 @@ versionnement [SemVer](https://semver.org/lang/fr/).
 ## [Unreleased]
 
 ### À venir
-- Modules métier : formations, référentiel, stages, activités.
-- Gestion fine des membres : rôles, suspension (T-021).
+- Rapports et exports (T-062 → T-064).
+
+## [1.2.0] — 2026-11-15 — Phase 3 : connecteur GitHub et traçabilité commits (T-043 → T-045)
+
+### Ajouté
+- **T-043** : dépôts Git associés aux projets (CRUD, fournisseur
+  github/gitlab/other, branche par défaut), connecteur GitHub REST v3
+  (`GitProviderInterface` + `GitHubProvider`, DEC-ST-007), test de connexion
+  avec erreur explicite, jeton d'accès optionnel **chiffré côté serveur**
+  (`token_encrypted`, masqué au sérialiseur, absent des vues et de l'audit).
+- **T-044** : import idempotent des commits (INV-05 : unicité
+  `(repository_id, sha)`, `imported_at` écrit à la création uniquement,
+  associations commit ↔ activité conservées), tracé dans `sync_runs`
+  (success/partial/failed, compteur, résumé d'erreur).
+- **T-045** : fichiers de commits (`commit_files`, unicité `(commit_id, path)`,
+  upsert sans doublon) et association manuelle commit ↔ activité
+  (`activity_commits`, unicité, plusieurs commits par activité, FK composites
+  anti-fuite inter-espaces).
+- Routes imbriquées `w/{workspace}/.../projects/{project}/repositories...`,
+  vues création/fiche dépôt, section « Dépôts Git » sur la fiche projet.
+- Jeu de démo : dépôt + 3 commits + 1 liaison activité.
+- Tests : 9 nouveaux (`tests/Feature/Git/`), dont MT-06 (double import sans
+  doublon) et isolation inter-espaces.
+
+### Notes
+- Complément MLD §9 : colonne `token_encrypted` sur `repositories` (le MLD ne
+  modélisait pas le stockage du jeton ; conforme au README §11 — jeton chiffré,
+  jamais exposé).
+- Piège outillé : Pint (`php_unit_method_casing`) renomme `testConnection()`
+  en `test_connection()` dans les classes anonymes des fichiers de test — les
+  faux fournisseurs vivent désormais dans `tests/Support/FakeGitProvider.php`.
+- 113 tests PASS / 497 assertions ; pint PASS ; `migrate:fresh --seed` OK
+  (dev + test).
 
 ## [1.1.0] — 2026-11-13 — Phase 3 : preuves, visibilité et liaison activités (T-040 → T-042)
 
