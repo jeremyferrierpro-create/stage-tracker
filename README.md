@@ -735,12 +735,40 @@ phpunit.xml
 ### 16.2 Commandes de qualité
 
 ```bash
-vendor/bin/pint --test      # style — PASS le 2026-11-08
+vendor/bin/pint --test      # style — PASS le 2026-11-15
 php artisan test            # tests PHPUnit - 113 tests PASS (497 assertions) le 2026-11-15
-php artisan migrate:fresh --seed --env=testing   # jeu de démo neutre — vérifié le 2026-11-08
+php artisan migrate:fresh --seed --env=testing   # jeu de démo neutre — vérifié le 2026-11-15
 npm run build               # assets Vite — vérifié le 2026-11-08
-npx playwright test         # navigateur — à activer en T-046/T-066
+npx playwright test         # tests navigateur — 4 tests PASS le 2026-11-15 (voir §16.4)
 ```
+
+### 16.4 Tests navigateur (Playwright)
+
+Parcours critiques vérifiés dans un vrai navigateur (Chromium) :
+
+| Fichier | Parcours |
+|---|---|
+| `e2e/auth.spec.ts` | connexion / déconnexion, mot de passe erroné |
+| `e2e/git-traceability.spec.ts` | MT-06 : du tableau de bord à la fiche dépôt, commits visibles et liaison activité |
+| `e2e/evidence-visibility.spec.ts` | MT-07/MT-08 : preuve privée invisible et refusée (403) au maître de stage, preuve partagée consultable |
+
+Prérequis (une fois) :
+
+```bash
+npm install                          # installe @playwright/test
+npx playwright install chromium      # navigateur (~124 Mo)
+```
+
+Exécution :
+
+```bash
+php artisan migrate:fresh --seed     # jeu de démo (les tests s'appuient dessus)
+php artisan serve --host=127.0.0.1 --port=8000   # dans un 2e terminal
+npx playwright test                  # rapport HTML dans e2e-report/ (ignoré par Git)
+npx playwright show-report           # consulter le rapport
+```
+
+Variable `E2E_BASE_URL` pour pointer vers une autre adresse si besoin.
 
 Base de test isolée (une seule fois) :
 
@@ -760,7 +788,7 @@ Créer `.env.testing` à partir de `.env` avec `APP_ENV=testing` et
 - Aucun secret dans Git ; `.env` ignoré.
 - Aucune fonctionnalité déclarée terminée sans test exécuté et preuve AIDF.
 
-*Statut : `DISPONIBLE` — Pint, PHPUnit et build Vite activés et vérifiés le 2026-11-08.*
+*Statut : `DISPONIBLE` — Pint, PHPUnit, build Vite et Playwright (4 parcours) activés et vérifiés le 2026-11-15.*
 
 ---
 
@@ -769,12 +797,12 @@ Créer `.env.testing` à partir de `.env` avec `APP_ENV=testing` et
 | Limite | Statut |
 |---|---|
 | Modules métier suite | non implémentés — évaluations, rapports à venir (formations, référentiels, stages, projets, activités, tâches Kanban, journal quotidien et preuves livrés en T-020 → T-030 et T-040 → T-042) |
-| Navigation clavier complète + parcours Playwright (dont « Navigation clavier ») | `À VENIR` — audit d'accessibilité en T-066 |
+| Navigation clavier complète + parcours Playwright (dont « Navigation clavier ») | `À VENIR` — audit d'accessibilité en T-066 ; les parcours critiques Playwright (T-046) sont toutefois livrés et PASS (§16.4) |
 | Version Livewire | résolu — DEC-ST-014 accepté (Livewire 4.4.8 installé) ; l'interface reste en Blade pur à ce jour, aucun composant Livewire utilisé |
 | Envoi réel d'e-mails | non configuré — `MAIL_MAILER=log` (le lien d'invitation va dans le log) |
 | Suspension / changement de rôle des membres | livré par T-021 |
 | Conformité RGPD | **NOT_PROVEN** — analyse juridique requise |
-| Playwright sous Windows | non vérifié (IN-07) |
+| Playwright sous Windows | vérifié le 2026-11-15 — 4 parcours PASS (Chromium headless shell 159, §16.4) ; l'audit accessibilité reste en T-066 |
 | Trames officielles de rapports | indisponibles — modèles configurables |
 | Version applicable du référentiel DWWM | à vérifier auprès de la source officielle |
 | Antivirus sur les uploads | non prévu en V1 (documenté) |

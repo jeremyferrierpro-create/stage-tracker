@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-15T10-21-49-897Z-c012a9",
+  "type": "implementation-change",
+  "status": "PASS",
+  "gate": null,
+  "phase": null,
+  "summary": "T-046 : campagne de tests phase 3 - Playwright active (Chromium headless shell 159, @playwright/test 1.65.1), 4 parcours critiques PASS (authentification, MT-06 tracabilite commits, MT-07/MT-08 visibilite des preuves) ; 113 tests PHPUnit PASS / 497 assertions ; pint PASS ; README §16.4 + CHANGELOG 1.3.0",
+  "note": "T-046 : campagne de tests phase 3 - Playwright active (Chromium headless shell 159, @playwright/test 1.65.1), 4 parcours critiques PASS (authentification, MT-06 tracabilite commits, MT-07/MT-08 visibilite des preuves) ; 113 tests PHPUnit PASS / 497 assertions ; pint PASS ; README §16.4 + CHANGELOG 1.3.0",
+  "createdBy": "aidf",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-15T10:21:49.897Z",
+  "checks": [
+    {
+      "id": "files-captured",
+      "status": "PASS",
+      "reason": "10 file(s) from git"
+    }
+  ],
+  "commands": [],
+  "files": [
+    ".aidf/docs/CHANGELOG.md",
+    ".gitignore",
+    "README.md",
+    "package-lock.json",
+    "package.json",
+    "e2e/auth.spec.ts",
+    "e2e/evidence-visibility.spec.ts",
+    "e2e/git-traceability.spec.ts",
+    "e2e/helpers.ts",
+    "playwright.config.ts"
+  ],
+  "limitations": [
+    "File list is not a review of the content or quality of the change."
+  ],
+  "previous": "4ba1cfa0295f8c490eab0c0b5709e3dc75b45033069e38f8acf78eecd8c8baaf",
+  "hash": "cf0f489ff6c579f549fd88e397c29827410e0f746675751c9f496b35d7edf2ee"
+}

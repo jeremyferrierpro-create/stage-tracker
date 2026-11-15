@@ -15,7 +15,27 @@ versionnement [SemVer](https://semver.org/lang/fr/).
 ## [Unreleased]
 
 ### À venir
-- Rapports et exports (T-062 → T-064).
+- Rapports et exports (T-062 → T-064), audit accessibilité (T-066).
+
+## [1.3.0] — 2026-11-15 — Phase 3 : campagne de tests et Playwright (T-046)
+
+### Ajouté
+- **T-046** : tests navigateur Playwright (Chromium headless shell 159,
+  @playwright/test 1.65.1), configuration `playwright.config.ts`, 4 parcours
+  critiques PASS :
+  - `e2e/auth.spec.ts` : connexion/déconnexion, mot de passe erroné ;
+  - `e2e/git-traceability.spec.ts` : MT-06 via l'UI — du tableau de bord à la
+    fiche dépôt, 3 commits visibles, liaison activité affichée ;
+  - `e2e/evidence-visibility.spec.ts` : MT-07/MT-08 via l'UI — preuve privée
+    absente de la liste du maître de stage et refusée en 403 par URL directe,
+    preuve partagée consultable.
+- Script `npm run e2e` ; rapport HTML dans `e2e-report/` (ignoré par Git) ;
+  helper partagé `e2e/helpers.ts` (connexion, ouverture de l'espace démo).
+
+### Notes
+- Le jeu de démo est requis (`php artisan migrate:fresh --seed`) : les tests
+  s'appuient sur ses libellés, sans UUID codé en dur.
+- 113 tests PHPUnit PASS / 497 assertions ; pint PASS ; Playwright 4/4 PASS.
 
 ## [1.2.0] — 2026-11-15 — Phase 3 : connecteur GitHub et traçabilité commits (T-043 → T-045)
 
