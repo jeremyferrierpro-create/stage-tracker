@@ -63,8 +63,8 @@ Preuve → Compétence → Évaluation → Synthèse.
 
 | Élément | État |
 |---|---|
-| Phase AIDF | IMPLEMENTATION en cours — Phase 1 (T-001 → T-012) et Phase 2 (T-020 → T-030) livrées |
-| Code applicatif | socle Laravel 13.40.0 + authentification + isolation + invitations + organisations + audit + squelette d'interface + formations (programmes, inscriptions) + référentiels versionnés et publication immuable + stages (stagiaires, participants, projets, activités) + tâches Kanban + journal quotidien (clôture) + tableau de bord consolidé ; modules métier restants (preuves, évaluations, rapports) à venir |
+| Phase AIDF | IMPLEMENTATION en cours — Phase 1 (T-001 → T-012), Phase 2 (T-020 → T-030) et Phase 3 (T-040 → T-042) livrées |
+| Code applicatif | socle Laravel 13.40.0 + authentification + isolation + invitations + organisations + audit + squelette d'interface + formations (programmes, inscriptions) + référentiels versionnés et publication immuable + stages (stagiaires, participants, projets, activités) + tâches Kanban + journal quotidien (clôture) + tableau de bord consolidé + preuves et visibilité (stockage abstrait local) ; modules restants à venir |
 | Base de données | PostgreSQL 16.15 (conteneur Docker `stage-tracker-postgres`) |
 | Tests | `php artisan test` → 98 tests PASS (426 assertions) ; `pint --test` → PASS ; campagnes MT-01/MT-02/MT-03/MT-04/MT-05/MT-10 |
 | Sécurité | Argon2id, rate limiting 5/15 min (429), sessions en base, messages neutres, audit append-only (trigger PostgreSQL) |
@@ -162,8 +162,9 @@ Exécuté : tables `users`, `sessions`, `cache`, `jobs`, `workspaces`,
 `audit_logs`, `training_programs`, `training_enrollments`,
 `competency_frameworks`, `framework_versions`, `competency_blocks`,
 `competencies`, `competency_criteria`, `internships`,
-`internship_participants`, `projects`, `activities`, `tasks`, `daily_logs`
-et `daily_log_activities` créées (T-004 → T-028).
+`internship_participants`, `projects`, `activities`, `tasks`, `daily_logs`,
+`daily_log_activities`, `evidences` et `activity_evidences` créées
+(T-004 → T-042).
 
 > Les seeders sont réservés aux environnements `local` et `test` ; ils ne
 > contiennent aucune donnée réelle. Jeu de démonstration (optionnel, à la fin) :
@@ -292,6 +293,7 @@ Définitions déjà stabilisées par la spécification :
 | **Stage** | période de stage rattachée à un workspace, un stagiaire, une organisation d'accueil et une version de référentiel publiée (T-023) |
 | **Projet** | travail mené pendant le stage, contenant des activités (T-024) |
 | **Activité** | unité de travail documentée (fonctionnalité, correction, étude, conception, recherche, maintenance, amélioration) avec objectifs, résultats, difficultés et solutions (T-025) |
+| **Preuve** | élément vérifiable (capture, document, commit, lien) avec une visibilité contrôlée : privée, stage ou partagée (T-041) |
 | **Tâche** | élément du Kanban rattaché à une activité, avec statut et position (T-026) |
 | **Journal** | saisie quotidienne des travaux, difficultés, solutions et résultats, clôturable et révisable avant clôture (T-027/T-028) |
 | **Programme** | instance d'une formation avec ses dates et ses inscriptions uniques (utilisateur, programme) |
@@ -531,6 +533,20 @@ brouillon peut être modifiée ; la clôture la rend en lecture seule.
 
 *Statut : `DISPONIBLE` (tâches, Kanban, journal, clôture) — vérifié le 2026-11-13.*
 
+### 10.13 Preuves et visibilité (T-040, T-041, T-042)
+
+Dans un espace, le lien « Preuves » liste les preuves (titre, type,
+visibilité, propriétaire). Il est possible de créer une preuve en
+déposant un fichier (stocké hors webroot, clé de stockage en base) ou en
+indiquant un lien externe, avec une visibilité `Privée`, `Stage` ou
+`Partagée`. Une preuve peut être liée à une ou plusieurs activités
+(contribution optionnelle). L'archivage conserve l'historique (aucune
+suppression physique). Le stockage est abstrait (`EvidenceStorageInterface`,
+implémentation locale) : une évolution vers un stockage distant ne change
+pas le domaine.
+
+*Statut : `DISPONIBLE` (preuves, visibilité, liaison activité) — vérifié le 2026-11-13.*
+
 ---
 
 ## 11. Connecteur GitHub
@@ -656,7 +672,7 @@ phpunit.xml
 
 ```bash
 vendor/bin/pint --test      # style — PASS le 2026-11-08
-php artisan test            # tests PHPUnit — 98 tests PASS (426 assertions) le 2026-11-13
+php artisan test            # tests PHPUnit — 104 tests PASS (449 assertions) le 2026-11-13
 php artisan migrate:fresh --seed --env=testing   # jeu de démo neutre — vérifié le 2026-11-08
 npm run build               # assets Vite — vérifié le 2026-11-08
 npx playwright test         # navigateur — à activer en T-046/T-066
@@ -688,9 +704,9 @@ Créer `.env.testing` à partir de `.env` avec `APP_ENV=testing` et
 
 | Limite | Statut |
 |---|---|
-| Modules métier suite | non implémentés — preuves, évaluations, rapports à venir (formations, référentiels, stages, projets, activités, tâches Kanban et journal quotidien livrés en T-020 → T-028) |
+| Modules métier suite | non implémentés — évaluations, rapports à venir (formations, référentiels, stages, projets, activités, tâches Kanban, journal quotidien et preuves livrés en T-020 → T-030 et T-040 → T-042) |
 | Navigation clavier complète + parcours Playwright (dont « Navigation clavier ») | `À VENIR` — audit d'accessibilité en T-066 |
-| Version Livewire | décision humaine requise avant T-020 (DEC-ST-014) : l'interface actuelle est en Blade pur |
+| Version Livewire | résolu — DEC-ST-014 accepté (Livewire 4.4.8 installé) ; l'interface reste en Blade pur à ce jour, aucun composant Livewire utilisé |
 | Envoi réel d'e-mails | non configuré — `MAIL_MAILER=log` (le lien d'invitation va dans le log) |
 | Suspension / changement de rôle des membres | livré par T-021 |
 | Conformité RGPD | **NOT_PROVEN** — analyse juridique requise |

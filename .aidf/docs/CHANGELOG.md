@@ -18,6 +18,41 @@ versionnement [SemVer](https://semver.org/lang/fr/).
 - Modules métier : formations, référentiel, stages, activités.
 - Gestion fine des membres : rôles, suspension (T-021).
 
+## [1.1.0] — 2026-11-13 — Phase 3 : preuves, visibilité et liaison activités (T-040 → T-042)
+
+### Ajouté
+- T-040 : abstraction de stockage `EvidenceStorageInterface` + implémentation
+  locale `LocalEvidenceStorage` (fichiers hors webroot, clés aléatoires UUID,
+  liée au conteneur DI dans `AppServiceProvider`). Validation d'upload :
+  taille max 10 Mo et liste d'extensions autorisées (images, PDF, documents,
+  archives).
+- T-041 : CRUD des preuves (`evidence.created/updated/archived` audités),
+  `demonstrated` obligatoire, visibilité `private/stage/shared`, galerie et
+  détail, archivage (jamais de suppression physique).
+- T-042 : liaison N-N preuve ↔ activité avec note, contrainte unique
+  `(activity_id, evidence_id)` (idempotence via `firstOrCreate`) ; une preuve
+  peut documenter plusieurs activités ; section « Preuves liées » dans la
+  fiche d'activité.
+- Téléchargement contrôlé : `GET /evidences/{evidence}/download` soumis à la
+  policy `EvidencePolicy::view` (MT-07 : preuve privée inaccessible au maître
+  de stage en liste, détail et téléchargement direct ; MT-08 : preuve partagée
+  téléchargeable par un membre autorisé).
+- Policy `EvidencePolicy` (view/manage), modèle `ActivityEvidence`, sidebar :
+  lien « Preuves » actif.
+- Jeu de démo : deux preuves (une partagée liée à la maquette, une privée).
+- 6 tests `EvidenceTest` (upload, type interdit, taille dépassée, MT-07,
+  MT-08, liaison N-N) ; **104 tests PASS / 449 assertions**.
+
+### Corrigé
+- Routes preuves placées dans le groupe `w/{workspace}` (précédemment hors
+  contexte workspace) ; noms de tables explicites `evidences`/`activity_evidences`
+  (le pluralisateur Eloquent traite « evidence » comme invariable).
+
+### Sécurité
+- Upload : extensions et taille contrôlées côté serveur ; noms de fichiers
+  aléatoires (UUID) — l'URL n'est jamais devinable ; téléchargement uniquement
+  via le contrôleur (policy) ; fichiers hors webroot (disque `local`).
+
 ## [1.0.0] — 2026-11-13 — Phase 2 complète : stages et suivi (T-023 → T-030)
 
 ### Ajouté

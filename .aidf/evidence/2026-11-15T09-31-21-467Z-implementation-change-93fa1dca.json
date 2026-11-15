@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-15T09-31-21-466Z-a0c9a4",
+  "type": "implementation-change",
+  "status": "PASS",
+  "gate": null,
+  "phase": null,
+  "summary": "T-040/T-041/T-042 : preuves (stockage local securise noms aleatoires, validation MIME/taille, telechargement controle via policy), visibilite private/stage/shared (MT-07/MT-08), liaison N-N activite-preuve (unique, idempotent), 6 tests EvidenceTest, 104 tests PASS (449 assertions), pint PASS, migrate:fresh --seed OK",
+  "note": "T-040/T-041/T-042 : preuves (stockage local securise noms aleatoires, validation MIME/taille, telechargement controle via policy), visibilite private/stage/shared (MT-07/MT-08), liaison N-N activite-preuve (unique, idempotent), 6 tests EvidenceTest, 104 tests PASS (449 assertions), pint PASS, migrate:fresh --seed OK",
+  "createdBy": "aidf",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-15T09:31:21.466Z",
+  "checks": [
+    {
+      "id": "files-captured",
+      "status": "PASS",
+      "reason": "24 file(s) from git"
+    }
+  ],
+  "commands": [],
+  "files": [
+    ".aidf/docs/CHANGELOG.md",
+    "README.md",
+    "app/Domain/Identity/Models/Workspace.php",
+    "app/Domain/Project/Models/Activity.php",
+    "app/Http/Controllers/ActivityController.php",
+    "app/Providers/AppServiceProvider.php",
+    "database/seeders/DemoSeeder.php",
+    "resources/views/activities/show.blade.php",
+    "resources/views/layouts/app.blade.php",
+    "routes/web.php",
+    "app/Domain/Evidence/Models/ActivityEvidence.php",
+    "app/Domain/Evidence/Models/Evidence.php",
+    "app/Http/Controllers/EvidenceController.php",
+    "app/Integrations/Storage/EvidenceStorageInterface.php",
+    "app/Integrations/Storage/LocalEvidenceStorage.php",
+    "app/Policies/EvidencePolicy.php",
+    "database/factories/EvidenceFactory.php",
+    "database/migrations/2026_11_13_150000_create_evidences_table.php",
+    "database/migrations/2026_11_13_150100_create_activity_evidences_table.php",
+    "resources/views/evidences/create.blade.php",
+    "resources/views/evidences/edit.blade.php",
+    "resources/views/evidences/index.blade.php",
+    "resources/views/evidences/show.blade.php",
+    "tests/Feature/Evidence/EvidenceTest.php"
+  ],
+  "limitations": [
+    "File list is not a review of the content or quality of the change."
+  ],
+  "previous": "0ce8c24486c908bf221238357b9f02decfdbd93c52b417ae3b7a2df64fe22251",
+  "hash": "93fa1dcac13011c66b8b832b6657327b7bb705b7e425587cc66e94d71ce905f1"
+}

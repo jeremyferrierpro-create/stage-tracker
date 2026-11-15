@@ -116,6 +116,26 @@
         @endif
     </div>
 
+    <div class="card">
+        <h2>Preuves liées</h2>
+        @if ($activity->evidences->isEmpty())
+            <p class="muted">Aucune preuve liée à cette activité.</p>
+        @else
+            <ul>
+                @foreach ($activity->evidences as $evidence)
+                    <li>
+                        <a href="{{ route('workspace.evidences.show', [$workspace, $evidence]) }}">{{ $evidence->title }}</a>
+                        <span class="badge">{{ $evidence->typeLabel() }}</span>
+                        @if ($evidence->pivot->note) — {{ $evidence->pivot->note }} @endif
+                    </li>
+                @endforeach
+            </ul>
+        @endif
+        <p>
+            <a class="button secondary small" href="{{ route('workspace.evidences.index', $workspace) }}">Gérer les preuves</a>
+        </p>
+    </div>
+
     <div class="actions">
         <a class="button secondary" href="{{ route('workspace.internships.projects.activities.edit', [$workspace, $internship, $project, $activity]) }}">Modifier</a>
         <form method="POST" action="{{ route('workspace.internships.projects.activities.archive', [$workspace, $internship, $project, $activity]) }}" class="inline">

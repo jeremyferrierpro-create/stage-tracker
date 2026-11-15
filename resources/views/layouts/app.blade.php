@@ -102,6 +102,11 @@
                                 Stages
                             </a>
 
+                            <a href="{{ route('workspace.evidences.index', $workspace) }}"
+                               @if (str_starts_with((string) $currentRoute, 'workspace.evidences')) aria-current="page" @endif>
+                                Preuves
+                            </a>
+
                             @can('manageMembers', $workspace)
                                 <a href="{{ route('workspace.members.index', $workspace) }}"
                                    @if ($currentRoute === 'workspace.members.index') aria-current="page" @endif>
@@ -116,7 +121,7 @@
                                 </a>
                             @endcan
 
-                            @foreach (['Preuves', 'Rapports'] as $coming)
+                            @foreach (['Rapports'] as $coming)
                                 <span class="soon">{{ $coming }} <em>à venir</em></span>
                             @endforeach
                         </nav>

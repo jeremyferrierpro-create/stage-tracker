@@ -2,6 +2,7 @@
 
 namespace App\Domain\Identity\Models;
 
+use App\Domain\Evidence\Models\Evidence;
 use App\Domain\Internship\Models\Internship;
 use App\Domain\Organization\Models\Organization;
 use App\Domain\Training\Models\TrainingProgram;
@@ -95,6 +96,14 @@ class Workspace extends Model
     public function trainingPrograms(): HasMany
     {
         return $this->hasMany(TrainingProgram::class);
+    }
+
+    /**
+     * @return HasMany<Evidence, $this>
+     */
+    public function evidences(): HasMany
+    {
+        return $this->hasMany(Evidence::class);
     }
 
     /**

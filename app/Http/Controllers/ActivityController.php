@@ -100,6 +100,7 @@ class ActivityController extends Controller
             'project' => $project,
             'activity' => $activity,
             'tasks' => $activity->tasks()->orderBy('position')->get(),
+            'evidences' => $activity->evidences()->get(),
         ]);
     }
 

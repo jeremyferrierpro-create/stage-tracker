@@ -4,6 +4,7 @@ use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DailyLogController;
+use App\Http\Controllers\EvidenceController;
 use App\Http\Controllers\FrameworkBlockController;
 use App\Http\Controllers\FrameworkCompetencyController;
 use App\Http\Controllers\FrameworkController;
@@ -30,8 +31,8 @@ Route::get('/', function () {
 |--------------------------------------------------------------------------
 | Invitations (T-007)
 |--------------------------------------------------------------------------
-| Le token en clair circule uniquement dans le lien envoyÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â© par e-mail.
-| Seul son hash SHA-256 est stockÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â© en base.
+| Le token en clair circule uniquement dans le lien envoyÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â© par e-mail.
+| Seul son hash SHA-256 est stockÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â© en base.
 */
 Route::get('/invitations/{token}', [InvitationController::class, 'show'])
     ->where('token', '[A-Za-z0-9]{32,64}')
@@ -174,7 +175,7 @@ Route::middleware('auth')->group(function (): void {
                 ->whereUuid('project')
                 ->name('workspace.internships.projects.update');
 
-            // ActivitÃƒÂ©s (T-025).
+            // ActivitÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©s (T-025).
             Route::get('/internships/{internship}/projects/{project}/activities', [ActivityController::class, 'index'])
                 ->whereUuid('internship')
                 ->whereUuid('project')
@@ -207,7 +208,7 @@ Route::middleware('auth')->group(function (): void {
                 ->whereUuid('project')
                 ->whereUuid('activity')
                 ->name('workspace.internships.projects.activities.archive');
-            // TÃ¢ches Kanban (T-026).
+            // TÃƒÆ’Ã‚Â¢ches Kanban (T-026).
             Route::post('/internships/{internship}/projects/{project}/activities/{activity}/tasks', [TaskController::class, 'store'])
                 ->whereUuid('internship')->whereUuid('project')->whereUuid('activity')
                 ->name('workspace.tasks.store');
@@ -243,8 +244,36 @@ Route::middleware('auth')->group(function (): void {
             Route::post('/internships/{internship}/daily-logs/{log}/activities', [DailyLogController::class, 'linkActivity'])
                 ->whereUuid('internship')->whereUuid('log')
                 ->name('workspace.internships.daily_logs.link_activity');
+            // Preuves et visibilitÃ© (T-041/T-042).
+            Route::get('/evidences', [EvidenceController::class, 'index'])
+                ->name('workspace.evidences.index');
+            Route::get('/evidences/create', [EvidenceController::class, 'create'])
+                ->name('workspace.evidences.create');
+            Route::post('/evidences', [EvidenceController::class, 'store'])
+                ->name('workspace.evidences.store');
+            Route::get('/evidences/{evidence}', [EvidenceController::class, 'show'])
+                ->whereUuid('evidence')
+                ->name('workspace.evidences.show');
+            Route::get('/evidences/{evidence}/edit', [EvidenceController::class, 'edit'])
+                ->whereUuid('evidence')
+                ->name('workspace.evidences.edit');
+            Route::put('/evidences/{evidence}', [EvidenceController::class, 'update'])
+                ->whereUuid('evidence')
+                ->name('workspace.evidences.update');
+            Route::post('/evidences/{evidence}/archive', [EvidenceController::class, 'archive'])
+                ->whereUuid('evidence')
+                ->name('workspace.evidences.archive');
+            Route::post('/evidences/{evidence}/link-activity', [EvidenceController::class, 'linkActivity'])
+                ->whereUuid('evidence')
+                ->name('workspace.evidences.link_activity');
+            Route::get('/internships/{internship}/projects/{project}/activities/{activity}/evidences/{evidence}/download', [EvidenceController::class, 'download'])
+                ->whereUuid('internship')->whereUuid('project')->whereUuid('activity')->whereUuid('evidence')
+                ->name('workspace.evidences.download_activity');
+            Route::get('/evidences/{evidence}/download', [EvidenceController::class, 'download'])
+                ->whereUuid('evidence')
+                ->name('workspace.evidences.download');
         });
-    // RÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©fÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©rentiels (T-021/T-022) ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ressource globale, administration par propriÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©taires/admins actifs.
+    // RÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©fÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©rentiels (T-021/T-022) ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â ressource globale, administration par propriÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©taires/admins actifs.
     Route::middleware('auth')->group(function (): void {
         Route::get('/frameworks', [FrameworkController::class, 'index'])
             ->name('frameworks.index');

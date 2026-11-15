@@ -2,12 +2,14 @@
 
 namespace App\Domain\Project\Models;
 
+use App\Domain\Evidence\Models\Evidence;
 use App\Models\Concerns\BelongsToWorkspace;
 use Database\Factories\ActivityFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -114,5 +116,18 @@ class Activity extends Model
     public function tasks(): HasMany
     {
         return $this->hasMany(Task::class);
+    }
+
+    /**
+     * @return BelongsToMany<Evidence, $this>
+     */
+    public function evidences(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Evidence::class,
+            'activity_evidences',
+            'activity_id',
+            'evidence_id',
+        )->withPivot(['note', 'workspace_id'])->withTimestamps();
     }
 }

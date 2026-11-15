@@ -7,6 +7,8 @@ use App\Domain\Framework\Models\CompetencyBlock;
 use App\Domain\Framework\Models\CompetencyCriterion;
 use App\Domain\Framework\Models\CompetencyFramework;
 use App\Domain\Framework\Models\FrameworkVersion;
+use App\Domain\Evidence\Models\ActivityEvidence;
+use App\Domain\Evidence\Models\Evidence;
 use App\Domain\Identity\Models\User;
 use App\Domain\Identity\Models\Workspace;
 use App\Domain\Identity\Models\WorkspaceMember;
@@ -159,7 +161,7 @@ class DemoSeeder extends Seeder
             'end_date' => now()->startOfDay()->addMonths(2),
         ]);
 
-        Activity::create([
+        $mockupActivity = Activity::create([
             'project_id' => $project->id,
             'workspace_id' => $workspace->id,
             'title' => 'Maquette de la page d\'accueil',
@@ -182,9 +184,38 @@ class DemoSeeder extends Seeder
             'objectives' => 'Respecter la maquette validée.',
         ]);
 
+        $sharedEvidence = Evidence::create([
+            'workspace_id' => $workspace->id,
+            'owner_id' => $trainee->id,
+            'title' => 'Maquette desktop de la page d\'accueil',
+            'type' => 'mockup',
+            'description' => 'Maquette Figma de la page d\'accueil (desktop).',
+            'demonstrated' => 'L\'ergonomie de la page d\'accueil a été validée avec le maître de stage.',
+            'external_url' => 'https://www.figma.com/file/demo-maquette-accueil',
+            'visibility' => 'shared',
+        ]);
+
+        $privateEvidence = Evidence::create([
+            'workspace_id' => $workspace->id,
+            'owner_id' => $trainee->id,
+            'title' => 'Notes personnelles de préparation',
+            'type' => 'technical_doc',
+            'description' => 'Notes privées du stagiaire (non visibles des autres participants).',
+            'demonstrated' => 'Démarche personnelle de préparation de l\'entretien client.',
+            'external_url' => 'https://example.test/notes-privees',
+            'visibility' => 'private',
+        ]);
+
+        ActivityEvidence::create([
+            'activity_id' => $mockupActivity->id,
+            'evidence_id' => $sharedEvidence->id,
+            'workspace_id' => $workspace->id,
+            'note' => 'Documente la maquette validée.',
+        ]);
+
         $this->command?->line(
             'Jeu de démonstration créé : utilisateurs (mot de passe « '.self::DEMO_PASSWORD.' »),'
-            .' espace « Espace Démo », formations, référentiel publié, stage et projet démo.'
+            .' espace « Espace Démo », formations, référentiel publié, stage, projet démo et deux preuves (une partagée, une privée).'
         );
     }
 
