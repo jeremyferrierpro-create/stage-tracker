@@ -46,6 +46,7 @@ final class AuditLogger
         'repository_name',
         'commit_sha',
         'items_imported',
+        'competency_code',
     ];
 
     /**

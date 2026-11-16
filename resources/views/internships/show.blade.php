@@ -43,6 +43,10 @@
         </p>
     @endcan
 
+    <p>
+        <a class="button secondary" href="{{ route('workspace.internships.competencies', [$workspace, $internship]) }}">Matrice des compétences</a>
+    </p>
+
     <div class="card">
         <h2>Participants</h2>
 

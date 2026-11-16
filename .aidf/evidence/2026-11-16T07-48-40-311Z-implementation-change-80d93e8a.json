@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-16T07-48-40-310Z-1392c9",
+  "type": "implementation-change",
+  "status": "PASS",
+  "gate": null,
+  "phase": null,
+  "summary": "Phase 5 T-060 a T-061 : associations activite-competence (justification obligatoire, statuts mobilized/documented/evaluated), evaluations nominatives (assessor/date/appreciation conserves, AC-11.2), INV-09 aucune validation automatique (AC-11.1), permission assess (supervisor/tutor rattaches, auto-evaluation interdite), matrice competences ; 173 tests PHPUnit PASS / 708 assertions, pint PASS",
+  "note": "Phase 5 T-060 a T-061 : associations activite-competence (justification obligatoire, statuts mobilized/documented/evaluated), evaluations nominatives (assessor/date/appreciation conserves, AC-11.2), INV-09 aucune validation automatique (AC-11.1), permission assess (supervisor/tutor rattaches, auto-evaluation interdite), matrice competences ; 173 tests PHPUnit PASS / 708 assertions, pint PASS",
+  "createdBy": "aidf",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-16T07:48:40.310Z",
+  "checks": [
+    {
+      "id": "files-captured",
+      "status": "PASS",
+      "reason": "14 file(s) from git"
+    }
+  ],
+  "commands": [],
+  "files": [
+    "app/Domain/Audit/AuditLogger.php",
+    "app/Domain/Authorization/EffectivePermissions.php",
+    "app/Domain/Project/Models/Activity.php",
+    "app/Http/Controllers/ActivityController.php",
+    "resources/views/activities/show.blade.php",
+    "resources/views/internships/show.blade.php",
+    "routes/web.php",
+    "app/Domain/Evaluation/Models/ActivityCompetency.php",
+    "app/Domain/Evaluation/Models/CompetencyAssessment.php",
+    "app/Http/Controllers/ActivityCompetencyController.php",
+    "database/migrations/2026_11_16_100000_create_activity_competencies_table.php",
+    "database/migrations/2026_11_16_100100_create_competency_assessments_table.php",
+    "resources/views/internships/competencies.blade.php",
+    "tests/Feature/Evaluation/CompetencyTest.php"
+  ],
+  "limitations": [
+    "File list is not a review of the content or quality of the change."
+  ],
+  "previous": "9dc23c17d2aac66e241721c18092a6487872b6322a6c98287e0293b35cfe4a0f",
+  "hash": "80d93e8a713f5b19f14395a1c0980da5e2a6da07cbec767d199f4a188abcf3ba"
+}

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityCompetencyController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\Auth\LoginController;
@@ -225,6 +226,23 @@ Route::middleware('auth')->group(function (): void {
             // Vue dédiée maître de stage / tuteur (T-054).
             Route::get('/supervisor', [SupervisorController::class, 'dashboard'])
                 ->name('workspace.supervisor.dashboard');
+
+            // Compétences d'activité et évaluations (T-060, T-061).
+            Route::get('/internships/{internship}/competencies', [ActivityCompetencyController::class, 'matrix'])
+                ->whereUuid('internship')
+                ->name('workspace.internships.competencies');
+            Route::post('/internships/{internship}/projects/{project}/activities/{activity}/competencies', [ActivityCompetencyController::class, 'store'])
+                ->whereUuid('internship')->whereUuid('project')->whereUuid('activity')
+                ->name('workspace.internships.projects.activities.competencies.store');
+            Route::post('/internships/{internship}/projects/{project}/activities/{activity}/competencies/{competency}/document', [ActivityCompetencyController::class, 'document'])
+                ->whereUuid('internship')->whereUuid('project')->whereUuid('activity')->whereUuid('competency')
+                ->name('workspace.internships.projects.activities.competencies.document');
+            Route::post('/internships/{internship}/projects/{project}/activities/{activity}/competencies/{competency}/assessments', [ActivityCompetencyController::class, 'assess'])
+                ->whereUuid('internship')->whereUuid('project')->whereUuid('activity')->whereUuid('competency')
+                ->name('workspace.internships.projects.activities.competencies.assess');
+            Route::delete('/internships/{internship}/projects/{project}/activities/{activity}/competencies/{competency}', [ActivityCompetencyController::class, 'destroy'])
+                ->whereUuid('internship')->whereUuid('project')->whereUuid('activity')->whereUuid('competency')
+                ->name('workspace.internships.projects.activities.competencies.destroy');
 
             // ActivitÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©s (T-025).
             Route::get('/internships/{internship}/projects/{project}/activities', [ActivityController::class, 'index'])

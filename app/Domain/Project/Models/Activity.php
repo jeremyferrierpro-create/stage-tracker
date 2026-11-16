@@ -4,6 +4,7 @@ namespace App\Domain\Project\Models;
 
 use App\Domain\Collaboration\Models\Comment;
 use App\Domain\Collaboration\Models\Review;
+use App\Domain\Evaluation\Models\ActivityCompetency;
 use App\Domain\Evidence\Models\Evidence;
 use App\Models\Concerns\BelongsToWorkspace;
 use Database\Factories\ActivityFactory;
@@ -141,6 +142,16 @@ class Activity extends Model
     public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
+    }
+
+    /**
+     * Associations compétences (T-060).
+     *
+     * @return HasMany<ActivityCompetency, $this>
+     */
+    public function activityCompetencies(): HasMany
+    {
+        return $this->hasMany(ActivityCompetency::class);
     }
 
     /**

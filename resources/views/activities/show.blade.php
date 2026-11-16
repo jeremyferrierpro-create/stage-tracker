@@ -249,6 +249,94 @@
         @endif
     </div>
 
+    <div class="card">
+        <h2>Compétences</h2>
+        <p class="muted">
+            Statuts distincts : <strong>Mobilisée</strong> (associée avec justification),
+            <strong>Documentée</strong> (marquée par le gestionnaire),
+            <strong>Évaluée</strong> (appréciation nominative d'un évaluateur habilité).
+            Aucune transition automatique.
+        </p>
+
+        @if ($canManage && $availableCompetencies->isNotEmpty())
+        <form method="POST" action="{{ route('workspace.internships.projects.activities.competencies.store', [$workspace, $internship, $project, $activity]) }}" style="margin-bottom: 1rem;">
+            @csrf
+            <label for="competency-select">Compétence (référentiel du stage)</label>
+            <select id="competency-select" name="competency_id" required>
+                <option value="">— choisir une compétence —</option>
+                @foreach ($availableCompetencies as $competencyOption)
+                    <option value="{{ $competencyOption->id }}">{{ $competencyOption->code }} — {{ $competencyOption->title }}</option>
+                @endforeach
+            </select>
+            <label for="competency-justification">Justification (obligatoire)</label>
+            <textarea id="competency-justification" name="justification" rows="2" required minlength="10" maxlength="5000" placeholder="Comment cette activité mobilise la compétence"></textarea>
+            <div class="actions">
+                <button type="submit" class="small">Associer</button>
+            </div>
+        </form>
+        @endif
+
+        @if ($competencies->isEmpty())
+            <p class="muted">Aucune compétence associée.</p>
+        @else
+            <ul class="competency-list">
+                @foreach ($competencies as $association)
+                    <li>
+                        <strong>{{ $association->competency->code }}</strong>
+                        {{ $association->competency->title }}
+                        <span class="badge">{{ $association->statusLabel() }}</span>
+                        <p class="muted">Justification : {{ $association->justification }}</p>
+
+                        @if ($association->documented_at)
+                            <p class="muted">Documentée le {{ $association->documented_at->format('d/m/Y') }}.</p>
+                        @endif
+
+                        @php $latest = $association->assessments->sortByDesc('assessed_at')->first(); @endphp
+                        @if ($latest)
+                            <p>
+                                Dernière appréciation ({{ $latest->statusLabel() }}) par
+                                <strong>{{ $latest->assessor->name }}</strong>
+                                le {{ $latest->assessed_at->format('d/m/Y') }} :
+                                « {{ $latest->appreciation }} »
+                            </p>
+                        @endif
+
+                        <div class="actions">
+                            @if ($canManage && $association->status === 'mobilized')
+                            <form method="POST" action="{{ route('workspace.internships.projects.activities.competencies.document', [$workspace, $internship, $project, $activity, $association]) }}" class="inline">
+                                @csrf
+                                <button type="submit" class="small">Marquer documentée</button>
+                            </form>
+                            @endif
+                            @if ($canManage && $association->status !== 'evaluated')
+                            <form method="POST" action="{{ route('workspace.internships.projects.activities.competencies.destroy', [$workspace, $internship, $project, $activity, $association]) }}" class="inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="danger small">Retirer</button>
+                            </form>
+                            @endif
+                            @if ($canAssess)
+                            <form method="POST" action="{{ route('workspace.internships.projects.activities.competencies.assess', [$workspace, $internship, $project, $activity, $association]) }}" class="inline">
+                                @csrf
+                                <select name="status" aria-label="Statut de l'appréciation">
+                                    <option value="pending">En attente</option>
+                                    <option value="validated">Validée</option>
+                                    <option value="rejected">Rejetée</option>
+                                </select>
+                                <input type="text" name="appreciation" required minlength="5" maxlength="5000" placeholder="Votre appréciation (nominative)">
+                                <button type="submit" class="small">Évaluer</button>
+                            </form>
+                            @endif
+                        </div>
+                    </li>
+                @endforeach
+            </ul>
+        @endif
+        <p>
+            <a class="button secondary small" href="{{ route('workspace.internships.competencies', [$workspace, $internship]) }}">Matrice des compétences du stage</a>
+        </p>
+    </div>
+
     <div class="actions">
         @if ($canManage)
             <a class="button secondary" href="{{ route('workspace.internships.projects.activities.edit', [$workspace, $internship, $project, $activity]) }}">Modifier</a>

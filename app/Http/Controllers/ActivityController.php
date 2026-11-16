@@ -6,6 +6,7 @@ use App\Domain\Audit\AuditLogger;
 use App\Domain\Authorization\EffectivePermissions;
 use App\Domain\Collaboration\Models\Comment;
 use App\Domain\Evidence\Models\Evidence;
+use App\Domain\Framework\Models\Competency;
 use App\Domain\Identity\Models\Workspace;
 use App\Domain\Internship\Models\Internship;
 use App\Domain\Project\Models\Activity;
@@ -123,6 +124,19 @@ class ActivityController extends Controller
             ->orderByDesc('created_at')
             ->get();
 
+        // Compétences associées (T-060) et catalogue de la version du
+        // référentiel rattachée au stage.
+        $competencies = $activity->activityCompetencies()
+            ->with(['competency', 'assessments.assessor'])
+            ->get()
+            ->sortBy(fn ($association): string => $association->competency->code)
+            ->values();
+
+        $availableCompetencies = Competency::query()
+            ->where('framework_version_id', $internship->framework_version_id)
+            ->orderBy('code')
+            ->get();
+
         // Candidats réviseurs : participants supervisor/tutor actifs.
         $reviewers = $internship->participants()
             ->with('user')
@@ -132,6 +146,7 @@ class ActivityController extends Controller
 
         $canComment = $permissions['comment'];
         $canManage = $permissions['create_activity'];
+        $canAssess = $permissions['assess'];
 
         return view('activities.show', [
             'workspace' => $workspace,
@@ -143,8 +158,11 @@ class ActivityController extends Controller
             'comments' => $comments,
             'reviews' => $reviews,
             'reviewers' => $reviewers,
+            'competencies' => $competencies,
+            'availableCompetencies' => $availableCompetencies,
             'canComment' => $canComment,
             'canManage' => $canManage,
+            'canAssess' => $canAssess,
             'canReview' => $permissions['review'],
             'commentVisibilities' => $workspace->roleFor($user) === 'viewer'
                 ? ['shared' => Comment::VISIBILITY_LABELS['shared']]
