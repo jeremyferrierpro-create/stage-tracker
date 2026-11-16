@@ -119,6 +119,10 @@
                                    @if ($currentRoute === 'workspace.members.index') aria-current="page" @endif>
                                     Membres et invitations
                                 </a>
+                                <a href="{{ route('workspace.report-templates.index', $workspace) }}"
+                                   @if (str_starts_with((string) $currentRoute, 'workspace.report-templates')) aria-current="page" @endif>
+                                    Modèles de rapports
+                                </a>
                             @endcan
 
                             @can('viewAudit', $workspace)

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-16T08-12-34-534Z-04569e",
+  "type": "implementation-change",
+  "status": "PASS",
+  "gate": null,
+  "phase": null,
+  "summary": "Phase 5 T-062 a T-064 : modeles de rapports versionnes (schema_json valide, versions publiees immuables, CRUD admin), generation asynchrone (GenerateReport, statuts queued/generated/failed, INV-14 filtrage serveur + exclusions listees + audit MT-11), exports PDF (dompdf 3.1) et DOCX (PhpWord 1.1, compatibilite PHP 8.5 verifiee) avec stockage prive et telechargement audite ; 189 tests PASS / 763 assertions, pint PASS",
+  "note": "Phase 5 T-062 a T-064 : modeles de rapports versionnes (schema_json valide, versions publiees immuables, CRUD admin), generation asynchrone (GenerateReport, statuts queued/generated/failed, INV-14 filtrage serveur + exclusions listees + audit MT-11), exports PDF (dompdf 3.1) et DOCX (PhpWord 1.1, compatibilite PHP 8.5 verifiee) avec stockage prive et telechargement audite ; 189 tests PASS / 763 assertions, pint PASS",
+  "createdBy": "aidf",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-16T08:12:34.534Z",
+  "checks": [
+    {
+      "id": "files-captured",
+      "status": "PASS",
+      "reason": "22 file(s) from git"
+    }
+  ],
+  "commands": [],
+  "files": [
+    "app/Domain/Internship/Models/Internship.php",
+    "composer.json",
+    "composer.lock",
+    "resources/views/internships/show.blade.php",
+    "resources/views/layouts/app.blade.php",
+    "routes/web.php",
+    "app/Domain/Reporting/Models/Report.php",
+    "app/Domain/Reporting/Models/ReportTemplate.php",
+    "app/Domain/Reporting/Models/ReportTemplateVersion.php",
+    "app/Http/Controllers/ReportController.php",
+    "app/Http/Controllers/ReportTemplateController.php",
+    "app/Jobs/GenerateReport.php",
+    "database/migrations/2026_11_16_110000_create_report_templates_table.php",
+    "database/migrations/2026_11_16_110100_create_report_template_versions_table.php",
+    "database/migrations/2026_11_16_110200_create_reports_table.php",
+    "resources/views/internships/reports.blade.php",
+    "resources/views/report-templates/create.blade.php",
+    "resources/views/report-templates/edit.blade.php",
+    "resources/views/report-templates/index.blade.php",
+    "resources/views/report-templates/show.blade.php",
+    "tests/Feature/Reporting/ReportExportTest.php",
+    "tests/Feature/Reporting/ReportTest.php"
+  ],
+  "limitations": [
+    "File list is not a review of the content or quality of the change."
+  ],
+  "previous": "80d93e8a713f5b19f14395a1c0980da5e2a6da07cbec767d199f4a188abcf3ba",
+  "hash": "1aa279c8b1e1271996794369c7657687e3ea71839c0fa5ca70fd14e430a341b6"
+}

@@ -17,6 +17,8 @@ use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ReportTemplateController;
 use App\Http\Controllers\RepositoryController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SupervisorController;
@@ -243,6 +245,46 @@ Route::middleware('auth')->group(function (): void {
             Route::delete('/internships/{internship}/projects/{project}/activities/{activity}/competencies/{competency}', [ActivityCompetencyController::class, 'destroy'])
                 ->whereUuid('internship')->whereUuid('project')->whereUuid('activity')->whereUuid('competency')
                 ->name('workspace.internships.projects.activities.competencies.destroy');
+
+            // Modèles de rapports (T-062, gestion admin).
+            Route::get('/report-templates', [ReportTemplateController::class, 'index'])
+                ->name('workspace.report-templates.index');
+            Route::get('/report-templates/create', [ReportTemplateController::class, 'create'])
+                ->name('workspace.report-templates.create');
+            Route::post('/report-templates', [ReportTemplateController::class, 'store'])
+                ->name('workspace.report-templates.store');
+            Route::get('/report-templates/{template}', [ReportTemplateController::class, 'show'])
+                ->whereUuid('template')
+                ->name('workspace.report-templates.show');
+            Route::get('/report-templates/{template}/edit', [ReportTemplateController::class, 'edit'])
+                ->whereUuid('template')
+                ->name('workspace.report-templates.edit');
+            Route::put('/report-templates/{template}', [ReportTemplateController::class, 'update'])
+                ->whereUuid('template')
+                ->name('workspace.report-templates.update');
+            Route::delete('/report-templates/{template}', [ReportTemplateController::class, 'destroy'])
+                ->whereUuid('template')
+                ->name('workspace.report-templates.destroy');
+            Route::post('/report-templates/{template}/versions', [ReportTemplateController::class, 'storeVersion'])
+                ->whereUuid('template')
+                ->name('workspace.report-templates.versions.store');
+            Route::post('/report-templates/{template}/versions/{version}/publish', [ReportTemplateController::class, 'publishVersion'])
+                ->whereUuid('template')->whereUuid('version')
+                ->name('workspace.report-templates.versions.publish');
+
+            // Rapports de stage (T-063).
+            Route::get('/internships/{internship}/reports', [ReportController::class, 'index'])
+                ->whereUuid('internship')
+                ->name('workspace.internships.reports.index');
+            Route::post('/internships/{internship}/reports', [ReportController::class, 'store'])
+                ->whereUuid('internship')
+                ->name('workspace.internships.reports.store');
+            Route::get('/internships/{internship}/reports/{report}/download', [ReportController::class, 'download'])
+                ->whereUuid('internship')->whereUuid('report')
+                ->name('workspace.internships.reports.download');
+            Route::get('/internships/{internship}/reports/{report}/export/{format}', [ReportController::class, 'export'])
+                ->whereUuid('internship')->whereUuid('report')->whereIn('format', ['pdf', 'docx'])
+                ->name('workspace.internships.reports.export');
 
             // ActivitÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©s (T-025).
             Route::get('/internships/{internship}/projects/{project}/activities', [ActivityController::class, 'index'])

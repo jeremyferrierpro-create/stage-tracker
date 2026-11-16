@@ -7,6 +7,7 @@ use App\Domain\Identity\Models\User;
 use App\Domain\Journal\Models\DailyLog;
 use App\Domain\Organization\Models\Organization;
 use App\Domain\Project\Models\Project;
+use App\Domain\Reporting\Models\Report;
 use App\Domain\Training\Models\TrainingProgram;
 use App\Models\Concerns\BelongsToWorkspace;
 use Database\Factories\InternshipFactory;
@@ -119,6 +120,16 @@ class Internship extends Model
     public function dailyLogs(): HasMany
     {
         return $this->hasMany(DailyLog::class);
+    }
+
+    /**
+     * Rapports générés pour ce stage (T-063).
+     *
+     * @return HasMany<Report, $this>
+     */
+    public function reports(): HasMany
+    {
+        return $this->hasMany(Report::class);
     }
 
     public function statusLabel(): string
