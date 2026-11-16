@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Domain\Audit\AuditLogger;
+use App\Domain\Authorization\EffectivePermissions;
 use App\Domain\Git\Models\ActivityCommit;
 use App\Domain\Git\Models\Repository;
 use App\Domain\Git\Services\CommitImportService;
@@ -101,6 +102,12 @@ class RepositoryController extends Controller
         $repositoryModel = $projectModel->repositories()->findOrFail($repository);
 
         $this->authorize('view', $workspace);
+
+        // T-052 : portée « stage attribué » pour supervisor/tutor/viewer.
+        abort_unless(
+            EffectivePermissions::resolveForInternship(auth()->user(), $workspace, $internshipModel)['view_activities'],
+            403,
+        );
 
         $commits = $repositoryModel->commits()
             ->with(['files', 'activities'])

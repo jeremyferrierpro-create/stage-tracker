@@ -2,6 +2,8 @@
 
 namespace App\Domain\Project\Models;
 
+use App\Domain\Collaboration\Models\Comment;
+use App\Domain\Collaboration\Models\Review;
 use App\Domain\Evidence\Models\Evidence;
 use App\Models\Concerns\BelongsToWorkspace;
 use Database\Factories\ActivityFactory;
@@ -129,5 +131,25 @@ class Activity extends Model
             'activity_id',
             'evidence_id',
         )->withPivot(['note', 'workspace_id'])->withTimestamps();
+    }
+
+    /**
+     * Commentaires (T-050) — création/suppression seulement (INV-12).
+     *
+     * @return HasMany<Comment, $this>
+     */
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    /**
+     * Revues (T-051).
+     *
+     * @return HasMany<Review, $this>
+     */
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
     }
 }

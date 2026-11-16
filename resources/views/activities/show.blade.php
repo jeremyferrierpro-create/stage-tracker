@@ -43,6 +43,7 @@
     <div class="card">
         <h2>Tâches (Kanban)</h2>
 
+        @if ($canManage)
         <form method="POST" action="{{ route('workspace.tasks.store', [$workspace, $internship, $project, $activity]) }}" class="actions" style="margin-bottom: 1rem;">
             @csrf
             <div>
@@ -69,6 +70,7 @@
                 <button type="submit" class="small">Ajouter</button>
             </div>
         </form>
+        @endif
 
         @if ($tasks->isEmpty())
             <p class="muted">Aucune tâche.</p>
@@ -80,7 +82,7 @@
                         <th>Statut</th>
                         <th>Priorité</th>
                         <th>Échéance</th>
-                        <th></th>
+                        @if ($canManage) <th></th> @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -88,6 +90,7 @@
                         <tr>
                             <td>{{ $task->title }}</td>
                             <td>
+                                @if ($canManage)
                                 <form method="POST" action="{{ route('workspace.tasks.update', [$workspace, $internship, $project, $activity, $task]) }}" class="inline">
                                     @csrf
                                     @method('PUT')
@@ -99,9 +102,13 @@
                                         @endforeach
                                     </select>
                                 </form>
+                                @else
+                                    {{ $task->statusLabel() }}
+                                @endif
                             </td>
                             <td>{{ $task->priorityLabel() }}</td>
                             <td>{{ $task->due_date?->format('d/m/Y') ?? '—' }}</td>
+                            @if ($canManage)
                             <td>
                                 <form method="POST" action="{{ route('workspace.tasks.destroy', [$workspace, $internship, $project, $activity, $task]) }}" class="inline">
                                     @csrf
@@ -109,6 +116,7 @@
                                     <button type="submit" class="danger small">Supprimer</button>
                                 </form>
                             </td>
+                            @endif
                         </tr>
                     @endforeach
                 </tbody>
@@ -118,11 +126,11 @@
 
     <div class="card">
         <h2>Preuves liées</h2>
-        @if ($activity->evidences->isEmpty())
+        @if ($evidences->isEmpty())
             <p class="muted">Aucune preuve liée à cette activité.</p>
         @else
             <ul>
-                @foreach ($activity->evidences as $evidence)
+                @foreach ($evidences as $evidence)
                     <li>
                         <a href="{{ route('workspace.evidences.show', [$workspace, $evidence]) }}">{{ $evidence->title }}</a>
                         <span class="badge">{{ $evidence->typeLabel() }}</span>
@@ -136,11 +144,120 @@
         </p>
     </div>
 
+    <div class="card">
+        <h2>Commentaires</h2>
+
+        @if ($canComment)
+        <form method="POST" action="{{ route('workspace.internships.projects.activities.comments.store', [$workspace, $internship, $project, $activity]) }}" style="margin-bottom: 1rem;">
+            @csrf
+            <label for="comment-content">Votre commentaire</label>
+            <textarea id="comment-content" name="content" rows="3" required maxlength="5000" placeholder="Votre commentaire (échappé automatiquement)"></textarea>
+            <label for="comment-visibility">Visibilité</label>
+            <select id="comment-visibility" name="visibility">
+                @foreach ($commentVisibilities as $value => $label)
+                    <option value="{{ $value }}">{{ $label }}</option>
+                @endforeach
+            </select>
+            <div class="actions">
+                <button type="submit" class="small">Commenter</button>
+            </div>
+        </form>
+        @endif
+
+        @if ($comments->isEmpty())
+            <p class="muted">Aucun commentaire.</p>
+        @else
+            <ul class="comment-list">
+                @foreach ($comments as $comment)
+                    <li>
+                        <strong>{{ $comment->author->name }}</strong>
+                        <span class="muted">{{ $comment->created_at->format('d/m/Y H:i') }}</span>
+                        <span class="badge">{{ $comment->visibility }}</span>
+                        <p>{{ $comment->content }}</p>
+                        @if ($comment->author_id === auth()->id() || $canManage)
+                            <form method="POST" action="{{ route('workspace.internships.projects.activities.comments.destroy', [$workspace, $internship, $project, $activity, $comment]) }}" class="inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="danger small">Supprimer</button>
+                            </form>
+                        @endif
+                    </li>
+                @endforeach
+            </ul>
+        @endif
+    </div>
+
+    <div class="card">
+        <h2>Revues</h2>
+
+        @if ($canManage && $reviewers->isNotEmpty())
+        <form method="POST" action="{{ route('workspace.internships.projects.activities.reviews.store', [$workspace, $internship, $project, $activity]) }}" style="margin-bottom: 1rem;">
+            @csrf
+            <label for="review-reviewer">Demander une revue à</label>
+            <select id="review-reviewer" name="reviewer_id" required>
+                <option value="">— réviseur —</option>
+                @foreach ($reviewers as $participant)
+                    <option value="{{ $participant->user_id }}">{{ $participant->user->name }} ({{ \App\Domain\Internship\Models\InternshipParticipant::ROLE_LABELS[$participant->role] }})</option>
+                @endforeach
+            </select>
+            <div class="actions">
+                <button type="submit" class="small">Demander la revue</button>
+            </div>
+        </form>
+        @endif
+
+        @if ($reviews->isEmpty())
+            <p class="muted">Aucune revue demandée.</p>
+        @else
+            <table>
+                <thead>
+                    <tr>
+                        <th>Réviseur</th>
+                        <th>Statut</th>
+                        <th>Feedback</th>
+                        <th>Demandée le</th>
+                        @if ($canReview) <th></th> @endif
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($reviews as $review)
+                        <tr>
+                            <td>{{ $review->reviewer->name }}</td>
+                            <td><span class="badge">{{ $review->statusLabel() }}</span></td>
+                            <td>{{ $review->feedback ?? '—' }}</td>
+                            <td>{{ $review->created_at->format('d/m/Y H:i') }}</td>
+                            @if ($canReview && $review->reviewer_id === auth()->id())
+                            <td>
+                                <form method="POST" action="{{ route('workspace.internships.projects.activities.reviews.feedback', [$workspace, $internship, $project, $activity, $review]) }}" class="inline">
+                                    @csrf
+                                    <select name="status">
+                                        <option value="in_progress">En cours</option>
+                                        <option value="approved">Approuvée</option>
+                                        <option value="changes_requested">Modifications demandées</option>
+                                    </select>
+                                    <input type="text" name="feedback" maxlength="5000" placeholder="Feedback (optionnel)">
+                                    <button type="submit" class="small">Enregistrer</button>
+                                </form>
+                            </td>
+                            @else
+                            <td></td>
+                            @endif
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endif
+    </div>
+
     <div class="actions">
-        <a class="button secondary" href="{{ route('workspace.internships.projects.activities.edit', [$workspace, $internship, $project, $activity]) }}">Modifier</a>
+        @if ($canManage)
+            <a class="button secondary" href="{{ route('workspace.internships.projects.activities.edit', [$workspace, $internship, $project, $activity]) }}">Modifier</a>
+        @endif
+        @if ($canManage)
         <form method="POST" action="{{ route('workspace.internships.projects.activities.archive', [$workspace, $internship, $project, $activity]) }}" class="inline">
             @csrf
             <button type="submit" class="danger small">Archiver</button>
         </form>
+        @endif
     </div>
 @endsection

@@ -58,14 +58,25 @@
                         <tr>
                             <td>{{ $participant->user->name }}</td>
                             <td>{{ $participant->roleLabel() }}</td>
-                            <td>{{ $participant->status }}</td>
+                            <td>
+                                <span class="badge">{{ $participant->status === 'active' ? 'actif' : 'révoqué' }}</span>
+                            </td>
                             <td>
                                 @can('manageInternships', $workspace)
-                                    <form method="POST" action="{{ route('workspace.internships.participants.destroy', [$workspace, $internship, $participant]) }}" class="inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="danger small">Retirer</button>
-                                    </form>
+                                    @if ($participant->status === 'active')
+                                        @if ($participant->role !== 'trainee')
+                                            <form method="POST" action="{{ route('workspace.internships.participants.destroy', [$workspace, $internship, $participant]) }}" class="inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="danger small">Révoquer</button>
+                                            </form>
+                                        @endif
+                                    @else
+                                        <form method="POST" action="{{ route('workspace.internships.participants.reactivate', [$workspace, $internship, $participant]) }}" class="inline">
+                                            @csrf
+                                            <button type="submit" class="small">Réactiver</button>
+                                        </form>
+                                    @endif
                                 @endcan
                             </td>
                         </tr>

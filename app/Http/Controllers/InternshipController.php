@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Domain\Audit\AuditLogger;
+use App\Domain\Authorization\EffectivePermissions;
 use App\Domain\Framework\Models\CompetencyFramework;
 use App\Domain\Framework\Models\FrameworkVersion;
 use App\Domain\Identity\Models\User;
@@ -19,14 +20,24 @@ class InternshipController extends Controller
 
     public function index(Workspace $workspace): View
     {
+        $user = auth()->user();
         $this->authorize('view', $workspace);
+
+        $query = $workspace->internships()
+            ->with(['trainee', 'hostOrganization', 'frameworkVersion'])
+            ->orderByDesc('start_date');
+
+        // Portée « stage attribué » (T-052) : supervisor/tutor/viewer ne
+        // voient que les stages où ils sont rattachés actifs.
+        if (in_array($workspace->roleFor($user), ['supervisor', 'tutor', 'viewer'], true)) {
+            $query->whereHas('participants', function ($q) use ($user): void {
+                $q->where('user_id', $user->id)->where('status', 'active');
+            });
+        }
 
         return view('internships.index', [
             'workspace' => $workspace,
-            'internships' => $workspace->internships()
-                ->with(['trainee', 'hostOrganization', 'frameworkVersion'])
-                ->orderByDesc('start_date')
-                ->get(),
+            'internships' => $query->get(),
         ]);
     }
 
@@ -96,6 +107,11 @@ class InternshipController extends Controller
         $this->authorize('view', $workspace);
 
         $internship = $this->resolve($workspace, $internship);
+
+        abort_unless(
+            EffectivePermissions::resolveForInternship(auth()->user(), $workspace, $internship)['view_internship'],
+            403,
+        );
 
         return view('internships.show', [
             'workspace' => $workspace,
@@ -220,11 +236,57 @@ class InternshipController extends Controller
         $this->authorizeManage($workspace, $internship);
 
         $participantModel = $internship->participants()->findOrFail($participant);
-        $participantModel->delete();
+
+        // T-053 : révocation sans cascade destructive — le participant
+        // perd l'accès immédiatement mais son historique est conservé.
+        if ($participantModel->role === 'trainee') {
+            return redirect()
+                ->back()
+                ->withErrors(['participant' => 'Le stagiaire du stage ne peut pas être révoqué (transfert non pris en charge).']);
+        }
+
+        $participantModel->forceFill(['status' => 'removed'])->save();
+
+        $this->audit->record(
+            'internship.participant.revoked',
+            $workspace,
+            $participantModel,
+            [
+                'role' => $participantModel->role,
+                'status' => 'removed',
+            ],
+            auth()->user(),
+        );
 
         return redirect()
             ->route('workspace.internships.show', [$workspace, $internship])
-            ->with('status', 'Participant retiré.');
+            ->with('status', 'Participant révoqué (historique conservé).');
+    }
+
+    public function reactivateParticipant(Workspace $workspace, string $internship, string $participant): RedirectResponse
+    {
+        $internship = $this->resolve($workspace, $internship);
+
+        $this->authorizeManage($workspace, $internship);
+
+        $participantModel = $internship->participants()->findOrFail($participant);
+
+        $participantModel->forceFill(['status' => 'active'])->save();
+
+        $this->audit->record(
+            'internship.participant.reactivated',
+            $workspace,
+            $participantModel,
+            [
+                'role' => $participantModel->role,
+                'status' => 'active',
+            ],
+            auth()->user(),
+        );
+
+        return redirect()
+            ->route('workspace.internships.show', [$workspace, $internship])
+            ->with('status', 'Participant réactivé.');
     }
 
     private function resolve(Workspace $workspace, string $internship): Internship

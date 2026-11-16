@@ -15,7 +15,68 @@ versionnement [SemVer](https://semver.org/lang/fr/).
 ## [Unreleased]
 
 ### À venir
-- Rapports et exports (T-062 → T-064), audit accessibilité (T-066).
+- Rapports et exports (T-062 → T-064), audit accessibilité (T-066), guide tuteur (T-060, T-061).
+
+## [1.4.0] — 2026-11-16 — Phase 4 : collaboration, permissions effectives et vue maître de stage (T-050 → T-054)
+
+### Ajouté
+- **T-050** : commentaires d'activité (`comments`, FK composites
+  anti-fuite inter-espaces) — création/suppression seulement, **immuables**
+  (INV-12 : contenu, auteur et date non modifiables), visibilité
+  `private` (auteur seul) / `stage` / `shared`, échappement automatique
+  (aucun HTML interprété), tracés dans l'audit.
+- **T-051** : revues d'activité (`reviews`, `TRANSITIONS` contrôlées :
+  `requested → in_progress → approved|changes_requested`, état final
+  approuvée) — demande réservée aux gestionnaires de l'activité
+  (`create_activity`), réviseur choisi parmi les participants
+  supervisor/tutor actifs, **feedback réservé au réviseur désigné** ;
+  notifications = journal d'audit uniquement.
+- **T-052** : service `EffectivePermissions`
+  (`app/Domain/Authorization/EffectivePermissions.php`) — droits effectifs
+  = intersection (rôle espace ∩ rôle stage ∩ visibilité) ; owner/admin non
+  plafonnés par un rôle de participant ; supervisor/tutor/viewer limités
+  aux stages où ils sont participants actifs ; les permissions JSON par
+  participant ne peuvent que **restreindre** (seule exception : `export`,
+  octroyable à supervisor/tutor 🔶) ; participant `removed` = accès zéro.
+  Appliqué aux vues stage/projet/activité/dépôt et à la liste des stages
+  (portée « stage attribué »).
+- **T-053** : révocation de participant = passage à
+  `internship_participants.status='removed'` (INV-13 : historique conservé,
+  **aucune suppression en cascade** — l'ancienne suppression en dur est
+  remplacée), réactivation possible, actions tracées
+  (`internship.participant.revoked|reactivated`) ; le stagiaire du stage
+  ne peut pas être révoqué (transfert non pris en charge).
+- **T-054** : vue dédiée `Mes suivis` (`/w/{workspace}/supervisor`) pour
+  supervisor/tutor — stages rattachés actifs, revues à traiter, activités
+  récentes, preuves `stage|shared` seulement (les preuves privées sont
+  exclues **en amont**, jamais de fuite de titre), journal sans
+  `private_notes` ; lien sidebar conditionnel ; parcours Playwright avec
+  capture d'écran (`e2e/supervisor-view.spec.ts`,
+  `docs/screenshots/supervisor-dashboard.png`).
+- Vues : cartes Commentaires + Revues sur la fiche activité, statut
+  actif/révoqué + boutons Révoquer/Réactiver sur la fiche stage, formulaire
+  tâches caché aux non-gestionnaires.
+- Jeu de démo : 1 entrée de journal (avec notes privées) et preuve privée
+  rattachée à l'activité démo (démontre les garanties §8/§14 du README).
+- Tests : 45 nouveaux (`tests/Feature/Collaboration/`) — MT-09 (immuabilité
+  + XSS échappé), MT-03 complet (matrice paramétrée, 19 combinaisons +
+  restrictions JSON + révocation), MT-10 (révocation, réactivation,
+  désactivation de compte), T-054 (périmètre + absence de données privées).
+
+### Modifié
+- `DELETE .../participants/{participant}` : révocation (statut `removed`)
+  au lieu de la suppression en dur ; nouvelle route
+  `POST .../participants/{participant}/reactivate`.
+- Les privés ne sont plus visibles des gestionnaires : les commentaires
+  `private` ne sont visibles que de leur auteur (cohérent avec la matrice
+  preuves), les preuves privées uniquement de leur propriétaire.
+
+### Notes
+- Décision (matrice) : owner/admin ne sont pas plafonnés par un rôle de
+  participant — documentée ici, matrice §3-§5 de `roles-permissions.md`
+  reste la référence.
+- 158 tests PHPUnit PASS / 646 assertions ; pint PASS ; Playwright 6/6
+  PASS.
 
 ## [1.3.0] — 2026-11-15 — Phase 3 : campagne de tests et Playwright (T-046)
 

@@ -3,6 +3,7 @@
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DailyLogController;
 use App\Http\Controllers\EvidenceController;
 use App\Http\Controllers\FrameworkBlockController;
@@ -16,6 +17,8 @@ use App\Http\Controllers\MemberController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RepositoryController;
+use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\SupervisorController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TrainingEnrollmentController;
 use App\Http\Controllers\TrainingProgramController;
@@ -152,6 +155,10 @@ Route::middleware('auth')->group(function (): void {
                 ->whereUuid('internship')
                 ->whereNumber('participant')
                 ->name('workspace.internships.participants.destroy');
+            Route::post('/internships/{internship}/participants/{participant}/reactivate', [InternshipController::class, 'reactivateParticipant'])
+                ->whereUuid('internship')
+                ->whereNumber('participant')
+                ->name('workspace.internships.participants.reactivate');
 
             // Projets (T-024).
             Route::get('/internships/{internship}/projects', [ProjectController::class, 'index'])
@@ -198,6 +205,26 @@ Route::middleware('auth')->group(function (): void {
             Route::delete('/internships/{internship}/projects/{project}/repositories/{repository}', [RepositoryController::class, 'destroy'])
                 ->whereUuid('internship')->whereUuid('project')->whereUuid('repository')
                 ->name('workspace.internships.projects.repositories.destroy');
+
+            // Commentaires d'activité (T-050).
+            Route::post('/internships/{internship}/projects/{project}/activities/{activity}/comments', [CommentController::class, 'store'])
+                ->whereUuid('internship')->whereUuid('project')->whereUuid('activity')
+                ->name('workspace.internships.projects.activities.comments.store');
+            Route::delete('/internships/{internship}/projects/{project}/activities/{activity}/comments/{comment}', [CommentController::class, 'destroy'])
+                ->whereUuid('internship')->whereUuid('project')->whereUuid('activity')->whereUuid('comment')
+                ->name('workspace.internships.projects.activities.comments.destroy');
+
+            // Revues d'activité (T-051).
+            Route::post('/internships/{internship}/projects/{project}/activities/{activity}/reviews', [ReviewController::class, 'store'])
+                ->whereUuid('internship')->whereUuid('project')->whereUuid('activity')
+                ->name('workspace.internships.projects.activities.reviews.store');
+            Route::post('/internships/{internship}/projects/{project}/activities/{activity}/reviews/{review}/feedback', [ReviewController::class, 'feedback'])
+                ->whereUuid('internship')->whereUuid('project')->whereUuid('activity')->whereUuid('review')
+                ->name('workspace.internships.projects.activities.reviews.feedback');
+
+            // Vue dédiée maître de stage / tuteur (T-054).
+            Route::get('/supervisor', [SupervisorController::class, 'dashboard'])
+                ->name('workspace.supervisor.dashboard');
 
             // ActivitÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©s (T-025).
             Route::get('/internships/{internship}/projects/{project}/activities', [ActivityController::class, 'index'])

@@ -64,7 +64,7 @@ Preuve → Compétence → Évaluation → Synthèse.
 | Élément | État |
 |---|---|
 | Phase AIDF | IMPLEMENTATION en cours — Phase 1 (T-001 → T-012), Phase 2 (T-020 → T-030) et Phase 3 (T-040 → T-042) livrées |
-| Code applicatif | socle Laravel 13.40.0 + authentification + isolation + invitations + organisations + audit + squelette d'interface + formations (programmes, inscriptions) + référentiels versionnés et publication immuable + stages (stagiaires, participants, projets, activités) + tâches Kanban + journal quotidien (clôture) + tableau de bord consolidé + preuves et visibilité (stockage abstrait local) ; modules restants à venir |
+| Code applicatif | socle Laravel 13.40.0 + authentification + isolation + invitations + organisations + audit + squelette d'interface + formations (programmes, inscriptions) + référentiels versionnés et publication immuable + stages (stagiaires, participants, projets, activités) + tâches Kanban + journal quotidien (clôture) + tableau de bord consolidé + preuves et visibilité (stockage abstrait local) + connecteur GitHub + collaboration (commentaires immuables, revues d'activité) + permissions effectives et révocation de participants + vue dédiée maître de stage ; modules restants à venir |
 | Base de données | PostgreSQL 16.15 (conteneur Docker `stage-tracker-postgres`) |
 | Tests | `php artisan test` → 98 tests PASS (426 assertions) ; `pint --test` → PASS ; campagnes MT-01/MT-02/MT-03/MT-04/MT-05/MT-10 |
 | Sécurité | Argon2id, rate limiting 5/15 min (429), sessions en base, messages neutres, audit append-only (trigger PostgreSQL) |
@@ -335,16 +335,73 @@ Sections prévues :
 
 ## 8. Guide du maître de stage
 
-> `À VENIR — livré par T-050 → T-054` (les invitations d'espace de travail sont
+> **DISPONIBLE** — livré par T-050 → T-054 (les invitations d'espace de travail sont
 > déjà disponibles, voir §10.4).
 
-Sections prévues :
-- accepter une invitation ;
-- consulter uniquement les éléments partagés ;
-- commenter et demander une précision ;
-- limites d'accès (notes privées, preuves privées).
+### 8.1 Accepter une invitation et accéder à votre périmètre
 
-*Statut : `À VENIR`.*
+1. Vous recevez un lien d'invitation valable 7 jours (§10.4). En le suivant, vous
+   créez votre compte (ou vous connectez si le compte existe déjà) et rejoignez
+   l'espace avec le rôle **maître de stage** ou **tuteur**.
+2. L'administrateur (ou le stagiaire propriétaire) vous rattache ensuite à un stage
+   précis via la fiche du stage (*Participants*).
+3. Depuis la barre latérale, le lien **« Mes suivis »** (visible uniquement pour
+   maître de stage / tuteur) ouvre votre vue dédiée `Mes suivis` :
+   - les stages où vous êtes rattaché **actif** (et rien d'autre) ;
+   - les revues d'activité qui vous sont assignées ;
+   - les activités récentes du stage ;
+   - les preuves de visibilité `stage` ou `shared` (jamais les preuves privées) ;
+   - les dernières entrées du journal (travail réalisé, sans les notes personnelles).
+
+### 8.2 Commenter une activité
+
+Sur la fiche d'une activité (via *Stages* → projet → activité), la carte
+**Commentaires** permet de publier un message avec un niveau de visibilité :
+
+| Visibilité | Qui le voit |
+|---|---|
+| `partagé (shared)` | tous les membres de l'espace |
+| `stage` | les membres rattachés au stage |
+| `privé (private)` | vous seul (l'auteur) |
+
+Un commentaire est **immuable** : ni son contenu, ni son auteur, ni sa date ne
+peuvent être modifiés. Il peut être supprimé par son auteur ou par le gestionnaire
+du stage. Les commentaires sont échappés automatiquement (aucun HTML n'est
+interprété).
+
+### 8.3 Demander et traiter une revue
+
+- Le stagiaire (ou le gestionnaire du stage) **demande une revue** d'activité en
+  choisissant un réviseur parmi les maîtres de stage / tuteurs rattachés actifs.
+- Le **réviseur seul** peut enregistrer son feedback et faire évoluer le statut :
+  `demandée` → `en cours` → `approuvée` ou `modifications demandées`. Une revue
+  approuvée est un état final.
+- Les revues à traiter apparaissent sur votre vue **« Mes suivis »**.
+- Toutes les demandes et mises à jour sont tracées dans le journal d'audit.
+
+### 8.4 Ce que vous ne pouvez PAS faire (garanties)
+
+- Vous ne voyez **que les stages** où vous êtes rattaché actif : ni la liste
+  complète des stages, ni les activités, ni le journal d'un autre stage.
+- Les **preuves privées** du stagiaire ne sont jamais affichées (ni dans la liste,
+  ni via leur URL directe : accès refusé 403).
+- Les **notes personnelles** du journal du stagiaire ne sont jamais affichées.
+- Vous ne pouvez **ni créer d'activité, ni créer d'entrée de journal, ni déposer
+  de preuve** : ces actions restent au stagiaire et aux gestionnaires.
+- Vous ne pouvez pas supprimer le commentaire d'un autre utilisateur.
+
+### 8.5 Révocation et historique (administrateur)
+
+Le gestionnaire d'un stage peut **révoquer** un participant (maître de stage,
+tuteur ou observateur) depuis la fiche du stage : le participant perd l'accès
+immédiatement mais **son historique est conservé** (commentaires, revues passées,
+entrées d'audit). Aucune suppression en cascade. La révocation (comme la
+réactivation) est journalisée dans l'audit. Le stagiaire lui-même ne peut pas être
+révoqué dans cette version (transfert de stage non pris en charge, §17).
+
+![Vue dédiée maître de stage](docs/screenshots/supervisor-dashboard.png)
+
+*Statut : `DISPONIBLE`.*
 
 ---
 
@@ -660,15 +717,26 @@ Sections prévues :
 
 ## 14. Sécurité et confidentialité
 
-> `À VENIR — livré par T-041, T-052, T-070`.
+> **Partiel** — T-041 (stockage des preuves hors racine web) et T-052
+> (permissions effectives) livrés ; T-070 reste à venir.
+
+Sections livrées :
+- **trois niveaux de visibilité** des preuves (`private`, `stage`, `shared`) :
+  une preuve privée n'est visible que de son propriétaire, jamais par le maître de
+  stage (ni dans les listes, ni via son URL directe — 403) ;
+- **permissions effectives** (T-052) : pour chaque stage, vos droits réels sont
+  l'intersection de votre rôle dans l'espace, de votre rôle de participant au stage
+  et de vos restrictions individuelles éventuelles (les permissions par participant
+  ne peuvent que **restreindre**, jamais élargir, à l'exception de `export` qui
+  peut être accordé à un maître de stage / tuteur) ;
+- **révocation sans destruction** (T-053) : retirer un participant ne supprime
+  jamais son historique ;
+- **jetons GitHub** : chiffrés au repos, jamais exposés (§11).
 
 Sections prévues :
-- comprendre les trois niveaux de visibilité (`private`, `stage`, `shared`) ;
-- protéger ses notes personnelles ;
-- gérer les accès de son maître de stage ;
-- bonnes pratiques sur les jetons et les secrets.
+- bonnes pratiques sur les secrets (T-070).
 
-*Statut : `À VENIR`.*
+*Statut : `DISPONIBLE` (T-041, T-052, T-053) — T-070 à venir.*
 
 ---
 
@@ -797,13 +865,14 @@ Créer `.env.testing` à partir de `.env` avec `APP_ENV=testing` et
 | Limite | Statut |
 |---|---|
 | Modules métier suite | non implémentés — évaluations, rapports à venir (formations, référentiels, stages, projets, activités, tâches Kanban, journal quotidien et preuves livrés en T-020 → T-030 et T-040 → T-042) |
-| Navigation clavier complète + parcours Playwright (dont « Navigation clavier ») | `À VENIR` — audit d'accessibilité en T-066 ; les parcours critiques Playwright (T-046) sont toutefois livrés et PASS (§16.4) |
+| Navigation clavier complète + parcours Playwright (dont « Navigation clavier ») | `À VENIR` — audit d'accessibilité en T-066 ; les parcours critiques Playwright (T-046) sont toutefois livrés et PASS (§16.4) ; le parcours « vue maître de stage » (T-054) est livré (§8, capture incluse) |
 | Version Livewire | résolu — DEC-ST-014 accepté (Livewire 4.4.8 installé) ; l'interface reste en Blade pur à ce jour, aucun composant Livewire utilisé |
 | Envoi réel d'e-mails | non configuré — `MAIL_MAILER=log` (le lien d'invitation va dans le log) |
 | Suspension / changement de rôle des membres | livré par T-021 |
 | Conformité RGPD | **NOT_PROVEN** — analyse juridique requise |
 | Playwright sous Windows | vérifié le 2026-11-15 — 4 parcours PASS (Chromium headless shell 159, §16.4) ; l'audit accessibilité reste en T-066 |
 | Trames officielles de rapports | indisponibles — modèles configurables |
+| Transfert de stage (réaffectation du stagiaire) | non pris en charge — le stagiaire d'un stage ne peut pas être révoqué ; un nouveau stage est créé à la place (T-053) |
 | Version applicable du référentiel DWWM | à vérifier auprès de la source officielle |
 | Antivirus sur les uploads | non prévu en V1 (documenté) |
 | Chiffrement des sauvegardes | non prévu en V1 (documenté) |

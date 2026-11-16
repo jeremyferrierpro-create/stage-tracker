@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Domain\Audit\AuditLogger;
+use App\Domain\Authorization\EffectivePermissions;
+use App\Domain\Collaboration\Models\Comment;
+use App\Domain\Evidence\Models\Evidence;
 use App\Domain\Identity\Models\Workspace;
 use App\Domain\Internship\Models\Internship;
 use App\Domain\Project\Models\Activity;
@@ -94,13 +97,58 @@ class ActivityController extends Controller
         $project = $internship->projects()->findOrFail($project);
         $activity = $project->activities()->findOrFail($activity);
 
+        // T-052 : portée « stage attribué » pour supervisor/tutor/viewer.
+        $permissions = EffectivePermissions::resolveForInternship(auth()->user(), $workspace, $internship);
+        abort_unless($permissions['view_activities'], 403);
+
+        $user = auth()->user();
+
+        // Preuves liées : les privées ne sont visibles que de leur
+        // propriétaire (MT-07, pas de fuite de titre).
+        $evidences = $activity->evidences()
+            ->get()
+            ->filter(fn (Evidence $evidence): bool => $evidence->visibility !== 'private'
+                || $evidence->owner_id === $user->id);
+
+        // Commentaires : les privés ne sont visibles que de leur auteur.
+        $comments = $activity->comments()
+            ->with('author')
+            ->orderBy('created_at')
+            ->get()
+            ->filter(fn (Comment $comment): bool => $comment->visibility !== 'private'
+                || $comment->author_id === $user->id);
+
+        $reviews = $activity->reviews()
+            ->with('reviewer')
+            ->orderByDesc('created_at')
+            ->get();
+
+        // Candidats réviseurs : participants supervisor/tutor actifs.
+        $reviewers = $internship->participants()
+            ->with('user')
+            ->whereIn('role', ['supervisor', 'tutor'])
+            ->where('status', 'active')
+            ->get();
+
+        $canComment = $permissions['comment'];
+        $canManage = $permissions['create_activity'];
+
         return view('activities.show', [
             'workspace' => $workspace,
             'internship' => $internship,
             'project' => $project,
             'activity' => $activity,
             'tasks' => $activity->tasks()->orderBy('position')->get(),
-            'evidences' => $activity->evidences()->get(),
+            'evidences' => $evidences,
+            'comments' => $comments,
+            'reviews' => $reviews,
+            'reviewers' => $reviewers,
+            'canComment' => $canComment,
+            'canManage' => $canManage,
+            'canReview' => $permissions['review'],
+            'commentVisibilities' => $workspace->roleFor($user) === 'viewer'
+                ? ['shared' => Comment::VISIBILITY_LABELS['shared']]
+                : Comment::VISIBILITY_LABELS,
         ]);
     }
 

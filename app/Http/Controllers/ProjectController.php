@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Domain\Audit\AuditLogger;
+use App\Domain\Authorization\EffectivePermissions;
 use App\Domain\Identity\Models\Workspace;
 use App\Domain\Internship\Models\Internship;
 use App\Domain\Project\Models\Project;
@@ -79,6 +80,12 @@ class ProjectController extends Controller
         $this->authorize('view', $workspace);
 
         $internship = $workspace->internships()->findOrFail($internship);
+
+        // T-052 : portée « stage attribué » pour supervisor/tutor/viewer.
+        abort_unless(
+            EffectivePermissions::resolveForInternship(auth()->user(), $workspace, $internship)['view_internship'],
+            403,
+        );
         $project = $internship->projects()->findOrFail($project);
 
         return view('projects.show', [

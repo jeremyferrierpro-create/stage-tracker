@@ -14,6 +14,7 @@ use App\Domain\Git\Models\Commit;
 use App\Domain\Git\Models\Repository;
 use App\Domain\Identity\Models\User;
 use App\Domain\Identity\Models\Workspace;
+use App\Domain\Journal\Models\DailyLog;
 use App\Domain\Identity\Models\WorkspaceMember;
 use App\Domain\Internship\Models\Internship;
 use App\Domain\Internship\Models\InternshipParticipant;
@@ -216,6 +217,31 @@ class DemoSeeder extends Seeder
             'note' => 'Documente la maquette validée.',
         ]);
 
+        ActivityEvidence::create([
+            'activity_id' => $mockupActivity->id,
+            'evidence_id' => $privateEvidence->id,
+            'workspace_id' => $workspace->id,
+            'note' => null,
+        ]);
+
+        DailyLog::create([
+            'internship_id' => $internship->id,
+            'workspace_id' => $workspace->id,
+            'author_id' => $trainee->id,
+            'work_date' => now()->toDateString(),
+            'start_time' => '09:00',
+            'end_time' => '17:00',
+            'duration_minutes' => 480,
+            'objectives' => 'Avancer sur la maquette puis commencer l\'intégration.',
+            'work_done' => 'Finalisation de la maquette desktop et début de l\'intégration HTML/CSS responsive.',
+            'difficulties' => 'Choix des points de rupture responsive.',
+            'solutions' => 'Validation des breakpoints avec le maître de stage.',
+            'results' => 'Maquette validée, intégration démarrée.',
+            'remaining' => 'Terminer l\'intégration des sections.',
+            'private_notes' => 'Notes personnelles du stagiaire (journal privé).',
+            'status' => 'closed',
+        ]);
+
         $demoRepository = Repository::create([
             'project_id' => $project->id,
             'workspace_id' => $workspace->id,
@@ -259,7 +285,8 @@ class DemoSeeder extends Seeder
         $this->command?->line(
             'Jeu de démonstration créé : utilisateurs (mot de passe « '.self::DEMO_PASSWORD.' »),'
             .' espace « Espace Démo », formations, référentiel publié, stage, projet démo,'
-            .' deux preuves (une partagée, une privée) et dépôt Git démo avec 3 commits.'
+            .' deux preuves (une partagée, une privée), une entrée de journal'
+            .' et dépôt Git démo avec 3 commits.'
         );
     }
 

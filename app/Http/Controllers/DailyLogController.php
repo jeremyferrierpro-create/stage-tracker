@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Domain\Audit\AuditLogger;
+use App\Domain\Authorization\EffectivePermissions;
 use App\Domain\Identity\Models\Workspace;
 use App\Domain\Internship\Models\Internship;
 use App\Domain\Journal\Models\DailyLog;
@@ -103,6 +104,14 @@ class DailyLogController extends Controller
         $this->authorize('view', $workspace);
 
         $internship = $workspace->internships()->findOrFail($internship);
+
+        // T-052 : lecture du journal soumise aux permissions effectives
+        // (supervisor/tutor rattachés, sinon accès refusé).
+        abort_unless(
+            EffectivePermissions::resolveForInternship(auth()->user(), $workspace, $internship)['view_journal'],
+            403,
+        );
+
         $logModel = $internship->dailyLogs()->with(['author', 'activities.activity'])->findOrFail($log);
 
         return view('daily_logs.show', [

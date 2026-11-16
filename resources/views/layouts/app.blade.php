@@ -107,6 +107,13 @@
                                 Preuves
                             </a>
 
+                            @if (in_array($membership->role, ['supervisor', 'tutor'], true))
+                                <a href="{{ route('workspace.supervisor.dashboard', $workspace) }}"
+                                   @if ($currentRoute === 'workspace.supervisor.dashboard') aria-current="page" @endif>
+                                    Mes suivis
+                                </a>
+                            @endif
+
                             @can('manageMembers', $workspace)
                                 <a href="{{ route('workspace.members.index', $workspace) }}"
                                    @if ($currentRoute === 'workspace.members.index') aria-current="page" @endif>
