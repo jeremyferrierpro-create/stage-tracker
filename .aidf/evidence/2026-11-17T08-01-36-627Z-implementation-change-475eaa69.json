@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-17T08-01-36-627Z-c64052",
+  "type": "implementation-change",
+  "status": "PASS",
+  "gate": null,
+  "phase": null,
+  "summary": "Phase 5 T-065 : sauvegarde app:backup (base JSONL 43 tables + 75 fichiers disque prive, empreintes SHA-256 manifest.json) et restauration app:restore --dry-run (controle empreintes) / complete (TRUNCATE + insertion ordre topologique FK, sequences recadrees, fichiers restitues). MT-12 PASS : test Feature 3/3 (restauration identique, archive corrompue refusee sans ecriture, dry-run) + preuve reelle sur la base de demo (43 tables, 76 lignes, 75 fichiers restaures a l'identique). 192 tests PASS / 777 assertions, pint PASS",
+  "note": "Phase 5 T-065 : sauvegarde app:backup (base JSONL 43 tables + 75 fichiers disque prive, empreintes SHA-256 manifest.json) et restauration app:restore --dry-run (controle empreintes) / complete (TRUNCATE + insertion ordre topologique FK, sequences recadrees, fichiers restitues). MT-12 PASS : test Feature 3/3 (restauration identique, archive corrompue refusee sans ecriture, dry-run) + preuve reelle sur la base de demo (43 tables, 76 lignes, 75 fichiers restaures a l'identique). 192 tests PASS / 777 assertions, pint PASS",
+  "createdBy": "aidf",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-17T08:01:36.626Z",
+  "checks": [
+    {
+      "id": "files-captured",
+      "status": "PASS",
+      "reason": "4 file(s) from git"
+    }
+  ],
+  "commands": [],
+  "files": [
+    "app/Console/Commands/BackupCommand.php",
+    "app/Console/Commands/RestoreCommand.php",
+    "app/Support/Backup/BackupService.php",
+    "tests/Feature/Backup/BackupRestoreTest.php"
+  ],
+  "limitations": [
+    "File list is not a review of the content or quality of the change."
+  ],
+  "previous": "1aa279c8b1e1271996794369c7657687e3ea71839c0fa5ca70fd14e430a341b6",
+  "hash": "475eaa699023a7347d1f2bb3d765e46ab2b7adc7f5e53aba3066ec138b6ba348"
+}
