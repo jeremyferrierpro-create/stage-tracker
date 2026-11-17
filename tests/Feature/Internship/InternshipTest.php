@@ -2,12 +2,10 @@
 
 namespace Tests\Feature\Internship;
 
-use App\Domain\Framework\Models\FrameworkVersion;
 use App\Domain\Identity\Models\User;
 use App\Domain\Identity\Models\Workspace;
 use App\Domain\Identity\Models\WorkspaceMember;
 use App\Domain\Internship\Models\Internship;
-use App\Domain\Organization\Models\Organization;
 use App\Domain\Project\Models\Activity;
 use App\Domain\Project\Models\Project;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -39,15 +37,12 @@ class InternshipTest extends TestCase
             'user_id' => $trainee->id,
             'role' => 'trainee',
         ]);
-        $organization = Organization::factory()->create(['workspace_id' => $workspace->id]);
-        $version = FrameworkVersion::factory()->published()->create();
 
         $this->actingAs($owner)
             ->post(route('workspace.internships.store', $workspace), [
                 'title' => 'Stage Démo',
                 'trainee_id' => $trainee->id,
-                'host_organization_id' => $organization->id,
-                'framework_version_id' => $version->id,
+                'company_name' => 'Entreprise Test',
                 'start_date' => '2026-09-01',
                 'end_date' => '2027-01-31',
                 'status' => 'active',
@@ -65,15 +60,12 @@ class InternshipTest extends TestCase
     {
         $trainee = User::factory()->create();
         $workspace = $this->workspaceWithMember($trainee, 'trainee');
-        $organization = Organization::factory()->create(['workspace_id' => $workspace->id]);
-        $version = FrameworkVersion::factory()->published()->create();
 
         $this->actingAs($trainee)
             ->post(route('workspace.internships.store', $workspace), [
                 'title' => 'Interdit',
                 'trainee_id' => $trainee->id,
-                'host_organization_id' => $organization->id,
-                'framework_version_id' => $version->id,
+                'company_name' => 'Entreprise Test',
                 'start_date' => '2026-09-01',
                 'end_date' => '2027-01-31',
                 'status' => 'draft',
@@ -108,21 +100,16 @@ class InternshipTest extends TestCase
             'role' => 'trainee',
         ]);
 
-        $organization = Organization::factory()->create(['workspace_id' => $workspace->id]);
-        $version = FrameworkVersion::factory()->published()->create();
-
         $internshipA = Internship::factory()->create([
             'workspace_id' => $workspace->id,
             'trainee_id' => $trainee->id,
-            'host_organization_id' => $organization->id,
-            'framework_version_id' => $version->id,
+            'company_name' => 'Entreprise Test',
             'title' => 'Stage A',
         ]);
         $internshipB = Internship::factory()->create([
             'workspace_id' => $workspace->id,
             'trainee_id' => $trainee->id,
-            'host_organization_id' => $organization->id,
-            'framework_version_id' => $version->id,
+            'company_name' => 'Entreprise Test',
             'title' => 'Stage B',
         ]);
 

@@ -2,13 +2,11 @@
 
 namespace Tests\Feature\Phase2;
 
-use App\Domain\Framework\Models\FrameworkVersion;
 use App\Domain\Identity\Models\User;
 use App\Domain\Identity\Models\Workspace;
 use App\Domain\Identity\Models\WorkspaceMember;
 use App\Domain\Internship\Models\Internship;
 use App\Domain\Journal\Models\DailyLog;
-use App\Domain\Organization\Models\Organization;
 use App\Domain\Project\Models\Activity;
 use App\Domain\Project\Models\Project;
 use App\Domain\Project\Models\Task;
@@ -41,13 +39,10 @@ class Phase2CampaignTest extends TestCase
             'user_id' => $trainee->id,
             'role' => 'trainee',
         ]);
-        $organization = Organization::factory()->create(['workspace_id' => $workspace->id]);
-        $version = FrameworkVersion::factory()->published()->create();
         $internship = Internship::factory()->create([
             'workspace_id' => $workspace->id,
             'trainee_id' => $trainee->id,
-            'host_organization_id' => $organization->id,
-            'framework_version_id' => $version->id,
+            'company_name' => 'Entreprise Test',
         ]);
         $project = Project::factory()->create([
             'internship_id' => $internship->id,
@@ -98,13 +93,10 @@ class Phase2CampaignTest extends TestCase
             'user_id' => $trainee->id,
             'role' => 'trainee',
         ]);
-        $organization = Organization::factory()->create(['workspace_id' => $workspace->id]);
-        $version = FrameworkVersion::factory()->published()->create();
         $internship = Internship::factory()->create([
             'workspace_id' => $workspace->id,
             'trainee_id' => $trainee->id,
-            'host_organization_id' => $organization->id,
-            'framework_version_id' => $version->id,
+            'company_name' => 'Entreprise Test',
         ]);
 
         $log = DailyLog::factory()->create([
@@ -134,7 +126,7 @@ class Phase2CampaignTest extends TestCase
         $this->assertSame('2026-10-02', $log->work_date->format('Y-m-d'));
     }
 
-    public function test_internship_requires_a_published_framework_version(): void
+    public function test_internship_requires_a_company_name(): void
     {
         $owner = User::factory()->create();
         $workspace = $this->workspaceWithMember($owner);
@@ -144,24 +136,17 @@ class Phase2CampaignTest extends TestCase
             'user_id' => $trainee->id,
             'role' => 'trainee',
         ]);
-        $organization = Organization::factory()->create(['workspace_id' => $workspace->id]);
-        $draftVersion = FrameworkVersion::factory()->create([
-            'status' => 'draft',
-        ]);
 
-        // Une version brouillon est refusée : le stage doit être lié à une
-        // version publiée (T-023, acceptation).
+        // Un stage sans entreprise d'accueil est refusé (simplification 1.6.0).
         $this->actingAs($owner)
             ->post(route('workspace.internships.store', $workspace), [
                 'title' => 'Stage Test',
                 'trainee_id' => $trainee->id,
-                'host_organization_id' => $organization->id,
-                'framework_version_id' => $draftVersion->id,
                 'start_date' => '2026-09-01',
                 'end_date' => '2027-01-31',
                 'status' => 'draft',
             ])
-            ->assertSessionHasErrors('framework_version_id');
+            ->assertSessionHasErrors('company_name');
 
         $this->assertSame(0, Internship::count());
     }

@@ -6,10 +6,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Stage (T-023, MLD §6). Rattaché à un workspace, à un stagiaire, à une
- * organisation d'accueil et à une version de référentiel publiée.
- * FK composites : host_organization et training_program doivent appartenir
- * au même workspace (INV-11).
+ * Stage (T-023, MLD §6). Rattaché à un workspace et à un stagiaire.
+ * Simplification 1.6.0 (décision utilisateur) : l'entreprise d'accueil est
+ * un champ texte `company_name`, le programme de formation et la version de
+ * référentiel sont supprimés — les compétences sont définies directement
+ * au niveau du workspace.
  */
 return new class extends Migration
 {
@@ -19,9 +20,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('workspace_id')->constrained('workspaces')->cascadeOnDelete();
             $table->foreignId('trainee_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignUuid('host_organization_id');
-            $table->foreignUuid('training_program_id')->nullable();
-            $table->foreignUuid('framework_version_id')->constrained('framework_versions');
+            $table->string('company_name', 200);
             $table->string('title', 160);
             $table->date('start_date');
             $table->date('end_date');
@@ -30,14 +29,6 @@ return new class extends Migration
             $table->timestamps();
 
             $table->unique(['id', 'workspace_id']);
-
-            $table->foreign(['host_organization_id', 'workspace_id'])
-                ->references(['id', 'workspace_id'])
-                ->on('organizations');
-
-            $table->foreign(['training_program_id', 'workspace_id'])
-                ->references(['id', 'workspace_id'])
-                ->on('training_programs');
         });
 
         DB::statement(

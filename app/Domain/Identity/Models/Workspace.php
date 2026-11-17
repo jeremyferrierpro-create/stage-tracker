@@ -2,10 +2,9 @@
 
 namespace App\Domain\Identity\Models;
 
+use App\Domain\Evaluation\Models\Competency;
 use App\Domain\Evidence\Models\Evidence;
 use App\Domain\Internship\Models\Internship;
-use App\Domain\Organization\Models\Organization;
-use App\Domain\Training\Models\TrainingProgram;
 use Database\Factories\WorkspaceFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -83,19 +82,11 @@ class Workspace extends Model
     }
 
     /**
-     * @return HasMany<Organization, $this>
+     * @return HasMany<Competency, $this>
      */
-    public function organizations(): HasMany
+    public function competencies(): HasMany
     {
-        return $this->hasMany(Organization::class);
-    }
-
-    /**
-     * @return HasMany<TrainingProgram, $this>
-     */
-    public function trainingPrograms(): HasMany
-    {
-        return $this->hasMany(TrainingProgram::class);
+        return $this->hasMany(Competency::class);
     }
 
     /**

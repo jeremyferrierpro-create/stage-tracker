@@ -94,33 +94,11 @@
     </div>
 
     <div class="card">
-        <h2>Référentiels appliqués</h2>
-        @if ($referencedVersions->isEmpty())
-            <p class="muted">Aucun référentiel appliqué aux stages de cet espace pour le moment.</p>
-        @else
-            <ul>
-                @foreach ($referencedVersions as $version)
-                    <li>
-                        {{ $version->framework->name }} — {{ $version->version }}
-                        <span class="badge">{{ $version->statusLabel() }}</span>
-                    </li>
-                @endforeach
-            </ul>
-        @endif
-        @can('manage', \App\Domain\Framework\Models\CompetencyFramework::class)
-            <p>
-                <a class="button secondary small" href="{{ route('frameworks.index') }}">Gérer les référentiels</a>
-            </p>
-        @endcan
-    </div>
-
-    <div class="card">
         <h2>Raccourcis</h2>
         <div class="actions">
             <a class="button" href="{{ route('workspace.internships.index', $workspace) }}">Stages</a>
-            <a class="button" href="{{ route('workspace.training.index', $workspace) }}">Formations</a>
-            <a class="button secondary" href="{{ route('workspace.organizations.index', $workspace) }}">Organisations</a>
             @can('manageMembers', $workspace)
+                <a class="button secondary" href="{{ route('workspace.competencies.index', $workspace) }}">Compétences</a>
                 <a class="button secondary" href="{{ route('workspace.members.index', $workspace) }}">Membres et invitations</a>
             @endcan
             @can('viewAudit', $workspace)

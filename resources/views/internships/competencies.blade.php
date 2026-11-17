@@ -40,9 +40,6 @@
                             <td>
                                 <strong>{{ $row->competency->code }}</strong><br>
                                 {{ $row->competency->title }}
-                                @if ($row->competency->block)
-                                    <span class="muted">({{ $row->competency->block->title }})</span>
-                                @endif
                             </td>
                             <td><span class="badge">{{ $row->statusLabel() }}</span></td>
                             <td>

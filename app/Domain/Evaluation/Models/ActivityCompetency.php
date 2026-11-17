@@ -2,7 +2,6 @@
 
 namespace App\Domain\Evaluation\Models;
 
-use App\Domain\Framework\Models\Competency;
 use App\Domain\Project\Models\Activity;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;

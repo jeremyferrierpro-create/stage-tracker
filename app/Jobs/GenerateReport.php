@@ -31,7 +31,7 @@ class GenerateReport implements ShouldQueue
     public function handle(AuditLogger $audit): void
     {
         try {
-            $internship = $this->report->internship()->with(['trainee', 'hostOrganization'])->firstOrFail();
+            $internship = $this->report->internship()->with('trainee')->firstOrFail();
             $version = $this->report->templateVersion()->firstOrFail();
             $sections = $version->schema_json['sections'] ?? [];
 
@@ -117,7 +117,7 @@ class GenerateReport implements ShouldQueue
         return '<h2>Identité du stage</h2>'
             .'<ul>'
             .'<li>Stagiaire : '.e($internship->trainee->name).'</li>'
-            .'<li>Organisation : '.e((string) $internship->hostOrganization?->name).'</li>'
+            .'<li>Organisation d\'accueil : '.e($internship->company_name).'</li>'
             .'<li>Période : '.optional($internship->start_date)->format('d/m/Y').' → '
             .optional($internship->end_date)->format('d/m/Y').'</li>'
             .'<li>Objectifs : '.e((string) $internship->objectives).'</li>'

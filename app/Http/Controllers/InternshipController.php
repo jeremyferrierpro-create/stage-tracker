@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Domain\Audit\AuditLogger;
 use App\Domain\Authorization\EffectivePermissions;
-use App\Domain\Framework\Models\CompetencyFramework;
-use App\Domain\Framework\Models\FrameworkVersion;
 use App\Domain\Identity\Models\User;
 use App\Domain\Identity\Models\Workspace;
 use App\Domain\Internship\Models\Internship;
@@ -24,7 +22,7 @@ class InternshipController extends Controller
         $this->authorize('view', $workspace);
 
         $query = $workspace->internships()
-            ->with(['trainee', 'hostOrganization', 'frameworkVersion'])
+            ->with('trainee')
             ->orderByDesc('start_date');
 
         // Portée « stage attribué » (T-052) : supervisor/tutor/viewer ne
@@ -47,12 +45,6 @@ class InternshipController extends Controller
 
         return view('internships.create', [
             'workspace' => $workspace,
-            'organizations' => $workspace->organizations()->active()->orderBy('name')->get(),
-            'programs' => $workspace->trainingPrograms()->orderBy('name')->get(),
-            'versions' => CompetencyFramework::query()
-                ->with(['versions' => fn ($q) => $q->where('status', 'published')])
-                ->get()
-                ->flatMap->versions,
             'users' => $workspace->users()->wherePivot('status', 'active')->orderBy('name')->get(),
         ]);
     }
@@ -64,20 +56,7 @@ class InternshipController extends Controller
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:160'],
             'trainee_id' => ['required', 'exists:users,id'],
-            'host_organization_id' => ['required', 'uuid'],
-            'training_program_id' => ['nullable', 'uuid'],
-            'framework_version_id' => [
-                'required',
-                'uuid',
-                'exists:framework_versions,id',
-                function (string $attribute, mixed $value, \Closure $fail): void {
-                    $version = FrameworkVersion::query()->find($value);
-
-                    if ($version !== null && $version->status !== 'published') {
-                        $fail('Le stage doit être lié à une version de référentiel publiée.');
-                    }
-                },
-            ],
+            'company_name' => ['required', 'string', 'max:200'],
             'start_date' => ['required', 'date'],
             'end_date' => ['required', 'date', 'after_or_equal:start_date'],
             'objectives' => ['nullable', 'string', 'max:5000'],
@@ -115,7 +94,7 @@ class InternshipController extends Controller
 
         return view('internships.show', [
             'workspace' => $workspace,
-            'internship' => $internship->load(['trainee', 'hostOrganization', 'trainingProgram', 'frameworkVersion', 'participants.user', 'projects']),
+            'internship' => $internship->load(['trainee', 'participants.user', 'projects']),
         ]);
     }
 
@@ -128,12 +107,6 @@ class InternshipController extends Controller
         return view('internships.edit', [
             'workspace' => $workspace,
             'internship' => $internship,
-            'organizations' => $workspace->organizations()->active()->orderBy('name')->get(),
-            'programs' => $workspace->trainingPrograms()->orderBy('name')->get(),
-            'versions' => CompetencyFramework::query()
-                ->with(['versions' => fn ($q) => $q->where('status', 'published')])
-                ->get()
-                ->flatMap->versions,
         ]);
     }
 
@@ -145,20 +118,7 @@ class InternshipController extends Controller
 
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:160'],
-            'host_organization_id' => ['required', 'uuid'],
-            'training_program_id' => ['nullable', 'uuid'],
-            'framework_version_id' => [
-                'required',
-                'uuid',
-                'exists:framework_versions,id',
-                function (string $attribute, mixed $value, \Closure $fail): void {
-                    $version = FrameworkVersion::query()->find($value);
-
-                    if ($version !== null && $version->status !== 'published') {
-                        $fail('Le stage doit être lié à une version de référentiel publiée.');
-                    }
-                },
-            ],
+            'company_name' => ['required', 'string', 'max:200'],
             'start_date' => ['required', 'date'],
             'end_date' => ['required', 'date', 'after_or_equal:start_date'],
             'objectives' => ['nullable', 'string', 'max:5000'],

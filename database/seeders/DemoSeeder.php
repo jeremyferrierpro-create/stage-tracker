@@ -2,27 +2,20 @@
 
 namespace Database\Seeders;
 
+use App\Domain\Evaluation\Models\Competency;
 use App\Domain\Evidence\Models\ActivityEvidence;
 use App\Domain\Evidence\Models\Evidence;
-use App\Domain\Framework\Models\Competency;
-use App\Domain\Framework\Models\CompetencyBlock;
-use App\Domain\Framework\Models\CompetencyCriterion;
-use App\Domain\Framework\Models\CompetencyFramework;
-use App\Domain\Framework\Models\FrameworkVersion;
 use App\Domain\Git\Models\ActivityCommit;
 use App\Domain\Git\Models\Commit;
 use App\Domain\Git\Models\Repository;
 use App\Domain\Identity\Models\User;
 use App\Domain\Identity\Models\Workspace;
-use App\Domain\Journal\Models\DailyLog;
 use App\Domain\Identity\Models\WorkspaceMember;
 use App\Domain\Internship\Models\Internship;
 use App\Domain\Internship\Models\InternshipParticipant;
-use App\Domain\Organization\Models\Organization;
+use App\Domain\Journal\Models\DailyLog;
 use App\Domain\Project\Models\Activity;
 use App\Domain\Project\Models\Project;
-use App\Domain\Training\Models\TrainingEnrollment;
-use App\Domain\Training\Models\TrainingProgram;
 use Illuminate\Database\Seeder;
 
 /**
@@ -57,88 +50,25 @@ class DemoSeeder extends Seeder
         $this->member($workspace, $supervisor, 'supervisor');
         $this->member($workspace, $tutor, 'tutor');
 
-        $company = Organization::create([
-            'workspace_id' => $workspace->id,
-            'name' => 'Entreprise Démo',
-            'type' => 'company',
-            'contact_email' => 'contact@entreprise-demo.test',
-            'contact_phone' => '+33 1 00 00 00 00',
-            'address' => '1 Rue Fictive, 75000 Ville Imaginaire',
-        ]);
-
-        $trainingCenter = Organization::create([
-            'workspace_id' => $workspace->id,
-            'name' => 'Centre de Formation Démo',
-            'type' => 'training_center',
-            'contact_email' => 'contact@centre-formation-demo.test',
-            'contact_phone' => '+33 1 00 00 00 01',
-            'address' => '2 Allée Exemple, 75000 Ville Imaginaire',
-        ]);
-
-        $program = TrainingProgram::create([
-            'workspace_id' => $workspace->id,
-            'organization_id' => $trainingCenter->id,
-            'name' => 'Formation Démo (DWWM)',
-            'certification' => 'DWWM — Développeur Web et Web Mobile',
-            'start_date' => now()->startOfDay()->subMonth(),
-            'end_date' => now()->startOfDay()->addMonths(8),
-        ]);
-
-        TrainingEnrollment::create([
-            'user_id' => $trainee->id,
-            'training_program_id' => $program->id,
-            'workspace_id' => $workspace->id,
-            'start_date' => now()->startOfDay()->subMonth(),
-            'end_date' => now()->startOfDay()->addMonths(8),
-            'status' => 'active',
-        ]);
-
-        $framework = CompetencyFramework::create([
-            'name' => 'Référentiel Démo (pilote)',
-            'issuing_authority' => 'Centre de Formation Démo',
-            'description' => 'Référentiel fictif de démonstration (aucune donnée réelle).',
-            'status' => 'draft',
-        ]);
-
-        $version = FrameworkVersion::create([
-            'framework_id' => $framework->id,
-            'version' => 'v1.0.0',
-            'effective_date' => now()->startOfDay(),
-            'status' => 'draft',
-        ]);
-
-        $block = CompetencyBlock::create([
-            'framework_version_id' => $version->id,
-            'code' => 'B1',
-            'title' => 'Communication professionnelle',
-            'position' => 1,
-        ]);
-
+        // Compétences définies directement dans l'espace (simplification 1.6.0).
         $competency = Competency::create([
-            'framework_version_id' => $version->id,
-            'block_id' => $block->id,
+            'workspace_id' => $workspace->id,
             'code' => 'C1.1',
             'title' => 'Rédiger un message professionnel',
-            'position' => 1,
+            'description' => 'Communiquer clairement avec le client et l\'équipe.',
         ]);
 
-        CompetencyCriterion::create([
-            'competency_id' => $competency->id,
-            'label' => 'Le message est clair et structuré.',
-            'position' => 1,
+        Competency::create([
+            'workspace_id' => $workspace->id,
+            'code' => 'C2.1',
+            'title' => 'Intégrer une interface responsive',
+            'description' => 'Traduire une maquette en HTML/CSS accessible.',
         ]);
-
-        $version->forceFill([
-            'status' => 'published',
-            'published_at' => now(),
-        ])->save();
 
         $internship = Internship::create([
             'workspace_id' => $workspace->id,
             'trainee_id' => $trainee->id,
-            'host_organization_id' => $company->id,
-            'training_program_id' => $program->id,
-            'framework_version_id' => $version->id,
+            'company_name' => 'Entreprise Démo',
             'title' => 'Stage Démo — Développeur Web',
             'start_date' => now()->startOfDay()->subMonth(),
             'end_date' => now()->startOfDay()->addMonths(4),
@@ -284,7 +214,7 @@ class DemoSeeder extends Seeder
 
         $this->command?->line(
             'Jeu de démonstration créé : utilisateurs (mot de passe « '.self::DEMO_PASSWORD.' »),'
-            .' espace « Espace Démo », formations, référentiel publié, stage, projet démo,'
+            .' espace « Espace Démo », compétences, stage, projet démo,'
             .' deux preuves (une partagée, une privée), une entrée de journal'
             .' et dépôt Git démo avec 3 commits.'
         );

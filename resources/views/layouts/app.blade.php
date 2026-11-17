@@ -28,9 +28,6 @@
         <nav aria-label="Navigation principale">
             @auth
                 <a href="{{ route('workspaces.index') }}">Mes espaces</a>
-                @can('manage', \App\Domain\Framework\Models\CompetencyFramework::class)
-                    <a href="{{ route('frameworks.index') }}">Référentiels</a>
-                @endcan
                 <span class="user">{{ auth()->user()->name }}</span>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
@@ -87,16 +84,6 @@
                                 Tableau de bord
                             </a>
 
-                            <a href="{{ route('workspace.organizations.index', $workspace) }}"
-                               @if (str_starts_with((string) $currentRoute, 'workspace.organizations')) aria-current="page" @endif>
-                                Organisations
-                            </a>
-
-                            <a href="{{ route('workspace.training.index', $workspace) }}"
-                               @if (str_starts_with((string) $currentRoute, 'workspace.training')) aria-current="page" @endif>
-                                Formations
-                            </a>
-
                             <a href="{{ route('workspace.internships.index', $workspace) }}"
                                @if (str_starts_with((string) $currentRoute, 'workspace.internships')) aria-current="page" @endif>
                                 Stages
@@ -118,6 +105,10 @@
                                 <a href="{{ route('workspace.members.index', $workspace) }}"
                                    @if ($currentRoute === 'workspace.members.index') aria-current="page" @endif>
                                     Membres et invitations
+                                </a>
+                                <a href="{{ route('workspace.competencies.index', $workspace) }}"
+                                   @if (str_starts_with((string) $currentRoute, 'workspace.competencies')) aria-current="page" @endif>
+                                    Compétences
                                 </a>
                                 <a href="{{ route('workspace.report-templates.index', $workspace) }}"
                                    @if (str_starts_with((string) $currentRoute, 'workspace.report-templates')) aria-current="page" @endif>

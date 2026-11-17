@@ -6,8 +6,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Compétence d'une version de référentiel, rattachée optionnellement à un
- * bloc et à une compétence parente (hiérarchie, T-021, MLD §5).
+ * Compétences du workspace (T-021 simplifié, décision utilisateur 1.6.0).
+ * Liste simple définie directement par les administrateurs de l'espace :
+ * plus de référentiel versionné, de bloc ni de critère. Chaque compétence
+ * est rattachable à une activité (T-060) et évaluable par le tuteur
+ * ou maître de stage (T-061).
  */
 return new class extends Migration
 {
@@ -15,25 +18,19 @@ return new class extends Migration
     {
         Schema::create('competencies', function (Blueprint $table): void {
             $table->uuid('id')->primary();
-            $table->foreignUuid('framework_version_id')->constrained('framework_versions')->cascadeOnDelete();
-            $table->foreignUuid('block_id')->nullable()
-                ->constrained('competency_blocks')->cascadeOnDelete();
-            $table->foreignUuid('parent_id')->nullable();
+            $table->foreignUuid('workspace_id')->constrained('workspaces')->cascadeOnDelete();
             $table->string('code', 40);
             $table->string('title', 200);
             $table->text('description')->nullable();
-            $table->smallInteger('position')->default(0);
             $table->timestamps();
 
-            $table->unique(['framework_version_id', 'code']);
-            $table->index('parent_id');
+            $table->unique(['workspace_id', 'code']);
         });
 
         DB::statement(
             'ALTER TABLE competencies
-             ADD CONSTRAINT competencies_parent_id_foreign
-             FOREIGN KEY (parent_id) REFERENCES competencies (id)
-             ON DELETE SET NULL'
+             ADD CONSTRAINT competencies_title_check
+             CHECK (length(title) > 0)'
         );
     }
 

@@ -3,7 +3,7 @@ doc: CHANGELOG
 status: VALIDATED
 version: 1.0.0
 source: stage-tracker-specification
-updated: 2026-11-08
+updated: 2026-11-17
 validated_by: Jeremy Ferrier
 ---
 
@@ -15,7 +15,60 @@ versionnement [SemVer](https://semver.org/lang/fr/).
 ## [Unreleased]
 
 ### À venir
-- Rapports et exports (T-062 → T-064), audit accessibilité (T-066), guide tuteur (T-060, T-061).
+- Audit accessibilité et parcours E2E (T-066), revue de sécurité (T-070), rapport de release (T-071), README final (T-072).
+
+## [1.6.0] — 2026-11-17 — Phase 5 (T-060 → T-065) et simplification du périmètre (décision utilisateur)
+
+### Ajouté
+- **T-060/T-061** : évaluations de compétences — table `activity_competencies`
+  (association à une activité avec **justification obligatoire**), table
+  `competency_assessments` (appréciation nominative `validated` / `remediation`
+  avec commentaire, signée par un évaluateur habilité) ; permission `assess`
+  limitée aux participants supervisor/tutor du stage ; **INV-09** : aucune
+  validation automatique (clôtures d'activité ou de journal sans effet) ;
+  compétence évaluée non retirable ; matrice des compétences par stage ;
+  audit `competency.associated|documented|unlinked` + `assessment.created`.
+- **T-062/T-063** : modèles de rapports versionnés (`report_templates`,
+  `report_template_versions`, `reports`) ; sections allowlistées
+  (`ReportTemplate::ALLOWED_SECTIONS`) ; version publiée immuable ;
+  génération asynchrone via job `GenerateReport` (statuts
+  queued/generated/failed) ; **INV-14** : filtrage serveur des notes privées
+  et preuves non partagées, exclusions listées dans le rapport, distinction
+  faits / déclarations / appréciations ; audit `report_template.*` +
+  `report.generated`.
+- **T-064** : exports PDF (dompdf 3.1, `isRemoteEnabled = false`) et DOCX
+  (PhpWord 1.1, lecteur XHTML strict avec document complet) sur chaque
+  rapport généré.
+- **T-065** : sauvegarde `app:backup` (base en JSONL par table + fichiers de
+  preuves + `manifest.json` avec empreintes SHA-256) et restauration
+  `app:restore` (vérification des empreintes **avant** toute écriture,
+  insertion en ordre topologique des clés étrangères, recadrage des séquences,
+  restitution des fichiers) avec `--dry-run` ; **MT-12** prouvé en tests
+  (3 tests) et sur la base de démonstration réelle (43 tables, 76 lignes,
+  75 fichiers restaurés à l'identique).
+
+### Modifié — simplification du périmètre (décision utilisateur du 2026-11-17)
+- **Suppression du module Formations** (`TrainingProgram`,
+  `TrainingEnrollment`, routes, vues, tables) : outil orienté stage en
+  entreprise, pas gestion de formation.
+- **Suppression des Organisations d'accueil** (`Organization`,
+  `OrganizationMember`) : remplacées par un champ texte
+  `internships.company_name` « entreprise d'accueil ».
+- **Suppression des référentiels versionnés** (`CompetencyFramework`,
+  `FrameworkVersion`, `CompetencyBlock`, `CompetencyCriterion`,
+  `FrameworkVersionService`, triggers d'immuabilité) : remplacés par une
+  **liste simple de compétences par espace** (`competencies` :
+  code + intitulé + description, unique par espace) définie par les
+  administrateurs ; modèle `Competency` déplacé dans
+  `App\Domain\Evaluation\Models`.
+- Ajustements : FK `internships` simplifiée, navigation latérale (Formations,
+  Organisations, Référentiels retirés ; lien « Compétences » ajouté),
+  Dashboard sans carte « Référentiels appliqués », allowlist d'audit
+  resserrée, tests réécrits (MT-01/MT-02/MT-03/MT-10 portent désormais sur
+  les compétences).
+- Impact : migration fraîche requise (`migrate:fresh --seed`) ; les données
+  de formation, organisations et référentiels des installations précédentes
+  ne sont pas reprises.
 
 ## [1.4.0] — 2026-11-16 — Phase 4 : collaboration, permissions effectives et vue maître de stage (T-050 → T-054)
 

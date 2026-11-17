@@ -3,10 +3,10 @@
 namespace Tests\Feature\Tenant;
 
 use App\Domain\Audit\Models\AuditLog;
+use App\Domain\Evaluation\Models\Competency;
 use App\Domain\Identity\Models\User;
 use App\Domain\Identity\Models\Workspace;
 use App\Domain\Identity\Models\WorkspaceMember;
-use App\Domain\Organization\Models\Organization;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -44,32 +44,34 @@ class MultiTenantCampaignTest extends TestCase
     public function test_mt01_a_member_never_sees_data_of_another_workspace(): void
     {
         $alien = User::factory()->create();
-        $workspaceA = $this->workspaceWithMember($alien, 'trainee', 'Espace A');
-        Organization::factory()->create([
+        $workspaceA = $this->workspaceWithMember($alien, 'admin', 'Espace A');
+        Competency::factory()->create([
             'workspace_id' => $workspaceA->id,
-            'name' => 'Organisation A',
+            'code' => 'A1',
+            'title' => 'Compétence A',
         ]);
 
         $workspaceB = $this->workspaceWithMember(User::factory()->create(), 'owner', 'Espace B');
-        $orgB = Organization::factory()->create([
+        Competency::factory()->create([
             'workspace_id' => $workspaceB->id,
-            'name' => 'Organisation B',
+            'code' => 'B1',
+            'title' => 'Compétence B',
         ]);
 
-        // Liste de A : le nom de l'organisation B n'apparaît pas.
+        // Liste de A : la compétence de B n'apparaît pas.
         $this->actingAs($alien)
-            ->get(route('workspace.organizations.index', $workspaceA))
+            ->get(route('workspace.competencies.index', $workspaceA))
             ->assertOk()
-            ->assertSee('Organisation A', false)
-            ->assertDontSee('Organisation B', false);
+            ->assertSee('Compétence A', false)
+            ->assertDontSee('Compétence B', false);
 
         // Ressource de B accédée par ID direct : 403 (non-membre de B) et
         // aucune fuite d'existence dans la réponse.
         $response = $this->actingAs($alien)
-            ->get(route('workspace.organizations.edit', [$workspaceB, $orgB]))
+            ->get(route('workspace.competencies.index', $workspaceB))
             ->assertForbidden();
 
-        $this->assertStringNotContainsString('Organisation B', (string) $response->getContent());
+        $this->assertStringNotContainsString('Compétence B', (string) $response->getContent());
         $this->assertStringNotContainsString($workspaceB->name, (string) $response->getContent());
 
         // Journal de B : 403 également.
@@ -84,26 +86,26 @@ class MultiTenantCampaignTest extends TestCase
     {
         $intruder = User::factory()->create(); // membre d'aucun workspace
         $workspace = $this->workspaceWithMember(User::factory()->create(), 'owner', 'Espace Cible');
-        $organization = Organization::factory()->create([
+        Competency::factory()->create([
             'workspace_id' => $workspace->id,
-            'name' => 'Organisation Cible',
+            'code' => 'C1',
+            'title' => 'Compétence Cible',
         ]);
 
         $requests = [
             ['get', 'workspace.dashboard', [$workspace]],
-            ['get', 'workspace.organizations.index', [$workspace]],
-            ['get', 'workspace.organizations.create', [$workspace]],
-            ['get', 'workspace.organizations.edit', [$workspace, $organization]],
-            ['post', 'workspace.organizations.store', [$workspace]],
+            ['get', 'workspace.competencies.index', [$workspace]],
+            ['get', 'workspace.competencies.create', [$workspace]],
+            ['post', 'workspace.competencies.store', [$workspace]],
             ['get', 'workspace.members.index', [$workspace]],
             ['post', 'workspace.invitations.store', [$workspace]],
             ['get', 'workspace.audit.index', [$workspace]],
         ];
 
         $payloads = [
-            'workspace.organizations.store' => [
-                'name' => 'Tentative Intrus',
-                'type' => 'company',
+            'workspace.competencies.store' => [
+                'code' => 'X9',
+                'title' => 'Tentative Intrus',
             ],
             'workspace.invitations.store' => [
                 'email' => 'intrus@example.test',
@@ -124,7 +126,7 @@ class MultiTenantCampaignTest extends TestCase
         }
 
         // Aucun objet n'a été créé malgré les POST.
-        $this->assertSame(1, Organization::count());
+        $this->assertSame(1, Competency::count());
         $this->assertSame(0, $workspace->invitations()->count());
     }
 
@@ -149,16 +151,17 @@ class MultiTenantCampaignTest extends TestCase
                 'role' => $role,
             ]);
 
-            // En lecture : les organisations restent consultables...
+            // En lecture : la gestion des compétences est réservée aux
+            // administrateurs (comme les membres et l'audit).
             $this->actingAs($member)
-                ->get(route('workspace.organizations.index', $workspace))
-                ->assertOk();
+                ->get(route('workspace.competencies.index', $workspace))
+                ->assertForbidden();
 
             // ... mais aucune écriture ni administration n'est possible.
             $this->actingAs($member)
-                ->post(route('workspace.organizations.store', $workspace), [
-                    'name' => 'Interdit',
-                    'type' => 'company',
+                ->post(route('workspace.competencies.store', $workspace), [
+                    'code' => 'X1',
+                    'title' => 'Interdit',
                 ])
                 ->assertForbidden();
 
@@ -177,7 +180,7 @@ class MultiTenantCampaignTest extends TestCase
                 ->get(route('workspace.audit.index', $workspace))
                 ->assertForbidden();
 
-            $this->assertSame(0, Organization::count(), "Le rôle {$role} ne doit rien créer.");
+            $this->assertSame(0, Competency::count(), "Le rôle {$role} ne doit rien créer.");
             $this->assertSame(0, $workspace->invitations()->count(), "Le rôle {$role} ne doit rien inviter.");
         }
     }
@@ -188,14 +191,13 @@ class MultiTenantCampaignTest extends TestCase
         $workspace = $this->workspaceWithMember($admin, 'admin', 'Espace ADM');
 
         $this->actingAs($admin)
-            ->post(route('workspace.organizations.store', $workspace), [
-                'name' => 'Organisation ADM',
-                'type' => 'company',
-                'contact_email' => 'contact@adm.test',
+            ->post(route('workspace.competencies.store', $workspace), [
+                'code' => 'ADM1',
+                'title' => 'Compétence ADM',
             ])
             ->assertRedirect();
 
-        $this->assertSame(1, $workspace->organizations()->count());
+        $this->assertSame(1, $workspace->competencies()->count());
 
         $this->actingAs($admin)
             ->post(route('workspace.invitations.store', $workspace), [
@@ -228,14 +230,13 @@ class MultiTenantCampaignTest extends TestCase
         // Le membre (admin) crée des données historiques via l'application,
         // ce qui trace aussi le journal d'audit.
         $this->actingAs($removed)
-            ->post(route('workspace.organizations.store', $workspace), [
-                'name' => 'Organisation Historique',
-                'type' => 'company',
-                'contact_email' => 'historique@example.test',
+            ->post(route('workspace.competencies.store', $workspace), [
+                'code' => 'H1',
+                'title' => 'Compétence Historique',
             ])
             ->assertRedirect();
 
-        $organization = $workspace->organizations()->where('name', 'Organisation Historique')->sole();
+        $competency = $workspace->competencies()->where('code', 'H1')->sole();
 
         // Entrées d'audit écrites avant la révocation.
         $preRevocationAuditIds = AuditLog::query()
@@ -243,7 +244,7 @@ class MultiTenantCampaignTest extends TestCase
             ->pluck('id')
             ->all();
         $this->assertContains(
-            AuditLog::query()->where('action', 'organization.created')->value('id'),
+            AuditLog::query()->where('action', 'competency.created')->value('id'),
             $preRevocationAuditIds
         );
 
@@ -259,10 +260,10 @@ class MultiTenantCampaignTest extends TestCase
             ->assertForbidden();
 
         // L'historique des données reste présent et consultable par le propriétaire.
-        $this->assertDatabaseHas('organizations', [
-            'id' => $organization->id,
+        $this->assertDatabaseHas('competencies', [
+            'id' => $competency->id,
             'workspace_id' => $workspace->id,
-            'name' => 'Organisation Historique',
+            'code' => 'H1',
         ]);
 
         $this->assertDatabaseHas('workspace_members', [
@@ -277,9 +278,9 @@ class MultiTenantCampaignTest extends TestCase
         }
 
         $this->actingAs($owner)
-            ->get(route('workspace.organizations.index', $workspace))
+            ->get(route('workspace.competencies.index', $workspace))
             ->assertOk()
-            ->assertSee('Organisation Historique', false);
+            ->assertSee('Compétence Historique', false);
 
         // La tentative de l'ancien membre est tracée dans le journal.
         $this->assertDatabaseHas('audit_logs', [

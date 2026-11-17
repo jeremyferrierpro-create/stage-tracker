@@ -261,7 +261,7 @@
         @if ($canManage && $availableCompetencies->isNotEmpty())
         <form method="POST" action="{{ route('workspace.internships.projects.activities.competencies.store', [$workspace, $internship, $project, $activity]) }}" style="margin-bottom: 1rem;">
             @csrf
-            <label for="competency-select">Compétence (référentiel du stage)</label>
+            <label for="competency-select">Compétence (liste de l'espace)</label>
             <select id="competency-select" name="competency_id" required>
                 <option value="">— choisir une compétence —</option>
                 @foreach ($availableCompetencies as $competencyOption)

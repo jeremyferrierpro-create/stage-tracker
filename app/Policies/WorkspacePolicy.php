@@ -28,16 +28,6 @@ class WorkspacePolicy
         return in_array($workspace->roleFor($user), self::MANAGEMENT_ROLES, true);
     }
 
-    public function manageOrganizations(User $user, Workspace $workspace): bool
-    {
-        return in_array($workspace->roleFor($user), self::MANAGEMENT_ROLES, true);
-    }
-
-    public function manageTraining(User $user, Workspace $workspace): bool
-    {
-        return in_array($workspace->roleFor($user), self::MANAGEMENT_ROLES, true);
-    }
-
     public function manageInternships(User $user, Workspace $workspace): bool
     {
         return in_array($workspace->roleFor($user), self::MANAGEMENT_ROLES, true);

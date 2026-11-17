@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Domain\Identity\Models\Workspace;
-use App\Domain\Internship\Models\Internship;
 use App\Domain\Journal\Models\DailyLog;
 use App\Domain\Project\Models\Activity;
 use Illuminate\Http\Request;
@@ -29,7 +28,7 @@ class WorkspaceController extends Controller
         $this->authorize('view', $workspace);
 
         $internships = $workspace->internships()
-            ->with(['trainee', 'hostOrganization'])
+            ->with('trainee')
             ->orderByDesc('start_date')
             ->get();
 
@@ -50,15 +49,6 @@ class WorkspaceController extends Controller
             ->limit(5)
             ->get();
 
-        $referencedVersions = Internship::query()
-            ->where('workspace_id', $workspace->getKey())
-            ->with('frameworkVersion.framework')
-            ->get()
-            ->pluck('frameworkVersion')
-            ->filter()
-            ->unique('id')
-            ->values();
-
         return view('workspace.dashboard', [
             'workspace' => $workspace,
             'membership' => $request->attributes->get('workspace_membership'),
@@ -66,7 +56,6 @@ class WorkspaceController extends Controller
             'activityCounts' => $activityCounts,
             'totalActivities' => $activities->count(),
             'recentLogs' => $recentLogs,
-            'referencedVersions' => $referencedVersions,
         ]);
     }
 }

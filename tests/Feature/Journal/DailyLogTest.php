@@ -2,13 +2,11 @@
 
 namespace Tests\Feature\Journal;
 
-use App\Domain\Framework\Models\FrameworkVersion;
 use App\Domain\Identity\Models\User;
 use App\Domain\Identity\Models\Workspace;
 use App\Domain\Identity\Models\WorkspaceMember;
 use App\Domain\Internship\Models\Internship;
 use App\Domain\Journal\Models\DailyLog;
-use App\Domain\Organization\Models\Organization;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -38,13 +36,10 @@ class DailyLogTest extends TestCase
             'user_id' => $trainee->id,
             'role' => 'trainee',
         ]);
-        $organization = Organization::factory()->create(['workspace_id' => $workspace->id]);
-        $version = FrameworkVersion::factory()->published()->create();
         $internship = Internship::factory()->create([
             'workspace_id' => $workspace->id,
             'trainee_id' => $trainee->id,
-            'host_organization_id' => $organization->id,
-            'framework_version_id' => $version->id,
+            'company_name' => 'Entreprise Test',
         ]);
 
         $this->actingAs($owner)
@@ -72,13 +67,10 @@ class DailyLogTest extends TestCase
             'user_id' => $trainee->id,
             'role' => 'trainee',
         ]);
-        $organization = Organization::factory()->create(['workspace_id' => $workspace->id]);
-        $version = FrameworkVersion::factory()->published()->create();
         $internship = Internship::factory()->create([
             'workspace_id' => $workspace->id,
             'trainee_id' => $trainee->id,
-            'host_organization_id' => $organization->id,
-            'framework_version_id' => $version->id,
+            'company_name' => 'Entreprise Test',
         ]);
 
         DailyLog::factory()->create([
@@ -105,13 +97,10 @@ class DailyLogTest extends TestCase
             'user_id' => $trainee->id,
             'role' => 'trainee',
         ]);
-        $organization = Organization::factory()->create(['workspace_id' => $workspace->id]);
-        $version = FrameworkVersion::factory()->published()->create();
         $internship = Internship::factory()->create([
             'workspace_id' => $workspace->id,
             'trainee_id' => $trainee->id,
-            'host_organization_id' => $organization->id,
-            'framework_version_id' => $version->id,
+            'company_name' => 'Entreprise Test',
         ]);
 
         $log = DailyLog::factory()->closed()->create([
@@ -136,13 +125,10 @@ class DailyLogTest extends TestCase
             'user_id' => $trainee->id,
             'role' => 'trainee',
         ]);
-        $organization = Organization::factory()->create(['workspace_id' => $workspace->id]);
-        $version = FrameworkVersion::factory()->published()->create();
         $internship = Internship::factory()->create([
             'workspace_id' => $workspace->id,
             'trainee_id' => $trainee->id,
-            'host_organization_id' => $organization->id,
-            'framework_version_id' => $version->id,
+            'company_name' => 'Entreprise Test',
         ]);
 
         $log = DailyLog::factory()->create([

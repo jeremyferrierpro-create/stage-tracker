@@ -21,11 +21,7 @@
     <div class="card">
         <h2>Informations</h2>
         <p><strong>Stagiaire :</strong> {{ $internship->trainee->name }}</p>
-        <p><strong>Organisation d'accueil :</strong> {{ $internship->hostOrganization->name }}</p>
-        @if ($internship->trainingProgram)
-            <p><strong>Programme :</strong> {{ $internship->trainingProgram->name }}</p>
-        @endif
-        <p><strong>Référentiel :</strong> {{ $internship->frameworkVersion->framework->name }} — {{ $internship->frameworkVersion->version }}</p>
+        <p><strong>Entreprise d'accueil :</strong> {{ $internship->company_name }}</p>
         @if ($internship->objectives)
             <p><strong>Objectifs :</strong> {{ $internship->objectives }}</p>
         @endif

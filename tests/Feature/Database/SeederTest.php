@@ -3,10 +3,10 @@
 namespace Tests\Feature\Database;
 
 use App\Domain\Audit\Models\AuditLog;
+use App\Domain\Evaluation\Models\Competency;
 use App\Domain\Identity\Models\User;
 use App\Domain\Identity\Models\Workspace;
 use App\Domain\Identity\Models\WorkspaceMember;
-use App\Domain\Organization\Models\Organization;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
@@ -24,7 +24,7 @@ class SeederTest extends TestCase
         $this->assertSame(4, User::count());
         $this->assertSame(1, Workspace::count());
         $this->assertSame(4, WorkspaceMember::count());
-        $this->assertSame(2, Organization::count());
+        $this->assertSame(2, Competency::count());
 
         $workspace = Workspace::query()->sole();
         $this->assertSame('Espace Démo', $workspace->name);
@@ -35,8 +35,8 @@ class SeederTest extends TestCase
             $this->assertSame(1, $workspace->members()->where('role', $role)->count());
         }
 
-        foreach ($workspace->organizations()->get() as $organization) {
-            $this->assertStringEndsWith('.test', (string) $organization->contact_email);
+        foreach ($workspace->competencies()->get() as $competency) {
+            $this->assertStringStartsWith('C', (string) $competency->code);
         }
     }
 
@@ -45,12 +45,12 @@ class SeederTest extends TestCase
         $this->artisan('db:seed')->assertExitCode(0);
 
         $users = User::count();
-        $organizations = Organization::count();
+        $competencies = Competency::count();
 
         $this->artisan('db:seed')->assertExitCode(0);
 
         $this->assertSame($users, User::count());
-        $this->assertSame($organizations, Organization::count());
+        $this->assertSame($competencies, Competency::count());
     }
 
     public function test_demo_credentials_are_usable(): void

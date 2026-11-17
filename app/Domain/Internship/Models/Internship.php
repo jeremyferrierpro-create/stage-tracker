@@ -2,13 +2,10 @@
 
 namespace App\Domain\Internship\Models;
 
-use App\Domain\Framework\Models\FrameworkVersion;
 use App\Domain\Identity\Models\User;
 use App\Domain\Journal\Models\DailyLog;
-use App\Domain\Organization\Models\Organization;
 use App\Domain\Project\Models\Project;
 use App\Domain\Reporting\Models\Report;
-use App\Domain\Training\Models\TrainingProgram;
 use App\Models\Concerns\BelongsToWorkspace;
 use Database\Factories\InternshipFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -18,8 +15,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * Stage (T-023, MLD §6). Rattaché à un stagiaire, une organisation
- * d'accueil et une version de référentiel (publiée).
+ * Stage (T-023, MLD). Rattaché à un stagiaire et à l'entreprise
+ * d'accueil (champ texte, simplification 1.6.0).
  */
 class Internship extends Model
 {
@@ -45,9 +42,7 @@ class Internship extends Model
     protected $fillable = [
         'workspace_id',
         'trainee_id',
-        'host_organization_id',
-        'training_program_id',
-        'framework_version_id',
+        'company_name',
         'title',
         'start_date',
         'end_date',
@@ -72,30 +67,6 @@ class Internship extends Model
     public function trainee(): BelongsTo
     {
         return $this->belongsTo(User::class, 'trainee_id');
-    }
-
-    /**
-     * @return BelongsTo<Organization, $this>
-     */
-    public function hostOrganization(): BelongsTo
-    {
-        return $this->belongsTo(Organization::class, 'host_organization_id');
-    }
-
-    /**
-     * @return BelongsTo<TrainingProgram, $this>
-     */
-    public function trainingProgram(): BelongsTo
-    {
-        return $this->belongsTo(TrainingProgram::class, 'training_program_id');
-    }
-
-    /**
-     * @return BelongsTo<FrameworkVersion, $this>
-     */
-    public function frameworkVersion(): BelongsTo
-    {
-        return $this->belongsTo(FrameworkVersion::class, 'framework_version_id');
     }
 
     /**

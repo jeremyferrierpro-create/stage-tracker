@@ -4,10 +4,10 @@ namespace Tests\Feature\Audit;
 
 use App\Domain\Audit\AuditLogger;
 use App\Domain\Audit\Models\AuditLog;
+use App\Domain\Evaluation\Models\Competency;
 use App\Domain\Identity\Models\User;
 use App\Domain\Identity\Models\Workspace;
 use App\Domain\Identity\Models\WorkspaceMember;
-use App\Domain\Organization\Models\Organization;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -115,20 +115,20 @@ class AuditLogTest extends TestCase
     {
         $owner = User::factory()->create();
         $workspace = $this->workspaceWith($owner);
-        $organization = Organization::factory()->create(['workspace_id' => $workspace->id]);
+        $competency = Competency::factory()->create(['workspace_id' => $workspace->id]);
 
         app(AuditLogger::class)->record(
-            'organization.created',
+            'competency.created',
             $workspace,
-            $organization,
-            ['organization_name' => $organization->name],
+            $competency,
+            ['competency_code' => $competency->code],
             $owner,
         );
 
         $this->actingAs($owner)
             ->get(route('workspace.audit.index', $workspace))
             ->assertOk()
-            ->assertSee('organization.created')
+            ->assertSee('competency.created')
             ->assertSee($owner->name);
 
         $trainee = User::factory()->create();

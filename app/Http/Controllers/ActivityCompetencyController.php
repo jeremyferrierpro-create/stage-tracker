@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Domain\Audit\AuditLogger;
 use App\Domain\Authorization\EffectivePermissions;
 use App\Domain\Evaluation\Models\ActivityCompetency;
+use App\Domain\Evaluation\Models\Competency;
 use App\Domain\Evaluation\Models\CompetencyAssessment;
-use App\Domain\Framework\Models\Competency;
 use App\Domain\Identity\Models\Workspace;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -39,9 +39,9 @@ class ActivityCompetencyController extends Controller
             'justification' => ['required', 'string', 'min:10', 'max:5000'],
         ]);
 
-        // La compétence doit appartenir à la version du référentiel du stage.
+        // La compétence doit appartenir au workspace du stage.
         $competency = Competency::query()
-            ->where('framework_version_id', $internshipModel->framework_version_id)
+            ->where('workspace_id', $internshipModel->workspace_id)
             ->findOrFail($validated['competency_id']);
 
         $exists = ActivityCompetency::query()
@@ -201,7 +201,7 @@ class ActivityCompetencyController extends Controller
         $rows = ActivityCompetency::query()
             ->where('workspace_id', $workspace->id)
             ->whereHas('activity', fn ($query) => $query->whereIn('activities.id', $internshipModel->projects()->with('activities')->get()->flatMap->activities->pluck('id')))
-            ->with(['competency.block', 'activity.project', 'assessments.assessor'])
+            ->with(['competency', 'activity.project', 'assessments.assessor'])
             ->get()
             ->sortBy(fn (ActivityCompetency $row): string => $row->competency->code)
             ->values();

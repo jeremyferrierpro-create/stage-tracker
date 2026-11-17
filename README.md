@@ -38,7 +38,7 @@ des activités professionnelles. Elle permet à un stagiaire de :
 - organiser ses activités techniques et ses tâches (Kanban) ;
 - relier ses commits Git à ses activités ;
 - conserver des preuves (captures, documents, rapports de tests, liens) ;
-- associer ses réalisations aux compétences de son référentiel de formation ;
+- associer ses réalisations aux compétences définies par son espace de travail ;
 - produire des synthèses pour son mémoire, son dossier professionnel et sa
   présentation orale.
 
@@ -64,9 +64,9 @@ Preuve → Compétence → Évaluation → Synthèse.
 | Élément | État |
 |---|---|
 | Phase AIDF | IMPLEMENTATION en cours — Phase 1 (T-001 → T-012), Phase 2 (T-020 → T-030) et Phase 3 (T-040 → T-042) livrées |
-| Code applicatif | socle Laravel 13.40.0 + authentification + isolation + invitations + organisations + audit + squelette d'interface + formations (programmes, inscriptions) + référentiels versionnés et publication immuable + stages (stagiaires, participants, projets, activités) + tâches Kanban + journal quotidien (clôture) + tableau de bord consolidé + preuves et visibilité (stockage abstrait local) + connecteur GitHub + collaboration (commentaires immuables, revues d'activité) + permissions effectives et révocation de participants + vue dédiée maître de stage ; modules restants à venir |
+| Code applicatif | socle Laravel 13.40.0 + authentification + isolation + invitations + audit + squelette d'interface + compétences définies par espace + stages (stagiaires, participants, projets, activités) + tâches Kanban + journal quotidien (clôture) + tableau de bord consolidé + preuves et visibilité (stockage abstrait local) + connecteur GitHub + collaboration (commentaires immuables, revues d'activité) + permissions effectives et révocation de participants + vue dédiée maître de stage + guide tuteur (compétences : mobilisée, documentée, évaluée) + modèles de rapports et exports (HTML, PDF, DOCX) + sauvegarde/restauration avec empreintes SHA-256 |
 | Base de données | PostgreSQL 16.15 (conteneur Docker `stage-tracker-postgres`) |
-| Tests | `php artisan test` → 98 tests PASS (426 assertions) ; `pint --test` → PASS ; campagnes MT-01/MT-02/MT-03/MT-04/MT-05/MT-10 |
+| Tests | `php artisan test` → 175 tests PASS (694 assertions) ; `pint --test` → PASS ; campagnes MT-01/MT-02/MT-03/MT-04/MT-05/MT-10/MT-11/MT-12 |
 | Sécurité | Argon2id, rate limiting 5/15 min (429), sessions en base, messages neutres, audit append-only (trigger PostgreSQL) |
 | Documents de référence | `.aidf/docs/` (11 documents validés) |
 | Annexes techniques | `docs/` (MCD, MLD, API, invariants, tests, planning) |
@@ -175,7 +175,7 @@ Exécuté : tables `users`, `sessions`, `cache`, `jobs`, `workspaces`,
 >
 > Crée « Espace Démo » avec 4 comptes de démonstration (`admin@example.test`,
 > `stagiaire@example.test`, `maitre-de-stage@example.test`, `tuteur@example.test`,
-> mot de passe `mot-de-passe-demo-2026`) et 2 organisations neutres ; y compris
+> mot de passe `mot-de-passe-demo-2026`) et un jeu de compétences neutres ; y compris
 > un stage, un projet démo, deux preuves (une partagée, une privée) et un dépôt
 > Git démo avec 3 commits dont un lié à l'activité maquette (§11.5).
 > Le seeder refuse de tourner en dehors de `local`/`testing` et est idempotent
@@ -247,14 +247,13 @@ connexion, « Mes espaces » liste les espaces dont vous êtes membre actif.
    actif de cet espace.
 4. À l'intérieur d'un espace (T-011) :
    - la barre supérieure porte le nom du produit, « Mes espaces », votre nom et
-     la déconnexion ; depuis T-021, les propriétaires et administrateurs y
-     trouvent aussi le lien « Référentiels » (ressource partagée) ;
-   - la navigation latérale regroupe « Tableau de bord », « Organisations »,
-     « Formations » (T-020), « Stages » (T-023, avec ses projets et
-     activités), puis, uniquement pour les propriétaires et
-     administrateurs, « Membres et invitations » et « Journal d'audit » (les
-     sections non encore livrées apparaissent grisées avec la mention
-     « à venir » et ne sont pas cliquables) ;
+     la déconnexion ;
+   - la navigation latérale regroupe « Tableau de bord », « Stages » (avec ses
+     projets et activités), « Preuves », puis, uniquement pour les propriétaires
+     et administrateurs, « Membres et invitations », « Compétences », « Modèles
+     de rapports » et « Journal d'audit » (les sections non encore livrées
+     apparaissent grisées avec la mention « à venir » et ne sont pas
+     cliquables) ;
    - le sélecteur « Espace actif » liste tous vos espaces avec leur rôle et
      permet de basculer directement vers leur tableau de bord ;
    - un fil d'Ariane rappelle l'emplacement (Mes espaces › Espace › Page) ;
@@ -281,55 +280,73 @@ connexion, « Mes espaces » liste les espaces dont vous êtes membre actif.
 
 ## 6. Concepts clés
 
-> Les concepts **workspace**, **rôles** et **organisations** sont déjà visibles
-> dans l'interface (§10). Les autres concepts seront illustrés par les écrans
-> réels à leur livraison (`À VENIR — livré par T-023 → T-027`).
+> Les concepts **workspace**, **rôles**, **stages**, **compétences** sont
+> visibles dans l'interface (§7 à §10). Les captures d'écran seront enrichies
+> à la fin du projet (audit accessibilité T-066).
 
 Définitions déjà stabilisées par la spécification :
 
 | Concept | Définition |
 |---|---|
 | **Workspace** | espace de travail isolé (personnel, associatif, professionnel, pédagogique) |
-| **Organisation** | entreprise ou organisme de formation rattaché à précisément un workspace, distingué par son type et archivable plutôt que supprimable |
-| **Formation** | programme de formation rattaché à un workspace et à un organisme de formation (T-020) |
-| **Stage** | période de stage rattachée à un workspace, un stagiaire, une organisation d'accueil et une version de référentiel publiée (T-023) |
+| **Stage** | période de stage rattachée à un workspace, un stagiaire et une entreprise d'accueil (champ texte) (T-023) |
 | **Projet** | travail mené pendant le stage, contenant des activités (T-024) |
 | **Activité** | unité de travail documentée (fonctionnalité, correction, étude, conception, recherche, maintenance, amélioration) avec objectifs, résultats, difficultés et solutions (T-025) |
 | **Preuve** | élément vérifiable (capture, document, commit, lien) avec une visibilité contrôlée : privée, stage ou partagée (T-041) |
 | **Tâche** | élément du Kanban rattaché à une activité, avec statut et position (T-026) |
 | **Journal** | saisie quotidienne des travaux, difficultés, solutions et résultats, clôturable et révisable avant clôture (T-027/T-028) |
-| **Programme** | instance d'une formation avec ses dates et ses inscriptions uniques (utilisateur, programme) |
-| **Référentiel** | cadre de compétences versionné, ressource partagée entre tous les espaces (T-021, DEC-ST-003) |
-| **Version** | état d'un référentiel ; une fois publiée, immuable (INV-08) |
-| **Compétence** | élément d'une version, rattachable à un bloc et à une compétence parente |
-| **Critère** | élément évaluable d'une compétence |
-| **Stage** | période de stage rattachée à un workspace, un stagiaire, une organisation d'accueil et une version de référentiel |
-| **Projet** | travail mené pendant le stage, contenant des activités |
-| **Activité** | unité de travail documentée (fonctionnalité, correction, étude, conception, recherche, maintenance, amélioration) |
-| **Tâche** | élément du Kanban, éventuellement rattaché à une activité |
-| **Journal** | saisie quotidienne des travaux, difficultés, solutions et résultats |
-| **Preuve** | élément vérifiable (capture, document, commit, rapport) avec une visibilité |
-| **Compétence** | élément d'une version de référentiel ; peut être mobilisée, documentée ou évaluée |
-| **Référentiel** | cadre de compétences versionné (ex. DWWM en pilote) |
+| **Compétence** | élément défini directement par les administrateurs de l'espace (code + intitulé) ; rattachable aux activités avec justification, puis évaluée nominativement par le maître de stage ou le tuteur (simplification 1.6.0) |
+| **Rapport** | synthèse générée depuis un modèle versionné de l'espace, exportable en HTML, PDF ou DOCX (T-062 → T-064) |
 
-*Statut : `DISPONIBLE` (définitions ; interfaces workspace/organisations livrées) — les autres captures `À VENIR`.*
+*Statut : `DISPONIBLE` (définitions ; interfaces livrées).*
 
 ---
 
 ## 7. Guide du stagiaire
 
-> `À VENIR — livré par T-023 → T-042`.
+> **DISPONIBLE** — livré par T-023 → T-042 et T-060 (les invitations d'espace
+> de travail sont déjà disponibles, voir §10.4).
 
-Sections prévues :
-- créer un stage et inviter son maître de stage ;
-- saisir une journée de journal (brouillon puis clôture) ;
-- documenter une activité ;
-- utiliser le Kanban ;
-- déposer une preuve et choisir sa visibilité ;
-- associer une compétence avec justification ;
-- générer une synthèse.
+### 7.1 Créer votre stage et inviter vos encadrants
 
-*Statut : `À VENIR`.*
+Un propriétaire ou administrateur de l'espace crée le stage (§10.7) ; en tant
+que stagiaire, vous êtes automatiquement participant. Vous pouvez modifier
+votre propre stage (période, objectifs).
+
+### 7.2 Travailler par projets et activités
+
+Depuis la fiche du stage, créez vos projets puis vos activités (§10.8). Chaque
+activité documente objectifs, résultats, difficultés et solutions ; le Kanban
+suit son avancement (§10.9).
+
+### 7.3 Saisir votre journal quotidien
+
+Depuis la fiche du stage, « Journal » : une entrée par jour et par auteur
+(horaires, durée, travaux, difficultés, solutions, résultats, reste à faire).
+Vous la modifiez tant qu'elle est brouillon, puis vous la **clôturez** — elle
+devient en lecture seule (§10.10).
+
+### 7.4 Déposer des preuves
+
+Le lien « Preuves » de l'espace : déposez un fichier (stocké hors racine web)
+ou un lien externe, et choisissez la visibilité : `Privée` (vous seul), `Stage`
+(vos participants) ou `Partagée`. Une preuve peut être liée à une activité
+(§10.11).
+
+### 7.5 Mobiliser des compétences
+
+Sur une activité, la carte « Compétences » : choisissez une compétence de
+l'espace et justifiez son rattachement (champ obligatoire). Les compétences
+mobilisées apparaissent dans la matrice du stage, où le maître de stage ou le
+tuteur peut les documenter puis les évaluer (§9).
+
+### 7.6 Générer un rapport
+
+Depuis la fiche du stage, « Rapports » : choisissez un modèle de l'espace et
+lancez la génération (asynchrone), puis téléchargez le résultat en HTML, PDF
+ou DOCX (§12).
+
+*Statut : `DISPONIBLE`.*
 
 ---
 
@@ -407,25 +424,46 @@ révoqué dans cette version (transfert de stage non pris en charge, §17).
 
 ## 9. Guide du tuteur pédagogique
 
-> `À VENIR — livré par T-060, T-061`.
+> **DISPONIBLE** — livré par T-060, T-061.
 
-Sections prévues :
-- consulter les compétences mobilisées et documentées ;
-- saisir une appréciation nominative ;
-- comprendre la distinction mobilisée / documentée / évaluée.
+En tant que tuteur (participant au stage, rôle `tutor` de l'espace), vous
+consultez la matrice des compétences de chaque stage auquel vous êtes rattaché
+(fiche stage → « Compétences »).
 
-*Statut : `À VENIR`.*
+Trois états par compétence :
+
+| État | Signification | Qui peut le poser |
+|---|---|---|
+| **Mobilisée** | la compétence est rattachée à une activité du stage, avec justification du stagiaire | stagiaire (ou administrateur) |
+| **Documentée** | les preuves et journaux attestent la mise en œuvre ; le gestionnaire du stage le confirme | maître de stage / tuteur participant |
+| **Évaluée** | vous (ou le maître de stage) portez une appréciation nominative (`validated` = validée, `remediation` = à consolider) avec un commentaire daté et signé | maître de stage / tuteur participant |
+
+Garanties :
+
+- **Aucune validation automatique** (INV-09) : ni la clôture d'une activité, ni
+  la clôture d'une journée de journal ne valident une compétence. Seule une
+  appréciation explicite d'un évaluateur habilité fait passer la compétence à
+  « Évaluée » (AC-11.1, AC-11.2).
+- Une compétence **évaluée ne peut pas être retirée** de l'activité : l'entrée
+  d'historique est conservée (aucune destruction de trace).
+- Le stagiaire **ne peut pas s'auto-évaluer** ; le propriétaire de l'espace
+  n'évalue que s'il est participant du stage.
+- Chaque évaluation est tracée dans le journal d'audit
+  (`assessment.created`).
+
+*Statut : `DISPONIBLE`.*
 
 ---
 
 ## 10. Guide de l'administrateur
 
-> **Partiel** — base livrée par T-006, invitations (T-007), organisations
-> (T-008) et journal d'audit (T-009) disponibles ; complété par T-021, T-062.
+> **DISPONIBLE** — base livrée par T-006, invitations (T-007), compétences
+> (simplification 1.6.0) et journal d'audit (T-009) disponibles ; complété par
+> T-021, T-062.
 
 ### 10.1 Rôles d'un espace de travail
 
-| Rôle | Consulter | Modifier l'espace | Gérer les membres | Gérer les organisations | Consulter l'audit | Supprimer |
+| Rôle | Consulter | Modifier l'espace | Gérer les membres | Gérer les compétences | Consulter l'audit | Supprimer |
 |---|---|---|---|---|---|---|
 | `owner` | oui | oui | oui | oui | oui | oui |
 | `admin` | oui | oui | oui | oui | oui | non |
@@ -484,24 +522,22 @@ Autres règles :
 - visiter le lien après acceptation → page « 410 Invitation indisponible » ;
 - seul le hash SHA-256 du token est stocké en base.
 
-### 10.5 Organisations
+### 10.5 Compétences (simplification 1.6.0)
 
-Page **Organisations** (`/w/{workspace}/organizations`) : consulter pour tous
-les membres, créer/modifier/archiver pour `owner` et `admin`.
+Page **Compétences** (`/w/{workspace}/competencies`), réservée à `owner` et
+`admin` : liste simple des compétences de l'espace (code + intitulé +
+description optionnelle).
 
-| Type | Libellé | Usage |
-|---|---|---|
-| `company` | Entreprise d'accueil | entreprise qui accueille le stagiaire |
-| `association` | Association | structure associative d'accueil |
-| `training_center` | Organisme de formation | centre qui délivre le référentiel |
-| `partner` | Partenaire | autre structure partenaire |
-
-- Les organisations d'accueil et les organismes de formation sont des entités
-  distinctes du même objet, différenciées par leur type (FR-3.1).
-- Aucune suppression physique : **archivage** (`archived_at`), les
-  organisations archivées restent consultables en bas de page.
-- Chaque organisation appartient à un workspace ; une organisation d'un autre
-  espace est inatteignable par identifiant (404).
+- Les compétences sont définies **directement** par les administrateurs de
+  l'espace : il n'y a plus de référentiel versionné, de bloc ni de critère
+  (décision de simplification 1.6.0).
+- Le code doit être unique dans l'espace (ex. `C1.1`).
+- Une compétence **associée à une activité** ne peut pas être supprimée :
+  le bouton est masqué et la tentative est refusée (aucune perte de trace).
+- La création, la modification et la suppression sont journalisées
+  (`competency.created`, `competency.deleted`).
+- Les compétences de cet espace sont ensuite rattachables aux activités des
+  stages (§7.5) et évaluables (§9).
 
 ### 10.6 Journal d'audit
 
@@ -513,7 +549,11 @@ Actions journalisées à ce stade : `auth.login`, `auth.logout`,
 `auth.login.failed`, `auth.login.throttled`, `workspace.created`,
 `workspace.access.denied` (403 membre non actif), `user.created`,
 `invitation.created/accepted/declined/cancelled`,
-`organization.created/updated/archived`.
+`competency.created/deleted/associated/documented/unlinked`,
+`assessment.created`, `internship.created/updated`, `project.*`,
+`activity.*`, `task.*`, `daily_log.closed`, `evidence.*`, `commit.linked`,
+`comment.created`, `review.*`, `report_template.*`, `report.generated`,
+`repository.connected/synced`.
 
 Garanties :
 
@@ -526,43 +566,19 @@ Garanties :
 - Les échecs de connexion sont rattachés à l'acteur si le compte existe, sans
   jamais contenir le mot de passe tenté.
 
-*Statut : `PARTIEL` — rôles, création de comptes/espaces, invitations,
-organisations et journal d'audit vérifiés le 2026-11-08 ; gestion fine des
-membres et référentiels `À VENIR`.*
+*Statut : `DISPONIBLE` — rôles, création de comptes/espaces, invitations,
+compétences et journal d'audit vérifiés (suite continue PHPUnit).*
 
-### 10.7 Formations (T-020)
-
-Dans un espace, le lien « Formations » (navigation latérale) ouvre la liste
-des programmes de formation. Propriétaires et administrateurs peuvent créer
-un programme (nom, organisme de formation de l'espace, certification, dates)
-et y inscrire des membres actifs de l'espace (une inscription par
-utilisateur et programme, dates de début/fin obligatoires). Le statut
-d'inscription peut être passé à `Terminée` ou `Abandon`.
-
-### 10.8 Référentiels (T-021, T-022)
-
-Lien « Référentiels » dans la barre supérieure (propriétaires et
-administrateurs d'un espace actif uniquement) : création d'un référentiel
-(nom, organisme émetteur, description), puis de versions (numéro, date
-d'effet), puis de blocs, compétences (rattachables à un bloc et à une
-compétence parente) et critères. La publication d'une version est
-définitive : son contenu devient immuable (refus applicatif HTTP 403 et
-trigger PostgreSQL). Toute tentative d'écriture sur une version publiée
-est rejetée, y compris en SQL direct.
-
-*Statut : `DISPONIBLE` (référentiels) — vérifié le 2026-11-13.*
-
-### 10.9 Stages (T-023)
+### 10.7 Stages (T-023)
 
 Dans un espace, le lien « Stages » liste les stages (titre, stagiaire,
-organisation d'accueil, période, statut). Propriétaires et administrateurs
-peuvent créer un stage (stagiaire membre actif de l'espace, organisation
-d'accueil, programme de formation optionnel, version de référentiel
-**publiée**, dates, objectifs, statut). La fiche de stage permet d'ajouter
-des participants (stagiaire, maître de stage, tuteur) et d'accéder aux
-projets. Le stagiaire concerné peut aussi modifier son stage.
+entreprise d'accueil, période, statut). Propriétaires et administrateurs
+peuvent créer un stage (stagiaire membre actif de l'espace, **entreprise
+d'accueil** saisie en texte libre, dates, objectifs, statut). La fiche de
+stage permet d'ajouter des participants (stagiaire, maître de stage, tuteur)
+et d'accéder aux projets. Le stagiaire concerné peut aussi modifier son stage.
 
-### 10.10 Projets et activités (T-024, T-025)
+### 10.8 Projets et activités (T-024, T-025)
 
 Depuis la fiche d'un stage, « Projets » liste et crée des projets (nom,
 description, statut, période). La fiche d'un projet liste ses activités et
@@ -573,7 +589,7 @@ deux stages d'un même stagiaire restent strictement séparés (MT-04).
 
 *Statut : `DISPONIBLE` (projets, activités) — vérifié le 2026-11-13.*
 
-### 10.11 Tâches et Kanban (T-026)
+### 10.9 Tâches et Kanban (T-026)
 
 Depuis la fiche d'une activité, la section « Tâches (Kanban) » liste les
 tâches avec leur statut, priorité et échéance. Il est possible d'ajouter une
@@ -581,7 +597,7 @@ tâche (titre, priorité, statut) et de changer son statut via la liste
 déroulante (sauvegarde immédiate). Les tâches peuvent être supprimées.
 L'ordre est conservé par une position.
 
-### 10.12 Journal quotidien (T-027, T-028)
+### 10.10 Journal quotidien (T-027, T-028)
 
 Depuis la fiche d'un stage, le lien « Journal » liste les journées saisies
 (date, auteur, durée, statut). Une journée contient les horaires, la durée,
@@ -592,7 +608,7 @@ brouillon peut être modifiée ; la clôture la rend en lecture seule.
 
 *Statut : `DISPONIBLE` (tâches, Kanban, journal, clôture) — vérifié le 2026-11-13.*
 
-### 10.13 Preuves et visibilité (T-040, T-041, T-042)
+### 10.11 Preuves et visibilité (T-040, T-041, T-042)
 
 Dans un espace, le lien « Preuves » liste les preuves (titre, type,
 visibilité, propriétaire). Il est possible de créer une preuve en
@@ -690,28 +706,64 @@ conservées.
 
 ## 12. Rapports et exports
 
-> `À VENIR — livré par T-062 → T-064`.
+> **DISPONIBLE** — livré par T-062 → T-064.
 
-Sections prévues :
-- choisir un modèle (mémoire, dossier professionnel, oral, bilan, suivi) ;
-- générer une synthèse ;
-- comprendre les exclusions (notes privées, preuves non partagées) ;
-- distinguer faits, déclarations personnelles et appréciations de tiers.
+### 12.1 Modèles de rapports
 
-*Statut : `À VENIR`.*
+Les propriétaires et administrateurs de l'espace définissent des **modèles**
+(page « Modèles de rapports ») : un modèle regroupe des sections parmi
+`identity` (identité du stage), `activities` (activités), `daily_logs`
+(journal), `evidences` (preuves) et `competencies` (compétences). Chaque
+modèle possède des **versions** : la version publiée est immuable (INV-14),
+toute évolution crée une nouvelle version.
+
+### 12.2 Générer et télécharger
+
+Depuis la fiche du stage, « Rapports » : choisissez un modèle de l'espace et
+lancez la génération. Elle est **asynchrone** (file de tâches) : le statut
+passe de `En attente` à `Généré` (ou `Échoué`), puis le rapport est
+téléchargeable en **HTML**, **PDF** ou **DOCX**.
+
+### 12.3 Exclusions garanties
+
+Le filtrage est effectué **côté serveur** (INV-14) :
+
+- les **notes privées** des journal quotidien ne sont jamais exportées ;
+- les **preuves non partagées** (privées) sont exclues, et la liste des
+  exclusions est jointe au rapport ;
+- le rapport distingue les **faits documentés** (activités, commits), les
+  **déclarations du stagiaire** (journal) et les **appréciations de tiers**
+  (commentaires, revues, évaluations).
+
+*Statut : `DISPONIBLE` — vérifié le 2026-11-17.*
 
 ---
 
 ## 13. Sauvegarde et restauration
 
-> `À VENIR — livré par T-065`.
+> **DISPONIBLE** — livré par T-065.
 
-Sections prévues :
-- sauvegarder la base et les fichiers de preuves ;
-- restaurer sur un environnement vierge ;
-- vérifier l'intégrité par empreintes.
+Deux commandes artisan (utilisables par l'exploitant du serveur) :
 
-*Statut : `À VENIR`.*
+```bash
+php artisan app:backup                    # sauvegarde complète
+php artisan app:restore <chemin> --dry-run   # simulation
+php artisan app:restore <chemin>          # restauration réelle
+```
+
+- La sauvegarde exporte **toutes les tables** en JSONL (un fichier par table),
+  **copie les fichiers de preuves** du stockage privé, et écrit un
+  `manifest.json` avec l'**empreinte SHA-256** de chaque fichier.
+- La restauration vérifie les empreintes **avant** d'écrire (une archive
+  corrompue est refusée sans aucune modification), insère les données dans
+  l'**ordre topologique** des clés étrangères, recadre les séquences et
+  restitue les fichiers à l'identique.
+- `--dry-run` vérifie les empreintes et calcule le plan d'insertion **sans
+  rien écrire**.
+- Preuve MT-12 : sauvegarde puis restauration d'une base de démonstration
+  complète (43 tables, 76 lignes, 75 fichiers) à l'identique.
+
+*Statut : `DISPONIBLE`.*
 
 ---
 
@@ -731,6 +783,12 @@ Sections livrées :
   peut être accordé à un maître de stage / tuteur) ;
 - **révocation sans destruction** (T-053) : retirer un participant ne supprime
   jamais son historique ;
+- **évaluations nominatives** (T-060/T-061) : seule une appréciation explicite
+  d'un maître de stage ou tuteur habilité valide une compétence ; le stagiaire
+  ne peut pas s'auto-évaluer et une compétence évaluée n'est jamais retirée
+  silencieusement (§9) ;
+- **rapports** (T-062 → T-064) : filtrage serveur des notes privées et des
+  preuves non partagées, exclusions listées (§12) ;
 - **jetons GitHub** : chiffrés au repos, jamais exposés (§11).
 
 Sections prévues :
@@ -765,19 +823,15 @@ Faits déjà observés sur l'environnement de développement :
 ```
 .aidf/            gouvernance AIDF, documents, preuves, workflow
 docs/             architecture, base de données, fonctionnel, tests, planning
-app/Console/      commandes artisan (comptes, espaces)
+app/Console/      commandes artisan (comptes, espaces, sauvegarde/restauration)
 app/Domain/Identity/  utilisateurs, workspaces, appartenances, invitations,
                   contexte courant
-app/Domain/Training/  programmes de formation et inscriptions (T-020)
-app/Domain/Framework/ référentiels, versions, blocs, compétences, critères
-                  (T-021/T-022)
 app/Domain/Internship/ stages, participants (T-023)
 app/Domain/Project/   projets et activités (T-024/T-025)
-app/Domain/Organization/  organisations d'accueil et organismes de formation
+app/Domain/Evaluation/ compétences, associations, évaluations (T-060/T-061)
 app/Domain/Audit/ journal d'audit (modèle append-only, service d'écriture)
-app/Domain/       autres domaines métier (Training, Framework, Internship,
-                  Project, Journal, Evidence, Evaluation, Reporting,
-                  Collaboration)
+app/Domain/       autres domaines métier (Internship, Journal, Evidence,
+                  Reporting, Collaboration, Git)
 app/Http/         contrôleurs, middlewares, requêtes de formulaire
 app/Mail/         e-mails transactionnels (invitation)
 app/Integrations/ Git, GitHub, Storage
@@ -864,16 +918,17 @@ Créer `.env.testing` à partir de `.env` avec `APP_ENV=testing` et
 
 | Limite | Statut |
 |---|---|
-| Modules métier suite | non implémentés — évaluations, rapports à venir (formations, référentiels, stages, projets, activités, tâches Kanban, journal quotidien et preuves livrés en T-020 → T-030 et T-040 → T-042) |
+| Modules métier suite | livrés (évaluations T-060/T-061, rapports T-062 → T-064, sauvegarde T-065) ; restent T-066 accessibilité, T-070 sécurité, T-071/T-072 release |
+| Périmètre simplifié 1.6.0 | décision utilisateur : le module Formations, les Organisations d'accueil (remplacées par un champ texte « entreprise d'accueil » sur le stage) et les référentiels versionnés (blocs/critères) sont supprimés ; les compétences sont définies directement par espace |
 | Navigation clavier complète + parcours Playwright (dont « Navigation clavier ») | `À VENIR` — audit d'accessibilité en T-066 ; les parcours critiques Playwright (T-046) sont toutefois livrés et PASS (§16.4) ; le parcours « vue maître de stage » (T-054) est livré (§8, capture incluse) |
 | Version Livewire | résolu — DEC-ST-014 accepté (Livewire 4.4.8 installé) ; l'interface reste en Blade pur à ce jour, aucun composant Livewire utilisé |
 | Envoi réel d'e-mails | non configuré — `MAIL_MAILER=log` (le lien d'invitation va dans le log) |
 | Suspension / changement de rôle des membres | livré par T-021 |
 | Conformité RGPD | **NOT_PROVEN** — analyse juridique requise |
 | Playwright sous Windows | vérifié le 2026-11-15 — 4 parcours PASS (Chromium headless shell 159, §16.4) ; l'audit accessibilité reste en T-066 |
-| Trames officielles de rapports | indisponibles — modèles configurables |
+| Trames officielles de rapports | indisponibles — modèles configurables par l'administrateur de l'espace |
 | Transfert de stage (réaffectation du stagiaire) | non pris en charge — le stagiaire d'un stage ne peut pas être révoqué ; un nouveau stage est créé à la place (T-053) |
-| Version applicable du référentiel DWWM | à vérifier auprès de la source officielle |
+| Version applicable du référentiel | non applicable — référentiels supprimés en 1.6.0 (compétences définies par espace) |
 | Antivirus sur les uploads | non prévu en V1 (documenté) |
 | Chiffrement des sauvegardes | non prévu en V1 (documenté) |
 

@@ -24,36 +24,9 @@
             <input id="title" type="text" name="title" required maxlength="160" value="{{ old('title', $internship->title) }}">
             @error('title') <p class="error">{{ $message }}</p> @enderror
 
-            <label for="host_organization_id">Organisation d'accueil</label>
-            <select id="host_organization_id" name="host_organization_id" required>
-                @foreach ($organizations as $organization)
-                    <option value="{{ $organization->id }}" @selected(old('host_organization_id', $internship->host_organization_id) === $organization->id)>
-                        {{ $organization->name }}
-                    </option>
-                @endforeach
-            </select>
-            @error('host_organization_id') <p class="error">{{ $message }}</p> @enderror
-
-            <label for="training_program_id">Programme de formation</label>
-            <select id="training_program_id" name="training_program_id">
-                <option value="">— aucun —</option>
-                @foreach ($programs as $program)
-                    <option value="{{ $program->id }}" @selected(old('training_program_id', $internship->training_program_id) === $program->id)>
-                        {{ $program->name }}
-                    </option>
-                @endforeach
-            </select>
-            @error('training_program_id') <p class="error">{{ $message }}</p> @enderror
-
-            <label for="framework_version_id">Version de référentiel</label>
-            <select id="framework_version_id" name="framework_version_id" required>
-                @foreach ($versions as $version)
-                    <option value="{{ $version->id }}" @selected(old('framework_version_id', $internship->framework_version_id) === $version->id)>
-                        {{ $version->framework->name }} — {{ $version->version }}
-                    </option>
-                @endforeach
-            </select>
-            @error('framework_version_id') <p class="error">{{ $message }}</p> @enderror
+            <label for="company_name">Entreprise d'accueil</label>
+            <input id="company_name" type="text" name="company_name" required maxlength="200" value="{{ old('company_name', $internship->company_name) }}">
+            @error('company_name') <p class="error">{{ $message }}</p> @enderror
 
             <label for="start_date">Date de début</label>
             <input id="start_date" type="date" name="start_date" required value="{{ old('start_date', $internship->start_date->format('Y-m-d')) }}">

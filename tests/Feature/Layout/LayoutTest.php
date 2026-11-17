@@ -40,7 +40,7 @@ class LayoutTest extends TestCase
             ->assertSee("Sections de l'espace", false)
             ->assertSee('Espace actif')
             ->assertSee('Tableau de bord')
-            ->assertSee('Organisations')
+            ->assertSee('Stages')
             ->assertSee('Membres et invitations')
             ->assertSee("Journal d'audit", false)
             ->assertSee('Propriétaire')
@@ -118,15 +118,15 @@ class LayoutTest extends TestCase
             ->assertDontSee("Sections de l'espace", false);
     }
 
-    public function test_organization_pages_show_breadcrumb(): void
+    public function test_competency_pages_show_breadcrumb(): void
     {
         $owner = User::factory()->create();
         $workspace = $this->workspaceWithMember($owner);
 
         $this->actingAs($owner)
-            ->get(route('workspace.organizations.index', $workspace))
+            ->get(route('workspace.competencies.index', $workspace))
             ->assertOk()
             ->assertSee("Fil d'Ariane", false)
-            ->assertSee('Organisations');
+            ->assertSee('Compétences');
     }
 }

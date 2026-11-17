@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Domain\Audit\AuditLogger;
 use App\Domain\Authorization\EffectivePermissions;
 use App\Domain\Collaboration\Models\Comment;
+use App\Domain\Evaluation\Models\Competency;
 use App\Domain\Evidence\Models\Evidence;
-use App\Domain\Framework\Models\Competency;
 use App\Domain\Identity\Models\Workspace;
 use App\Domain\Internship\Models\Internship;
 use App\Domain\Project\Models\Activity;
@@ -125,7 +125,7 @@ class ActivityController extends Controller
             ->get();
 
         // Compétences associées (T-060) et catalogue de la version du
-        // référentiel rattachée au stage.
+        // espace de travail du stage.
         $competencies = $activity->activityCompetencies()
             ->with(['competency', 'assessments.assessor'])
             ->get()
@@ -133,7 +133,7 @@ class ActivityController extends Controller
             ->values();
 
         $availableCompetencies = Competency::query()
-            ->where('framework_version_id', $internship->framework_version_id)
+            ->where('workspace_id', $internship->workspace_id)
             ->orderBy('code')
             ->get();
 

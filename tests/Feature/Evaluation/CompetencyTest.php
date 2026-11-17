@@ -3,11 +3,8 @@
 namespace Tests\Feature\Evaluation;
 
 use App\Domain\Evaluation\Models\ActivityCompetency;
+use App\Domain\Evaluation\Models\Competency;
 use App\Domain\Evaluation\Models\CompetencyAssessment;
-use App\Domain\Framework\Models\Competency;
-use App\Domain\Framework\Models\CompetencyBlock;
-use App\Domain\Framework\Models\CompetencyFramework;
-use App\Domain\Framework\Models\FrameworkVersion;
 use App\Domain\Identity\Models\User;
 use App\Domain\Identity\Models\Workspace;
 use App\Domain\Identity\Models\WorkspaceMember;
@@ -51,28 +48,15 @@ class CompetencyTest extends TestCase
             'role' => 'owner',
         ]);
 
-        $framework = CompetencyFramework::factory()->create();
-        $version = FrameworkVersion::factory()->create([
-            'framework_id' => $framework->id,
-            'status' => 'draft',
-        ]);
-        $block = CompetencyBlock::query()->create([
-            'framework_version_id' => $version->id,
-            'code' => 'B1',
-            'title' => 'Bloc démo',
-            'position' => 1,
-        ]);
         $this->competency = Competency::query()->create([
-            'framework_version_id' => $version->id,
-            'block_id' => $block->id,
+            'workspace_id' => $this->workspace->id,
             'code' => 'C1.1',
             'title' => 'Rédiger un message professionnel',
-            'position' => 1,
         ]);
 
         $this->internship = Internship::factory()->create([
             'workspace_id' => $this->workspace->id,
-            'framework_version_id' => $version->id,
+            'company_name' => 'Entreprise Test',
         ]);
         $this->project = Project::factory()->create([
             'internship_id' => $this->internship->id,
@@ -140,17 +124,12 @@ class CompetencyTest extends TestCase
         $this->assertDatabaseHas('audit_logs', ['action' => 'competency.associated']);
     }
 
-    public function test_competency_must_belong_to_the_internship_framework(): void
+    public function test_competency_must_belong_to_the_internship_workspace(): void
     {
-        $foreignVersion = FrameworkVersion::factory()->create([
-            'framework_id' => CompetencyFramework::factory()->create()->id,
-            'status' => 'draft',
-        ]);
         $foreign = Competency::query()->create([
-            'framework_version_id' => $foreignVersion->id,
+            'workspace_id' => Workspace::factory()->create()->id,
             'code' => 'X9.9',
-            'title' => 'Compétence hors référentiel',
-            'position' => 1,
+            'title' => 'Compétence hors espace',
         ]);
 
         $this->actingAs($this->owner)
@@ -158,7 +137,7 @@ class CompetencyTest extends TestCase
                 $this->workspace, $this->internship, $this->project, $this->activity,
             ]), [
                 'competency_id' => $foreign->id,
-                'justification' => 'Justification hors référentiel du stage.',
+                'justification' => 'Justification hors espace du stage.',
             ])
             ->assertNotFound();
 
