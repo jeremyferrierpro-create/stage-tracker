@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-18T07-35-17-822Z-40f347",
+  "type": "gate-run",
+  "status": "BLOCKED",
+  "gate": "testing-exit",
+  "phase": "testing",
+  "summary": "testing-exit (exit) -> BLOCKED",
+  "note": "",
+  "createdBy": "aidf",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-18T07:35:17.822Z",
+  "checks": [
+    {
+      "id": "test-command",
+      "type": "command",
+      "status": "BLOCKED",
+      "reason": "No \"test\" command is configured in .aidf/config.json.",
+      "evidence": null
+    },
+    {
+      "id": "test-evidence",
+      "type": "evidence",
+      "status": "NOT_PROVEN",
+      "reason": "No PASS evidence of type \"test-run\".",
+      "evidence": null
+    }
+  ],
+  "commands": [],
+  "files": [],
+  "limitations": [],
+  "previous": "f5439dfbfbb572b569d4cff87d7adbf55b93ab6c4112601ec5a26fc5f40dfb90",
+  "hash": "b2bcdcc78e6c54e9fce8f3106a1ac656e5c535c442af1e8602b9499b58fbe0cd"
+}

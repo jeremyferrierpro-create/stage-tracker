@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-18T07-38-51-097Z-a1f679",
+  "type": "gate-run",
+  "status": "NOT_PROVEN",
+  "gate": "testing-exit",
+  "phase": "testing",
+  "summary": "testing-exit (exit) -> NOT_PROVEN",
+  "note": "",
+  "createdBy": "aidf",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-18T07:38:51.097Z",
+  "checks": [
+    {
+      "id": "test-command",
+      "type": "command",
+      "status": "PASS",
+      "reason": "Command exited 0 in 86190ms.",
+      "evidence": null
+    },
+    {
+      "id": "test-evidence",
+      "type": "evidence",
+      "status": "NOT_PROVEN",
+      "reason": "No PASS evidence of type \"test-run\".",
+      "evidence": null
+    }
+  ],
+  "commands": [
+    {
+      "key": "test",
+      "command": "php artisan test",
+      "exitCode": 0,
+      "durationMs": 86190,
+      "stdout": "{\"tool\":\"phpunit\",\"result\":\"passed\",\"tests\":176,\"passed\":176,\"assertions\":697,\"duration_ms\":49417}\r\n",
+      "stderr": ""
+    }
+  ],
+  "files": [],
+  "limitations": [],
+  "previous": "b2bcdcc78e6c54e9fce8f3106a1ac656e5c535c442af1e8602b9499b58fbe0cd",
+  "hash": "237757b8b72319df1692213f044157e1309014602102cf563c9b10dd76daf450"
+}

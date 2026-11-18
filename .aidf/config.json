@@ -12,9 +12,9 @@
   },
   "adapter": "qoder",
   "commands": {
-    "test": null,
-    "build": null,
-    "lint": null,
+    "test": "php artisan test",
+    "build": "cmd /c \"npm run build\"",
+    "lint": "vendor/bin/pint --test",
     "securityAudit": null
   },
   "documents": {

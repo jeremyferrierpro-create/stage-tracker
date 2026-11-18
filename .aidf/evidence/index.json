@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-18T07:09:47.194Z",
-  "lastHash": "de7607001157603d72ac56b101339a76a563957fd1e5355520c40056a20e45e6",
+  "updatedAt": "2026-11-18T07:40:15.855Z",
+  "lastHash": "1bd7a5d662c53dc75050f7bc814ef0782ad85f9664772386be4b7a4144a07565",
   "entries": [
     {
       "id": "ev-2026-11-04T06-17-06-517Z-c9d381",
@@ -566,6 +566,78 @@
       "approvedBy": null,
       "file": ".aidf/evidence/2026-11-18T07-09-47-191Z-gate-run-de760700.json",
       "hash": "de7607001157603d72ac56b101339a76a563957fd1e5355520c40056a20e45e6"
+    },
+    {
+      "id": "ev-2026-11-18T07-15-18-464Z-edb4c5",
+      "type": "gate-run",
+      "status": "PASS",
+      "gate": "testing-entry",
+      "phase": "testing",
+      "createdAt": "2026-11-18T07:15:18.464Z",
+      "humanApproval": false,
+      "approvedBy": null,
+      "file": ".aidf/evidence/2026-11-18T07-15-18-464Z-gate-run-5efd55ae.json",
+      "hash": "5efd55ae8b0e1d198c1e2fdbfca7e60ae89720603ec4785b80dff59bb4b73080"
+    },
+    {
+      "id": "ev-2026-11-18T07-15-20-685Z-442eaa",
+      "type": "gate-run",
+      "status": "BLOCKED",
+      "gate": "testing-exit",
+      "phase": "testing",
+      "createdAt": "2026-11-18T07:15:20.685Z",
+      "humanApproval": false,
+      "approvedBy": null,
+      "file": ".aidf/evidence/2026-11-18T07-15-20-685Z-gate-run-f5439dfb.json",
+      "hash": "f5439dfbfbb572b569d4cff87d7adbf55b93ab6c4112601ec5a26fc5f40dfb90"
+    },
+    {
+      "id": "ev-2026-11-18T07-35-17-822Z-40f347",
+      "type": "gate-run",
+      "status": "BLOCKED",
+      "gate": "testing-exit",
+      "phase": "testing",
+      "createdAt": "2026-11-18T07:35:17.822Z",
+      "humanApproval": false,
+      "approvedBy": null,
+      "file": ".aidf/evidence/2026-11-18T07-35-17-823Z-gate-run-b2bcdcc7.json",
+      "hash": "b2bcdcc78e6c54e9fce8f3106a1ac656e5c535c442af1e8602b9499b58fbe0cd"
+    },
+    {
+      "id": "ev-2026-11-18T07-38-51-097Z-a1f679",
+      "type": "gate-run",
+      "status": "NOT_PROVEN",
+      "gate": "testing-exit",
+      "phase": "testing",
+      "createdAt": "2026-11-18T07:38:51.097Z",
+      "humanApproval": false,
+      "approvedBy": null,
+      "file": ".aidf/evidence/2026-11-18T07-38-51-098Z-gate-run-237757b8.json",
+      "hash": "237757b8b72319df1692213f044157e1309014602102cf563c9b10dd76daf450"
+    },
+    {
+      "id": "ev-2026-11-18T07-39-39-090Z-38450f",
+      "type": "test-run",
+      "status": "PASS",
+      "gate": null,
+      "phase": null,
+      "createdAt": "2026-11-18T07:39:39.090Z",
+      "humanApproval": false,
+      "approvedBy": null,
+      "file": ".aidf/evidence/2026-11-18T07-39-39-091Z-test-run-fa2c6b34.json",
+      "hash": "fa2c6b348c2e69d217a1ba7e0a8a7d46e0bb770510b52834b1a1f918a8c3bb0d"
+    },
+    {
+      "id": "ev-2026-11-18T07-40-15-852Z-6f876b",
+      "type": "gate-run",
+      "status": "PASS",
+      "gate": "testing-exit",
+      "phase": "testing",
+      "createdAt": "2026-11-18T07:40:15.852Z",
+      "humanApproval": false,
+      "approvedBy": null,
+      "file": ".aidf/evidence/2026-11-18T07-40-15-853Z-gate-run-1bd7a5d6.json",
+      "hash": "1bd7a5d662c53dc75050f7bc814ef0782ad85f9664772386be4b7a4144a07565"
     }
   ]
 }

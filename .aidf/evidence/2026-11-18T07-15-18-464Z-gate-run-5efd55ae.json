@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-18T07-15-18-464Z-edb4c5",
+  "type": "gate-run",
+  "status": "PASS",
+  "gate": "testing-entry",
+  "phase": "testing",
+  "summary": "testing-entry (entry) -> PASS",
+  "note": "",
+  "createdBy": "aidf",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-18T07:15:18.464Z",
+  "checks": [
+    {
+      "id": "previous-implementation",
+      "type": "previous-gate",
+      "status": "PASS",
+      "reason": "Prior gates PASS: implementation-exit.",
+      "evidence": null
+    }
+  ],
+  "commands": [],
+  "files": [],
+  "limitations": [],
+  "previous": "de7607001157603d72ac56b101339a76a563957fd1e5355520c40056a20e45e6",
+  "hash": "5efd55ae8b0e1d198c1e2fdbfca7e60ae89720603ec4785b80dff59bb4b73080"
+}

@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-18T07-39-39-090Z-38450f",
+  "type": "test-run",
+  "status": "PASS",
+  "gate": null,
+  "phase": null,
+  "summary": "Phase testing - execution reelle 2026-11-18 : (1) PHPUnit via la commande du gate (php artisan test) - exit 0 en 86190 ms (bootstrap) / 49417 ms de tests - 176 tests, 176 passes, 697 assertions - base .env.testing PostgreSQL 16 conteneur stage-tracker-postgres (stage_tracker_test), environnement local Windows ; (2) Playwright Chromium 1.65 contre le serveur de demo 127.0.0.1:8000 - 10/10 parcours PASS en 19.2 s incluant les 3 audits axe-core et le parcours guide tuteur. Aucun test saute, aucun test simule.",
+  "note": "Phase testing - execution reelle 2026-11-18 : (1) PHPUnit via la commande du gate (php artisan test) - exit 0 en 86190 ms (bootstrap) / 49417 ms de tests - 176 tests, 176 passes, 697 assertions - base .env.testing PostgreSQL 16 conteneur stage-tracker-postgres (stage_tracker_test), environnement local Windows ; (2) Playwright Chromium 1.65 contre le serveur de demo 127.0.0.1:8000 - 10/10 parcours PASS en 19.2 s incluant les 3 audits axe-core et le parcours guide tuteur. Aucun test saute, aucun test simule.",
+  "createdBy": "aidf",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-18T07:39:39.090Z",
+  "checks": [
+    {
+      "id": "files-captured",
+      "status": "PASS",
+      "reason": "8 file(s) from git"
+    }
+  ],
+  "commands": [],
+  "files": [
+    ".aidf/config.json",
+    ".aidf/evidence/index.json",
+    "docs/screenshots/supervisor-dashboard.png",
+    "docs/screenshots/tutor-assessment.png",
+    ".aidf/evidence/2026-11-18T07-15-18-464Z-gate-run-5efd55ae.json",
+    ".aidf/evidence/2026-11-18T07-15-20-685Z-gate-run-f5439dfb.json",
+    ".aidf/evidence/2026-11-18T07-35-17-823Z-gate-run-b2bcdcc7.json",
+    ".aidf/evidence/2026-11-18T07-38-51-098Z-gate-run-237757b8.json"
+  ],
+  "limitations": [
+    "File list is not a review of the content or quality of the change."
+  ],
+  "previous": "237757b8b72319df1692213f044157e1309014602102cf563c9b10dd76daf450",
+  "hash": "fa2c6b348c2e69d217a1ba7e0a8a7d46e0bb770510b52834b1a1f918a8c3bb0d"
+}
