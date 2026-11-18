@@ -58,6 +58,11 @@ versionnement [SemVer](https://semver.org/lang/fr/).
   bloquante ouverte ; limites `NOT_PROVEN` documentées.
 - **T-071** : rapport de release (`docs/release/`) — checklist, gates,
   limites connues.
+- **T-072** : README final vérifié par un **test réel d'installation depuis
+  un clone vierge** (`docs/release/installation-test.md`) : composer → .env →
+  migrations (29) → seed → build Vite → serve → parcours des 4 comptes de
+  démonstration PASS ; écarts trouvés corrigés (§4.5 mis à jour sur le
+  périmètre simplifié, dépannage `npm` sous PowerShell).
 
 ### Modifié — simplification du périmètre (décision utilisateur du 2026-11-17)
 - **Suppression du module Formations** (`TrainingProgram`,

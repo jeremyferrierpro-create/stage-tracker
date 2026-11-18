@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-18T07-09-42-757Z-26a69d",
+  "type": "implementation-change",
+  "status": "PASS",
+  "gate": null,
+  "phase": null,
+  "summary": "Phase 5 T-072 README final et test reel d'installation : clone vierge au commit 5be9c5a dans Temp, composer install 49.7s, .env + key:generate, 29 migrations + DemoSeeder 4s, npm install/build 3.6s (manifest OK), serve port 8010, parcours Playwright des 4 comptes demo (admin competences, stagiaire journal, maitre-de-stage matrice, tuteur dashboard) PASS. Ecarts corriges : README section 4.5 reecrit avec les 29 tables du perimetre simplifie (l'ancienne liste mentionnait organisations/formations/referentiels supprimes), depannage npm PowerShell ajoute section 15. Journal docs/release/installation-test.md. Suite finale 176 tests PASS / 697 assertions, pint PASS",
+  "note": "Phase 5 T-072 README final et test reel d'installation : clone vierge au commit 5be9c5a dans Temp, composer install 49.7s, .env + key:generate, 29 migrations + DemoSeeder 4s, npm install/build 3.6s (manifest OK), serve port 8010, parcours Playwright des 4 comptes demo (admin competences, stagiaire journal, maitre-de-stage matrice, tuteur dashboard) PASS. Ecarts corriges : README section 4.5 reecrit avec les 29 tables du perimetre simplifie (l'ancienne liste mentionnait organisations/formations/referentiels supprimes), depannage npm PowerShell ajoute section 15. Journal docs/release/installation-test.md. Suite finale 176 tests PASS / 697 assertions, pint PASS",
+  "createdBy": "aidf",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-18T07:09:42.757Z",
+  "checks": [
+    {
+      "id": "files-captured",
+      "status": "PASS",
+      "reason": "3 file(s) from git"
+    }
+  ],
+  "commands": [],
+  "files": [
+    ".aidf/docs/CHANGELOG.md",
+    "README.md",
+    "docs/release/installation-test.md"
+  ],
+  "limitations": [
+    "File list is not a review of the content or quality of the change."
+  ],
+  "previous": "3aa53b7790eba353f638ed951f9c4be8f18c2773c0272854a858460a581d4127",
+  "hash": "20e9301a6e54d090edb3736ac45174dbec3d5f2f37cb6e29030e74067cc15cd5"
+}

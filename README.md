@@ -157,14 +157,16 @@ Exécuté : conteneur `stage-tracker-postgres` démarré, healthcheck `healthy`.
 php artisan migrate
 ```
 
-Exécuté : tables `users`, `sessions`, `cache`, `jobs`, `workspaces`,
-`workspace_members`, `invitations`, `organizations`, `organization_members`,
-`audit_logs`, `training_programs`, `training_enrollments`,
-`competency_frameworks`, `framework_versions`, `competency_blocks`,
-`competencies`, `competency_criteria`, `internships`,
-`internship_participants`, `projects`, `activities`, `tasks`, `daily_logs`,
-`daily_log_activities`, `evidences` et `activity_evidences` créées
-(T-004 → T-042).
+Exécuté : 29 migrations, tables `users`, `sessions`, `cache`, `jobs`,
+`workspaces`, `workspace_members`, `invitations`, `audit_logs`,
+`competencies`, `internships`, `internship_participants`, `projects`,
+`activities`, `tasks`, `daily_logs`, `daily_log_activities`, `evidences`,
+`activity_evidences`, `repositories`, `commits`, `commit_files`,
+`activity_commits`, `sync_runs`, `comments`, `reviews`,
+`activity_competencies`, `competency_assessments`, `report_templates`,
+`report_template_versions` et `reports` créées (T-004 → T-063 ;
+périmètre simplifié 1.6.0 : plus de tables formations, organisations
+d'accueil ou référentiels versionnés).
 
 > Les seeders sont réservés aux environnements `local` et `test` ; ils ne
 > contiennent aucune donnée réelle. Jeu de démonstration (optionnel, à la fin) :
@@ -811,11 +813,16 @@ Faits déjà observés sur l'environnement de développement :
 | `pdo_sqlite` absent | extension non installée | sans impact : la base cible est PostgreSQL (`pdo_pgsql` présent) |
 | `psql` introuvable | PostgreSQL non installé nativement | utiliser Docker (`docker compose up -d`) |
 | port 5432 déjà utilisé | instance locale existante | arrêter le service ou changer `DB_PORT` |
+| `HTTP 419` après connexion | jeton CSRF expiré (page restée ouverte) | recharger la page de connexion et se reconnecter |
+| Docker Desktop arrêté (déconnexion Postgres) | le moteur Docker ne tourne plus | relancer Docker Desktop puis `docker compose up -d` |
+| `npm` bloque sous PowerShell (`npm.ps1`) | stratégie d'exécution de scripts | exécuter via `cmd /c "npm ..."` ou utiliser `npm.cmd` |
 
 > Les erreurs propres à l'application seront ajoutées au fil des tâches, avec
 > le message réel observé et la solution vérifiée.
 
-*Statut : `DISPONIBLE` (environnement) — application `À VENIR`.*
+*Statut : `DISPONIBLE` (environnement et application) — test réel
+d'installation effectué le 2026-11-18 depuis un clone vierge (T-072,
+journal dans `docs/release/installation-test.md`).*
 
 ---
 
@@ -924,7 +931,7 @@ Créer `.env.testing` à partir de `.env` avec `APP_ENV=testing` et
 
 | Limite | Statut |
 |---|---|
-| Modules métier suite | livrés (évaluations T-060/T-061, rapports T-062 → T-064, sauvegarde T-065, accessibilité T-066, revue de sécurité T-070) ; restent T-071/T-072 release |
+| Modules métier suite | livrés (évaluations T-060/T-061, rapports T-062 → T-064, sauvegarde T-065, accessibilité T-066, revue de sécurité T-070, release T-071, README final + test d'installation T-072) |
 | Périmètre simplifié 1.6.0 | décision utilisateur : le module Formations, les Organisations d'accueil (remplacées par un champ texte « entreprise d'accueil » sur le stage) et les référentiels versionnés (blocs/critères) sont supprimés ; les compétences sont définies directement par espace |
 | Navigation clavier complète | audit automatique axe-core livré en T-066 (10 parcours Playwright PASS, zéro défaut serious/critical, rapport `docs/accessibility/`) ; l'audit manuel (lecteur d'écran) reste un complément recommandé |
 | Version Livewire | résolu — DEC-ST-014 accepté (Livewire 4.4.8 installé) ; l'interface reste en Blade pur à ce jour, aucun composant Livewire utilisé |
