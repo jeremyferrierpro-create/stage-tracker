@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-18T06-58-06-113Z-b20f8d",
+  "type": "implementation-change",
+  "status": "PASS",
+  "gate": null,
+  "phase": null,
+  "summary": "Phase 5 T-066 accessibilite et E2E : audit axe-core 4.14 (wcag2a+aa) Playwright sur 14 pages (login, dashboard, stages, stage, projets, projet, activite, competences, rapports, modeles de rapports, membres, audit, preuves, journal stagiaire) ; 2 defauts critiques select-name corriges (labels for/id participant-user/participant-role, task-title/priority/status, aria-label statut tache/revue) ; bug 500 rapport corrige (ReportController import View Illuminate) ; parcours guide tuteur e2e/tutor-assessment.spec.ts (maitre-de-stage -> activite -> appreciation nominative validee, capture docs/screenshots/tutor-assessment.png) ; rapport docs/accessibility/README.md. Playwright 10/10 PASS, PHPUnit 175/175 PASS, pint PASS",
+  "note": "Phase 5 T-066 accessibilite et E2E : audit axe-core 4.14 (wcag2a+aa) Playwright sur 14 pages (login, dashboard, stages, stage, projets, projet, activite, competences, rapports, modeles de rapports, membres, audit, preuves, journal stagiaire) ; 2 defauts critiques select-name corriges (labels for/id participant-user/participant-role, task-title/priority/status, aria-label statut tache/revue) ; bug 500 rapport corrige (ReportController import View Illuminate) ; parcours guide tuteur e2e/tutor-assessment.spec.ts (maitre-de-stage -> activite -> appreciation nominative validee, capture docs/screenshots/tutor-assessment.png) ; rapport docs/accessibility/README.md. Playwright 10/10 PASS, PHPUnit 175/175 PASS, pint PASS",
+  "createdBy": "aidf",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-18T06:58:06.113Z",
+  "checks": [
+    {
+      "id": "files-captured",
+      "status": "PASS",
+      "reason": "13 file(s) from git"
+    }
+  ],
+  "commands": [],
+  "files": [
+    "README.md",
+    "app/Http/Controllers/ReportController.php",
+    "database/seeders/DemoSeeder.php",
+    "docs/screenshots/supervisor-dashboard.png",
+    "package-lock.json",
+    "package.json",
+    "resources/css/app.css",
+    "resources/views/activities/show.blade.php",
+    "resources/views/internships/show.blade.php",
+    "docs/accessibility/README.md",
+    "docs/screenshots/tutor-assessment.png",
+    "e2e/accessibility.spec.ts",
+    "e2e/tutor-assessment.spec.ts"
+  ],
+  "limitations": [
+    "File list is not a review of the content or quality of the change."
+  ],
+  "previous": "95fb635d491f435dfb98828e6fb894f0e49cadae731b2e5b22e8358e5ed4288a",
+  "hash": "dcf5ed461a7147948040abd14279d2b4da9d881774402d0f14b0f65336389d96"
+}

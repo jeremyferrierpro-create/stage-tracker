@@ -47,20 +47,20 @@
         <form method="POST" action="{{ route('workspace.tasks.store', [$workspace, $internship, $project, $activity]) }}" class="actions" style="margin-bottom: 1rem;">
             @csrf
             <div>
-                <label>Titre</label>
-                <input type="text" name="title" required maxlength="200" placeholder="Nouvelle tâche">
+                <label for="task-title">Titre</label>
+                <input id="task-title" type="text" name="title" required maxlength="200" placeholder="Nouvelle tâche">
             </div>
             <div>
-                <label>Priorité</label>
-                <select name="priority">
+                <label for="task-priority">Priorité</label>
+                <select id="task-priority" name="priority">
                     @foreach (\App\Domain\Project\Models\Task::PRIORITIES as $priority)
                         <option value="{{ $priority }}">{{ \App\Domain\Project\Models\Task::PRIORITY_LABELS[$priority] }}</option>
                     @endforeach
                 </select>
             </div>
             <div>
-                <label>Statut</label>
-                <select name="status">
+                <label for="task-status">Statut</label>
+                <select id="task-status" name="status">
                     @foreach (\App\Domain\Project\Models\Task::STATUSES as $status)
                         <option value="{{ $status }}">{{ \App\Domain\Project\Models\Task::STATUS_LABELS[$status] }}</option>
                     @endforeach
@@ -94,7 +94,7 @@
                                 <form method="POST" action="{{ route('workspace.tasks.update', [$workspace, $internship, $project, $activity, $task]) }}" class="inline">
                                     @csrf
                                     @method('PUT')
-                                    <select name="status" onchange="this.form.submit()">
+                                    <select name="status" aria-label="Statut de la tâche {{ $task->title }}" onchange="this.form.submit()">
                                         @foreach (\App\Domain\Project\Models\Task::STATUSES as $status)
                                             <option value="{{ $status }}" @selected($task->status === $status)>
                                                 {{ \App\Domain\Project\Models\Task::STATUS_LABELS[$status] }}
@@ -230,7 +230,7 @@
                             <td>
                                 <form method="POST" action="{{ route('workspace.internships.projects.activities.reviews.feedback', [$workspace, $internship, $project, $activity, $review]) }}" class="inline">
                                     @csrf
-                                    <select name="status">
+                                    <select name="status" aria-label="Statut de la revue">
                                         <option value="in_progress">En cours</option>
                                         <option value="approved">Approuvée</option>
                                         <option value="changes_requested">Modifications demandées</option>

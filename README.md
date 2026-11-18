@@ -260,8 +260,8 @@ connexion, « Mes espaces » liste les espaces dont vous êtes membre actif.
    - un lien « Aller au contenu » (premier élément au clavier avec Tab) saute
      directement au contenu principal.
 5. Sur mobile (< 900 px), la navigation latérale se replie derrière un bouton
-   « ☰ Menu ». La navigation complète au clavier fait l'objet de l'audit
-   d'accessibilité prévu en T-066 (Playwright).
+   « ☰ Menu ». La navigation complète au clavier fait l'objet d'un audit
+   d'accessibilité (T-066, §17 et rapport `docs/accessibility/`).
 
 ### 5.5 Sécurité de connexion
 
@@ -857,11 +857,11 @@ phpunit.xml
 ### 16.2 Commandes de qualité
 
 ```bash
-vendor/bin/pint --test      # style — PASS le 2026-11-15
-php artisan test            # tests PHPUnit - 113 tests PASS (497 assertions) le 2026-11-15
-php artisan migrate:fresh --seed --env=testing   # jeu de démo neutre — vérifié le 2026-11-15
+vendor/bin/pint --test      # style — PASS le 2026-11-18
+php artisan test            # tests PHPUnit - 175 tests PASS (694 assertions) le 2026-11-18
+php artisan migrate:fresh --seed --env=testing   # jeu de démo neutre — vérifié le 2026-11-18
 npm run build               # assets Vite — vérifié le 2026-11-08
-npx playwright test         # tests navigateur — 4 tests PASS le 2026-11-15 (voir §16.4)
+npx playwright test         # tests navigateur — 10 tests PASS le 2026-11-18 (voir §16.4)
 ```
 
 ### 16.4 Tests navigateur (Playwright)
@@ -873,6 +873,9 @@ Parcours critiques vérifiés dans un vrai navigateur (Chromium) :
 | `e2e/auth.spec.ts` | connexion / déconnexion, mot de passe erroné |
 | `e2e/git-traceability.spec.ts` | MT-06 : du tableau de bord à la fiche dépôt, commits visibles et liaison activité |
 | `e2e/evidence-visibility.spec.ts` | MT-07/MT-08 : preuve privée invisible et refusée (403) au maître de stage, preuve partagée consultable |
+| `e2e/supervisor-view.spec.ts` | vue maître de stage : journal visible, notes privées masquées |
+| `e2e/tutor-assessment.spec.ts` | guide tuteur (T-060/T-061) : évaluer une compétence, capture §9 |
+| `e2e/accessibility.spec.ts` | audit accessibilité axe-core (T-066, `docs/accessibility/`) |
 
 Prérequis (une fois) :
 
@@ -910,7 +913,7 @@ Créer `.env.testing` à partir de `.env` avec `APP_ENV=testing` et
 - Aucun secret dans Git ; `.env` ignoré.
 - Aucune fonctionnalité déclarée terminée sans test exécuté et preuve AIDF.
 
-*Statut : `DISPONIBLE` — Pint, PHPUnit, build Vite et Playwright (4 parcours) activés et vérifiés le 2026-11-15.*
+*Statut : `DISPONIBLE` — Pint, PHPUnit, build Vite et Playwright (10 parcours, dont audit axe-core) activés et vérifiés le 2026-11-18.*
 
 ---
 
@@ -920,7 +923,7 @@ Créer `.env.testing` à partir de `.env` avec `APP_ENV=testing` et
 |---|---|
 | Modules métier suite | livrés (évaluations T-060/T-061, rapports T-062 → T-064, sauvegarde T-065) ; restent T-066 accessibilité, T-070 sécurité, T-071/T-072 release |
 | Périmètre simplifié 1.6.0 | décision utilisateur : le module Formations, les Organisations d'accueil (remplacées par un champ texte « entreprise d'accueil » sur le stage) et les référentiels versionnés (blocs/critères) sont supprimés ; les compétences sont définies directement par espace |
-| Navigation clavier complète + parcours Playwright (dont « Navigation clavier ») | `À VENIR` — audit d'accessibilité en T-066 ; les parcours critiques Playwright (T-046) sont toutefois livrés et PASS (§16.4) ; le parcours « vue maître de stage » (T-054) est livré (§8, capture incluse) |
+| Navigation clavier complète | audit automatique axe-core livré en T-066 (10 parcours Playwright PASS, zéro défaut serious/critical, rapport `docs/accessibility/`) ; l'audit manuel (lecteur d'écran) reste un complément recommandé |
 | Version Livewire | résolu — DEC-ST-014 accepté (Livewire 4.4.8 installé) ; l'interface reste en Blade pur à ce jour, aucun composant Livewire utilisé |
 | Envoi réel d'e-mails | non configuré — `MAIL_MAILER=log` (le lien d'invitation va dans le log) |
 | Suspension / changement de rôle des membres | livré par T-021 |

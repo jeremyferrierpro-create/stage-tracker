@@ -13,6 +13,7 @@ use Dompdf\Dompdf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\Reader\Html;
 use Symfony\Component\HttpFoundation\StreamedResponse;

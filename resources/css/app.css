@@ -124,7 +124,7 @@ a { color: var(--accent); }
     color: var(--muted);
     font-size: .9rem;
 }
-.workspace-nav .soon em { font-style: normal; font-size: .8rem; opacity: .8; }
+.workspace-nav .soon em { font-style: normal; font-size: .8rem; }
 
 /* --- Contenu principal --- */
 .content {

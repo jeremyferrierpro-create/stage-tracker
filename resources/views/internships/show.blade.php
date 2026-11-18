@@ -91,16 +91,16 @@
             <form method="POST" action="{{ route('workspace.internships.participants.store', [$workspace, $internship]) }}" class="actions">
                 @csrf
                 <div>
-                    <label>Utilisateur</label>
-                    <select name="user_id" required>
+                    <label for="participant-user">Utilisateur</label>
+                    <select id="participant-user" name="user_id" required>
                         @foreach ($workspace->users()->wherePivot('status', 'active')->orderBy('name')->get() as $user)
                             <option value="{{ $user->id }}">{{ $user->name }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div>
-                    <label>Rôle</label>
-                    <select name="role" required>
+                    <label for="participant-role">Rôle</label>
+                    <select id="participant-role" name="role" required>
                         @foreach (\App\Domain\Internship\Models\InternshipParticipant::ROLES as $role)
                             <option value="{{ $role }}">{{ \App\Domain\Internship\Models\InternshipParticipant::ROLE_LABELS[$role] }}</option>
                         @endforeach

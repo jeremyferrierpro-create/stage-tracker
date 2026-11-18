@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Domain\Evaluation\Models\ActivityCompetency;
 use App\Domain\Evaluation\Models\Competency;
 use App\Domain\Evidence\Models\ActivityEvidence;
 use App\Domain\Evidence\Models\Evidence;
@@ -81,6 +82,15 @@ class DemoSeeder extends Seeder
             'workspace_id' => $workspace->id,
             'user_id' => $supervisor->id,
             'role' => 'supervisor',
+            'permissions' => [],
+            'status' => 'active',
+        ]);
+
+        InternshipParticipant::create([
+            'internship_id' => $internship->id,
+            'workspace_id' => $workspace->id,
+            'user_id' => $tutor->id,
+            'role' => 'tutor',
             'permissions' => [],
             'status' => 'active',
         ]);
@@ -210,6 +220,17 @@ class DemoSeeder extends Seeder
             'workspace_id' => $workspace->id,
             'linked_by' => $trainee->id,
             'linked_at' => now(),
+        ]);
+
+        // Compétence mobilisée sur la maquette (T-060), prête à être
+        // documentée puis évaluée par le maître de stage ou le tuteur.
+        $c1 = Competency::query()->where('code', 'C1.1')->where('workspace_id', $workspace->id)->firstOrFail();
+        ActivityCompetency::create([
+            'activity_id' => $mockupActivity->id,
+            'competency_id' => $c1->id,
+            'workspace_id' => $workspace->id,
+            'justification' => 'La maquette et son ergonomie mobilisent la rédaction de messages professionnels (échanges avec le client).',
+            'status' => 'mobilized',
         ]);
 
         $this->command?->line(
