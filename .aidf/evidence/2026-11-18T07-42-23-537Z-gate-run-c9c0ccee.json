@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-18T07-42-23-537Z-dea2a5",
+  "type": "gate-run",
+  "status": "PASS",
+  "gate": "security-exit",
+  "phase": "security",
+  "summary": "security-exit (exit) -> PASS",
+  "note": "",
+  "createdBy": "aidf",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-18T07:42:23.537Z",
+  "checks": [
+    {
+      "id": "security-doc-validated",
+      "type": "doc-status",
+      "status": "PASS",
+      "reason": "SECURITY: SECURITY is VALIDATED.",
+      "evidence": null
+    },
+    {
+      "id": "security-audit",
+      "type": "command",
+      "status": "NOT_APPLICABLE",
+      "reason": "No \"securityAudit\" command is configured.",
+      "evidence": null
+    },
+    {
+      "id": "security-human-approval",
+      "type": "evidence",
+      "status": "PASS",
+      "reason": "Found 1 matching evidence record(s).",
+      "evidence": [
+        ".aidf/evidence/2026-11-18T07-42-19-790Z-security-review-07e42877.json"
+      ]
+    }
+  ],
+  "commands": [],
+  "files": [],
+  "limitations": [],
+  "previous": "07e42877c1779152551541afbabb8862db702a72f74837a8671c5a4c0abafbad",
+  "hash": "c9c0cceefc8c1bf09cb959c309da6fc15d7f5c2630c454caa63e1958d8c977bd"
+}

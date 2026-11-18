@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-18T07-42-19-790Z-be1425",
+  "type": "security-review",
+  "status": "PASS",
+  "gate": null,
+  "phase": null,
+  "summary": "Revue de securite 1.6.0 approuvee par le proprietaire apres presentation du dossier : rapport docs/security/README.md, 8 tests obligatoires S-01..S-08 PASS avec preuve automatisee (SecurityCampaignTest S-02 inclus), composer audit --no-dev 0 avis, npm audit --omit=dev 0 vulnerabilite, 55 tests de securite PASS / 251 assertions, aucune vulnerabilite bloquante ouverte, limites NOT_PROVEN documentees et acceptees (RGPD juridique, antivirus, chiffrement sauvegardes, conservation, pentest).",
+  "note": "Revue de securite 1.6.0 approuvee par le proprietaire apres presentation du dossier : rapport docs/security/README.md, 8 tests obligatoires S-01..S-08 PASS avec preuve automatisee (SecurityCampaignTest S-02 inclus), composer audit --no-dev 0 avis, npm audit --omit=dev 0 vulnerabilite, 55 tests de securite PASS / 251 assertions, aucune vulnerabilite bloquante ouverte, limites NOT_PROVEN documentees et acceptees (RGPD juridique, antivirus, chiffrement sauvegardes, conservation, pentest).",
+  "createdBy": "human",
+  "humanApproval": true,
+  "approvedBy": "Jeremy Ferrier",
+  "createdAt": "2026-11-18T07:42:19.789Z",
+  "checks": [
+    {
+      "id": "manual-record",
+      "status": "PASS",
+      "reason": "Approved by Jeremy Ferrier"
+    }
+  ],
+  "commands": [],
+  "files": [],
+  "limitations": [],
+  "previous": "c7713ca64b34f2e066c56f841e3f747a40d3d9f8cff886898ecf5d2b4c92e83e",
+  "hash": "07e42877c1779152551541afbabb8862db702a72f74837a8671c5a4c0abafbad"
+}

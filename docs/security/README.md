@@ -43,6 +43,17 @@
 
 ## 4. Preuve d'exécution (2026-11-18)
 
+Vérifications de phase `security` (gate `security-exit`) :
+
+| Vérification | Résultat réel |
+|---|---|
+| Statut du document SECURITY | `VALIDATED` (gate : PASS) |
+| `composer audit --no-dev` | **0 avis de vulnérabilité** |
+| `npm audit --omit=dev` | **0 vulnérabilité** |
+| Réexécution des 9 suites de sécurité | **55 tests PASS / 251 assertions** (11,9 s) |
+| Commande `securityAudit` dédiée | non configurée → check `NOT_APPLICABLE` (non bloquant) |
+| Approbation humaine de la revue | **APPROUVÉE le 2026-11-18 par Jeremy Ferrier** (preuve `security-review` avec approbation humaine, demandée à l'issue de la présentation du dossier) |
+
 Suites de sécurité exécutées (`php artisan test`), toutes PASS :
 
 | Suite | Couverture |

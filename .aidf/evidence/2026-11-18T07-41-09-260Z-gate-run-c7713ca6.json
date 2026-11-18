@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-18T07-41-09-260Z-690334",
+  "type": "gate-run",
+  "status": "NOT_PROVEN",
+  "gate": "security-exit",
+  "phase": "security",
+  "summary": "security-exit (exit) -> NOT_PROVEN",
+  "note": "",
+  "createdBy": "aidf",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-18T07:41:09.260Z",
+  "checks": [
+    {
+      "id": "security-doc-validated",
+      "type": "doc-status",
+      "status": "PASS",
+      "reason": "SECURITY: SECURITY is VALIDATED.",
+      "evidence": null
+    },
+    {
+      "id": "security-audit",
+      "type": "command",
+      "status": "NOT_APPLICABLE",
+      "reason": "No \"securityAudit\" command is configured.",
+      "evidence": null
+    },
+    {
+      "id": "security-human-approval",
+      "type": "evidence",
+      "status": "NOT_PROVEN",
+      "reason": "No PASS evidence of type \"security-review\" with human approval.",
+      "evidence": null
+    }
+  ],
+  "commands": [],
+  "files": [],
+  "limitations": [],
+  "previous": "5ab447add3cd16082cc08f6f561f382626bcae5ddd5b8238fea78518cb5dc1ed",
+  "hash": "c7713ca64b34f2e066c56f841e3f747a40d3d9f8cff886898ecf5d2b4c92e83e"
+}
