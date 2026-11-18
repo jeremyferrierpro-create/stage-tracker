@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-18T07-43-27-212Z-e9fc4d",
+  "type": "gate-run",
+  "status": "NOT_PROVEN",
+  "gate": "release-exit",
+  "phase": "release",
+  "summary": "release-exit (exit) -> NOT_PROVEN",
+  "note": "",
+  "createdBy": "aidf",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-18T07:43:27.212Z",
+  "checks": [
+    {
+      "id": "prior-gates",
+      "type": "previous-gate",
+      "status": "PASS",
+      "reason": "Prior gates PASS: intake-exit, discovery-exit, specification-exit, planning-exit, implementation-exit, testing-exit, security-exit.",
+      "evidence": null
+    },
+    {
+      "id": "build-command",
+      "type": "command",
+      "status": "NOT_PROVEN",
+      "reason": "Command \"build\" was not executed. Re-run with --allow-exec or set security.allowCommandExecution=true.",
+      "evidence": null
+    },
+    {
+      "id": "release-human-approval",
+      "type": "evidence",
+      "status": "NOT_PROVEN",
+      "reason": "No PASS evidence of type \"release-approval\" with human approval.",
+      "evidence": null
+    }
+  ],
+  "commands": [
+    {
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "files": [],
+  "limitations": [],
+  "previous": "023ccaa37c0bf0d18a1af475a6b08b5f9bf80082661858157a2207b2bdc43d2e",
+  "hash": "7d1131997aa476fcbf37dd2e5c755f04d0ca7e5e5d847c04c858cbad487ce4ad"
+}

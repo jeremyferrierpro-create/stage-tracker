@@ -63,10 +63,10 @@ Preuve → Compétence → Évaluation → Synthèse.
 
 | Élément | État |
 |---|---|
-| Phase AIDF | IMPLEMENTATION en cours — Phase 1 (T-001 → T-012), Phase 2 (T-020 → T-030) et Phase 3 (T-040 → T-042) livrées |
+| Phase AIDF | **Cycle complet** : 8 phases, 16 gates PASS (release 1.6.0 approuvée le 2026-11-18) |
 | Code applicatif | socle Laravel 13.40.0 + authentification + isolation + invitations + audit + squelette d'interface + compétences définies par espace + stages (stagiaires, participants, projets, activités) + tâches Kanban + journal quotidien (clôture) + tableau de bord consolidé + preuves et visibilité (stockage abstrait local) + connecteur GitHub + collaboration (commentaires immuables, revues d'activité) + permissions effectives et révocation de participants + vue dédiée maître de stage + guide tuteur (compétences : mobilisée, documentée, évaluée) + modèles de rapports et exports (HTML, PDF, DOCX) + sauvegarde/restauration avec empreintes SHA-256 |
 | Base de données | PostgreSQL 16.15 (conteneur Docker `stage-tracker-postgres`) |
-| Tests | `php artisan test` → 175 tests PASS (694 assertions) ; `pint --test` → PASS ; campagnes MT-01/MT-02/MT-03/MT-04/MT-05/MT-10/MT-11/MT-12 |
+| Tests | `php artisan test` → 176 tests PASS (697 assertions) ; `pint --test` → PASS ; Playwright → 10/10 PASS (dont audits axe-core) ; campagnes MT-01/MT-02/MT-03/MT-04/MT-05/MT-10/MT-11/MT-12 |
 | Sécurité | Argon2id, rate limiting 5/15 min (429), sessions en base, messages neutres, audit append-only (trigger PostgreSQL) |
 | Documents de référence | `.aidf/docs/` (11 documents validés) |
 | Annexes techniques | `docs/` (MCD, MLD, API, invariants, tests, planning) |
@@ -84,7 +84,7 @@ node .aidf/bin/aidf.mjs context --task "ma tâche"
 node .aidf/bin/aidf.mjs validate --phase <phase> --kind exit --allow-exec
 ```
 
-*Statut : `DISPONIBLE` — vérifié le 2026-11-04.*
+*Statut : `DISPONIBLE` — vérifié le 2026-11-18 (release 1.6.0).*
 
 ---
 

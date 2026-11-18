@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-18T07:42:23.540Z",
-  "lastHash": "c9c0cceefc8c1bf09cb959c309da6fc15d7f5c2630c454caa63e1958d8c977bd",
+  "updatedAt": "2026-11-18T07:45:17.957Z",
+  "lastHash": "c2bf49c3f60fd29e9411bb962f663915a9ebba0d6720805a5afce5998a6ef8da",
   "entries": [
     {
       "id": "ev-2026-11-04T06-17-06-517Z-c9d381",
@@ -686,6 +686,54 @@
       "approvedBy": null,
       "file": ".aidf/evidence/2026-11-18T07-42-23-537Z-gate-run-c9c0ccee.json",
       "hash": "c9c0cceefc8c1bf09cb959c309da6fc15d7f5c2630c454caa63e1958d8c977bd"
+    },
+    {
+      "id": "ev-2026-11-18T07-43-27-055Z-defc2d",
+      "type": "gate-run",
+      "status": "PASS",
+      "gate": "release-entry",
+      "phase": "release",
+      "createdAt": "2026-11-18T07:43:27.055Z",
+      "humanApproval": false,
+      "approvedBy": null,
+      "file": ".aidf/evidence/2026-11-18T07-43-27-056Z-gate-run-023ccaa3.json",
+      "hash": "023ccaa37c0bf0d18a1af475a6b08b5f9bf80082661858157a2207b2bdc43d2e"
+    },
+    {
+      "id": "ev-2026-11-18T07-43-27-212Z-e9fc4d",
+      "type": "gate-run",
+      "status": "NOT_PROVEN",
+      "gate": "release-exit",
+      "phase": "release",
+      "createdAt": "2026-11-18T07:43:27.212Z",
+      "humanApproval": false,
+      "approvedBy": null,
+      "file": ".aidf/evidence/2026-11-18T07-43-27-213Z-gate-run-7d113199.json",
+      "hash": "7d1131997aa476fcbf37dd2e5c755f04d0ca7e5e5d847c04c858cbad487ce4ad"
+    },
+    {
+      "id": "ev-2026-11-18T07-45-13-145Z-2e8cc7",
+      "type": "release-approval",
+      "status": "PASS",
+      "gate": null,
+      "phase": null,
+      "createdAt": "2026-11-18T07:45:13.145Z",
+      "humanApproval": true,
+      "approvedBy": "Jeremy Ferrier",
+      "file": ".aidf/evidence/2026-11-18T07-45-13-146Z-release-approval-2c5ac70a.json",
+      "hash": "2c5ac70a1f66eb89f223017c570f0012d2af62892389a854a7645703d7012ea8"
+    },
+    {
+      "id": "ev-2026-11-18T07-45-17-954Z-a10b25",
+      "type": "gate-run",
+      "status": "PASS",
+      "gate": "release-exit",
+      "phase": "release",
+      "createdAt": "2026-11-18T07:45:17.954Z",
+      "humanApproval": false,
+      "approvedBy": null,
+      "file": ".aidf/evidence/2026-11-18T07-45-17-955Z-gate-run-c2bf49c3.json",
+      "hash": "c2bf49c3f60fd29e9411bb962f663915a9ebba0d6720805a5afce5998a6ef8da"
     }
   ]
 }

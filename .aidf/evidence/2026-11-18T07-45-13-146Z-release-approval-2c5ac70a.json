@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-18T07-45-13-145Z-2e8cc7",
+  "type": "release-approval",
+  "status": "PASS",
+  "gate": null,
+  "phase": null,
+  "summary": "Release 1.6.0 approuvee par le proprietaire apres presentation du dossier : 7 gates PASS (intake, discovery, specification, planning, implementation, testing, security), build Vite reel OK (app-CPfeOAEQ.css 5.63 ko, app-CiG0bjsp.js 0.13 ko, 71 ms), PHPUnit 176 tests / 697 assertions PASS, Playwright 10/10 PASS, composer audit 0 avis, npm audit 0 vulnerabilite, aucune migration en attente, arbre propre, test d'installation vierge PASS (docs/release/installation-test.md). Limites NOT_PROVEN documentees et acceptees.",
+  "note": "Release 1.6.0 approuvee par le proprietaire apres presentation du dossier : 7 gates PASS (intake, discovery, specification, planning, implementation, testing, security), build Vite reel OK (app-CPfeOAEQ.css 5.63 ko, app-CiG0bjsp.js 0.13 ko, 71 ms), PHPUnit 176 tests / 697 assertions PASS, Playwright 10/10 PASS, composer audit 0 avis, npm audit 0 vulnerabilite, aucune migration en attente, arbre propre, test d'installation vierge PASS (docs/release/installation-test.md). Limites NOT_PROVEN documentees et acceptees.",
+  "createdBy": "human",
+  "humanApproval": true,
+  "approvedBy": "Jeremy Ferrier",
+  "createdAt": "2026-11-18T07:45:13.145Z",
+  "checks": [
+    {
+      "id": "manual-record",
+      "status": "PASS",
+      "reason": "Approved by Jeremy Ferrier"
+    }
+  ],
+  "commands": [],
+  "files": [],
+  "limitations": [],
+  "previous": "7d1131997aa476fcbf37dd2e5c755f04d0ca7e5e5d847c04c858cbad487ce4ad",
+  "hash": "2c5ac70a1f66eb89f223017c570f0012d2af62892389a854a7645703d7012ea8"
+}

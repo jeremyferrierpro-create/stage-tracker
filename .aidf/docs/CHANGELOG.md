@@ -14,6 +14,10 @@ versionnement [SemVer](https://semver.org/lang/fr/).
 
 ## [Unreleased]
 
+_Release 1.6.0 approuvée le 2026-11-18 (gate release-exit PASS — cycle AIDF complet)._
+
+## [Released]
+
 ### À venir
 - (aucun élément en attente — 1.6.0 livrée)
 

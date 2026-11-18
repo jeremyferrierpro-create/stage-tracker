@@ -10,8 +10,8 @@
 | Version | **1.6.0** |
 | Date | 2026-11-18 |
 | Branche | `main` (dépôt local, pas de remote) |
-| Dernier commit | `0d0bfc3` — `test(security): revue de sécurité T-070` |
-| Arbre | propre (aucun fichier non committé) |
+| Dernier commit | `cbbdd3b` — `docs(security): approbation humaine de la revue, gate security-exit PASS` |
+| Arbre | propre (seules les preuves de gate de la phase release restent à committer) |
 
 ## 2. Contenu livré (historique des commits clés)
 
@@ -49,11 +49,26 @@
 | discovery | PASS | PASS |
 | specification | PASS | PASS |
 | planning | PASS | PASS |
-| implementation | PASS | à valider après T-072 (`implementation-exit`) |
-| testing / security / release | — | à valider en phase suivante |
+| implementation | PASS | PASS (`implementation-exit`, 2026-11-18) |
+| testing | PASS | PASS (`testing-exit`, 2026-11-18 — 176 tests réels) |
+| security | PASS | PASS (`security-exit`, 2026-11-18 — approbation humaine Jeremy Ferrier) |
+| release | PASS | en cours de validation (build réel + approbation humaine) |
+
+## 4 bis. Vérifications finales de phase release (2026-11-18)
+
+| Vérification | Résultat réel |
+|---|---|
+| `git status` | arbre propre hors preuves de gate |
+| Migrations en attente | aucune (`migrate:status`) |
+| `npm run build` | assets produits : `app-CPfeOAEQ.css` (5,63 ko), `app-CiG0bjsp.js` (0,13 ko), 71 ms |
+| `php artisan test` | 176 tests / 176 PASS / 697 assertions (31,8 s) |
+| `composer audit --no-dev` | 0 avis de vulnérabilité |
+| `npm audit --omit=dev` | 0 vulnérabilité |
+| Playwright | 10/10 PASS (serveur de démonstration réel) |
+| Preuve d'installation vierge | `docs/release/installation-test.md` (4 comptes, PASS) |
 
 Aucun statut `BLOCKED`, `FAIL` ou `NOT_PROVEN` non justifié dans le lot
-T-060 → T-070 ; les limites ouvertes sont documentées (§6) et reprises
+T-060 → T-072 ; les limites ouvertes sont documentées (§6) et reprises
 dans `docs/security/` §6.
 
 ## 5. Documentation livrée
@@ -80,6 +95,8 @@ bloquantes pour cette release :
 
 ## 7. Décision
 
-La version 1.6.0 est **prête pour la validation du gate
-`implementation-exit`**, sous réserve de la fin de T-072 (test réel
-d'installation guidé par le README).
+La version 1.6.0 a été **approuvée pour release le 2026-11-18 par
+Jeremy Ferrier** (preuve `release-approval` avec approbation humaine).
+Le gate `release-exit` est **PASS** : 7 gates antérieurs PASS, build réel
+PASS (1 045 ms), approbation humaine enregistrée. Le cycle AIDF est complet
+(8 phases, 16 gates PASS).

@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-18T07-45-17-954Z-a10b25",
+  "type": "gate-run",
+  "status": "PASS",
+  "gate": "release-exit",
+  "phase": "release",
+  "summary": "release-exit (exit) -> PASS",
+  "note": "",
+  "createdBy": "aidf",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-18T07:45:17.954Z",
+  "checks": [
+    {
+      "id": "prior-gates",
+      "type": "previous-gate",
+      "status": "PASS",
+      "reason": "Prior gates PASS: intake-exit, discovery-exit, specification-exit, planning-exit, implementation-exit, testing-exit, security-exit.",
+      "evidence": null
+    },
+    {
+      "id": "build-command",
+      "type": "command",
+      "status": "PASS",
+      "reason": "Command exited 0 in 1045ms.",
+      "evidence": null
+    },
+    {
+      "id": "release-human-approval",
+      "type": "evidence",
+      "status": "PASS",
+      "reason": "Found 1 matching evidence record(s).",
+      "evidence": [
+        ".aidf/evidence/2026-11-18T07-45-13-146Z-release-approval-2c5ac70a.json"
+      ]
+    }
+  ],
+  "commands": [
+    {
+      "key": "build",
+      "command": "cmd /c \"npm run build\"",
+      "exitCode": 0,
+      "durationMs": 1045,
+      "stdout": "\n> build\n> vite build\n\n\u001b[36mvite v6.4.5 \u001b[32mbuilding for production...\u001b[36m\u001b[39m\ntransforming...\n\u001b[32m✓\u001b[39m 2 modules transformed.\nrendering chunks...\ncomputing gzip size...\n\u001b[2mpublic/build/\u001b[22m\u001b[32mmanifest.json            \u001b[39m\u001b[1m\u001b[2m0.27 kB\u001b[22m\u001b[1m\u001b[22m\u001b[2m │ gzip: 0.15 kB\u001b[22m\n\u001b[2mpublic/build/\u001b[22m\u001b[35massets/app-CPfeOAEQ.css  \u001b[39m\u001b[1m\u001b[2m5.63 kB\u001b[22m\u001b[1m\u001b[22m\u001b[2m │ gzip: 1.79 kB\u001b[22m\n\u001b[2mpublic/build/\u001b[22m\u001b[36massets/app-CiG0bjsp.js   \u001b[39m\u001b[1m\u001b[2m0.13 kB\u001b[22m\u001b[1m\u001b[22m\u001b[2m │ gzip: 0.13 kB\u001b[22m\n\u001b[32m✓ built in 67ms\u001b[39m\n",
+      "stderr": ""
+    }
+  ],
+  "files": [],
+  "limitations": [],
+  "previous": "2c5ac70a1f66eb89f223017c570f0012d2af62892389a854a7645703d7012ea8",
+  "hash": "c2bf49c3f60fd29e9411bb962f663915a9ebba0d6720805a5afce5998a6ef8da"
+}
