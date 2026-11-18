@@ -14,14 +14,10 @@ versionnement [SemVer](https://semver.org/lang/fr/).
 
 ## [Unreleased]
 
-_Release 1.6.0 approuvée le 2026-11-18 (gate release-exit PASS — cycle AIDF complet)._
-
-## [Released]
-
 ### À venir
-- (aucun élément en attente — 1.6.0 livrée)
+- (aucun élément en attente — release 1.6.0 approuvée le 2026-11-18, gate `release-exit` PASS, cycle AIDF complet)
 
-## [1.6.0] — 2026-11-17 — Phase 5 (T-060 → T-065) et simplification du périmètre (décision utilisateur)
+## [1.6.0] - 2026-11-18 - Phase 5 (T-060 → T-072), simplification du périmètre et release
 
 ### Ajouté
 - **T-060/T-061** : évaluations de compétences — table `activity_competencies`
