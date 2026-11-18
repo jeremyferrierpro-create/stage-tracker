@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-18T07-03-57-110Z-5c5450",
+  "type": "implementation-change",
+  "status": "PASS",
+  "gate": null,
+  "phase": null,
+  "summary": "Phase 5 T-071 rapport de release : docs/release/README.md (identite 1.6.0, historique commits cles, checklist release avec preuves 176 tests PHPUnit PASS, Playwright 10/10, axe-core zero defaut serious/critical, revue securite S-01..S-08 PASS, migrate:fresh --seed OK, MT-12 prouve), etat des gates AIDF, limites connues documentees. CHANGELOG 1.6.0 complete avec T-066/T-070/T-071, Unreleased vide",
+  "note": "Phase 5 T-071 rapport de release : docs/release/README.md (identite 1.6.0, historique commits cles, checklist release avec preuves 176 tests PHPUnit PASS, Playwright 10/10, axe-core zero defaut serious/critical, revue securite S-01..S-08 PASS, migrate:fresh --seed OK, MT-12 prouve), etat des gates AIDF, limites connues documentees. CHANGELOG 1.6.0 complete avec T-066/T-070/T-071, Unreleased vide",
+  "createdBy": "aidf",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-18T07:03:57.110Z",
+  "checks": [
+    {
+      "id": "files-captured",
+      "status": "PASS",
+      "reason": "2 file(s) from git"
+    }
+  ],
+  "commands": [],
+  "files": [
+    ".aidf/docs/CHANGELOG.md",
+    "docs/release/README.md"
+  ],
+  "limitations": [
+    "File list is not a review of the content or quality of the change."
+  ],
+  "previous": "a70bdcc01675a1005ff58776b642aaf7f50628266678a0525a884df62d2e7f83",
+  "hash": "3aa53b7790eba353f638ed951f9c4be8f18c2773c0272854a858460a581d4127"
+}

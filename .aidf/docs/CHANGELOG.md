@@ -3,7 +3,7 @@ doc: CHANGELOG
 status: VALIDATED
 version: 1.0.0
 source: stage-tracker-specification
-updated: 2026-11-17
+updated: 2026-11-18
 validated_by: Jeremy Ferrier
 ---
 
@@ -15,7 +15,7 @@ versionnement [SemVer](https://semver.org/lang/fr/).
 ## [Unreleased]
 
 ### À venir
-- Audit accessibilité et parcours E2E (T-066), revue de sécurité (T-070), rapport de release (T-071), README final (T-072).
+- (aucun élément en attente — 1.6.0 livrée)
 
 ## [1.6.0] — 2026-11-17 — Phase 5 (T-060 → T-065) et simplification du périmètre (décision utilisateur)
 
@@ -46,6 +46,18 @@ versionnement [SemVer](https://semver.org/lang/fr/).
   restitution des fichiers) avec `--dry-run` ; **MT-12** prouvé en tests
   (3 tests) et sur la base de démonstration réelle (43 tables, 76 lignes,
   75 fichiers restaurés à l'identique).
+- **T-066** : audit d'accessibilité axe-core 4.14 (WCAG 2.1 A + AA) sur les
+  14 pages clés ; 2 défauts critiques `select-name` corrigés (labels associés
+  `for`/`id`, `aria-label` sur les sélecteurs de statut) ; parcours E2E
+  « guide tuteur » (évaluation nominative d'une compétence) avec capture ;
+  correction d'une erreur 500 sur la liste des rapports ; rapport
+  `docs/accessibility/` ; 10/10 parcours Playwright PASS.
+- **T-070** : revue de sécurité (rapport `docs/security/`) — les 8 tests de
+  sécurité obligatoires prouvés par tests automatisés, nouveau test HTTP
+  S-02 (injection de `workspace_id` ignorée) ; aucune vulnérabilité
+  bloquante ouverte ; limites `NOT_PROVEN` documentées.
+- **T-071** : rapport de release (`docs/release/`) — checklist, gates,
+  limites connues.
 
 ### Modifié — simplification du périmètre (décision utilisateur du 2026-11-17)
 - **Suppression du module Formations** (`TrainingProgram`,
