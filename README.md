@@ -769,8 +769,8 @@ php artisan app:restore <chemin>          # restauration réelle
 
 ## 14. Sécurité et confidentialité
 
-> **Partiel** — T-041 (stockage des preuves hors racine web) et T-052
-> (permissions effectives) livrés ; T-070 reste à venir.
+> **Disponible** — revue de sécurité complète livrée (T-070), rapport dans
+> `docs/security/` : aucune vulnérabilité bloquante ouverte.
 
 Sections livrées :
 - **trois niveaux de visibilité** des preuves (`private`, `stage`, `shared`) :
@@ -792,9 +792,12 @@ Sections livrées :
 - **jetons GitHub** : chiffrés au repos, jamais exposés (§11).
 
 Sections prévues :
-- bonnes pratiques sur les secrets (T-070).
+- bonnes pratiques sur les secrets (§15.3 : aucun secret dans `.env`
+  committé, `.env.example` documenté, jeton GitHub chiffré au repos).
 
-*Statut : `DISPONIBLE` (T-041, T-052, T-053) — T-070 à venir.*
+*Statut : `DISPONIBLE` (T-041, T-052, T-053, T-070) — revue de sécurité
+exécutée le 2026-11-18 : les 8 tests de sécurité obligatoires sont PASS avec
+preuve automatisée, checklist et limites documentées dans `docs/security/`.*
 
 ---
 
@@ -921,7 +924,7 @@ Créer `.env.testing` à partir de `.env` avec `APP_ENV=testing` et
 
 | Limite | Statut |
 |---|---|
-| Modules métier suite | livrés (évaluations T-060/T-061, rapports T-062 → T-064, sauvegarde T-065) ; restent T-066 accessibilité, T-070 sécurité, T-071/T-072 release |
+| Modules métier suite | livrés (évaluations T-060/T-061, rapports T-062 → T-064, sauvegarde T-065, accessibilité T-066, revue de sécurité T-070) ; restent T-071/T-072 release |
 | Périmètre simplifié 1.6.0 | décision utilisateur : le module Formations, les Organisations d'accueil (remplacées par un champ texte « entreprise d'accueil » sur le stage) et les référentiels versionnés (blocs/critères) sont supprimés ; les compétences sont définies directement par espace |
 | Navigation clavier complète | audit automatique axe-core livré en T-066 (10 parcours Playwright PASS, zéro défaut serious/critical, rapport `docs/accessibility/`) ; l'audit manuel (lecteur d'écran) reste un complément recommandé |
 | Version Livewire | résolu — DEC-ST-014 accepté (Livewire 4.4.8 installé) ; l'interface reste en Blade pur à ce jour, aucun composant Livewire utilisé |

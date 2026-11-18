@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-18T07-03-08-936Z-79649d",
+  "type": "implementation-change",
+  "status": "PASS",
+  "gate": null,
+  "phase": null,
+  "summary": "Phase 5 T-070 revue de securite : rapport docs/security/README.md (methode exigence->controle->preuve, matrice des 8 tests obligatoires S-01..S-08 tous PASS avec preuve automatisee, checklist controles SECURITY section 3, constats graves mineures traites, limites NOT_PROVEN non bloquantes reprises de SECURITY section 7). Nouveau test SecurityCampaignTest S-02 (workspace_id forge dans l'entree ignore, verification HTTP). Execution reelle : 55 tests PASS / 251 assertions sur les 9 suites de securite ; suite complete 176 tests PASS / 697 assertions ; pint PASS",
+  "note": "Phase 5 T-070 revue de securite : rapport docs/security/README.md (methode exigence->controle->preuve, matrice des 8 tests obligatoires S-01..S-08 tous PASS avec preuve automatisee, checklist controles SECURITY section 3, constats graves mineures traites, limites NOT_PROVEN non bloquantes reprises de SECURITY section 7). Nouveau test SecurityCampaignTest S-02 (workspace_id forge dans l'entree ignore, verification HTTP). Execution reelle : 55 tests PASS / 251 assertions sur les 9 suites de securite ; suite complete 176 tests PASS / 697 assertions ; pint PASS",
+  "createdBy": "aidf",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-18T07:03:08.936Z",
+  "checks": [
+    {
+      "id": "files-captured",
+      "status": "PASS",
+      "reason": "3 file(s) from git"
+    }
+  ],
+  "commands": [],
+  "files": [
+    "README.md",
+    "docs/security/README.md",
+    "tests/Feature/Security/SecurityCampaignTest.php"
+  ],
+  "limitations": [
+    "File list is not a review of the content or quality of the change."
+  ],
+  "previous": "dcf5ed461a7147948040abd14279d2b4da9d881774402d0f14b0f65336389d96",
+  "hash": "a70bdcc01675a1005ff58776b642aaf7f50628266678a0525a884df62d2e7f83"
+}
