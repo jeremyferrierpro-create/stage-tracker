@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-18T07-09-47-191Z-1d30e1",
+  "type": "gate-run",
+  "status": "PASS",
+  "gate": "implementation-exit",
+  "phase": "implementation",
+  "summary": "implementation-exit (exit) -> PASS",
+  "note": "",
+  "createdBy": "aidf",
+  "humanApproval": false,
+  "approvedBy": null,
+  "createdAt": "2026-11-18T07:09:47.191Z",
+  "checks": [
+    {
+      "id": "conventions-not-contradictory",
+      "type": "doc-status",
+      "status": "PASS",
+      "reason": "CONVENTIONS: CONVENTIONS is VALIDATED.",
+      "evidence": null
+    },
+    {
+      "id": "implementation-evidence",
+      "type": "evidence",
+      "status": "PASS",
+      "reason": "Found 26 matching evidence record(s).",
+      "evidence": [
+        ".aidf/evidence/2026-11-04T07-11-55-241Z-implementation-change-069f8fdb.json",
+        ".aidf/evidence/2026-11-04T07-11-55-404Z-implementation-change-29d3d756.json",
+        ".aidf/evidence/2026-11-04T07-11-55-542Z-implementation-change-c2eab0af.json",
+        ".aidf/evidence/2026-11-04T07-32-55-852Z-implementation-change-a5f1c03a.json",
+        ".aidf/evidence/2026-11-04T07-32-55-998Z-implementation-change-e322bc3a.json"
+      ]
+    }
+  ],
+  "commands": [],
+  "files": [],
+  "limitations": [],
+  "previous": "20e9301a6e54d090edb3736ac45174dbec3d5f2f37cb6e29030e74067cc15cd5",
+  "hash": "de7607001157603d72ac56b101339a76a563957fd1e5355520c40056a20e45e6"
+}
