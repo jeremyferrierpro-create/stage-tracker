@@ -36,3 +36,4 @@ auth.json
 Thumbs.db
 e2e-report/
 test-results/
+.neon

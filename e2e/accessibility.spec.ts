@@ -62,7 +62,7 @@ test.describe('Audit accessibilité axe-core (T-066)', () => {
         await page.waitForURL('**/internships');
         await page.getByRole('link', { name: 'Consulter' }).first().click();
         await page.waitForURL('**/internships/*');
-        await page.getByRole('link', { name: 'Rapports', exact: true }).click();
+        await page.locator('#contenu').getByRole('link', { name: 'Rapports' }).click();
         await page.waitForURL('**/reports');
         expect(await audit(page)).toEqual([]);
 
