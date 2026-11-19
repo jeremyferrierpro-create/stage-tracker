@@ -24,7 +24,7 @@ class CommitImportService
     /**
      * @return SyncRun l'exécution tracée (status success/partial/failed).
      */
-    public function sync(Repository $repository, int $maxPages = 3, bool $withFiles = true): SyncRun
+    public function sync(Repository $repository, int $maxPages = 10, bool $withFiles = true): SyncRun
     {
         $token = $repository->token_encrypted !== null
             ? decrypt($repository->token_encrypted)
@@ -41,6 +41,10 @@ class CommitImportService
         $imported = 0;
         $errors = [];
 
+        // Import incrémental : on repart de la dernière synchronisation
+        // (marge d'un jour pour absorber les fuseaux/retards GitHub).
+        $since = $repository->last_synced_at?->copy()->subDay()->toIso8601String();
+
         try {
             foreach (range(1, $maxPages) as $page) {
                 $commits = $this->provider->fetchCommits(
@@ -49,6 +53,7 @@ class CommitImportService
                     $repository->default_branch ?? 'main',
                     $page,
                     self::PER_PAGE,
+                    $since,
                 );
 
                 if ($commits === []) {
@@ -56,6 +61,27 @@ class CommitImportService
                 }
 
                 foreach ($commits as $data) {
+                    // La liste des commits ne contient pas les fichiers :
+                    // on ne les demande que pour les nouveaux commits.
+                    if ($withFiles && empty($data['files'])) {
+                        $isNew = ! Commit::query()
+                            ->where('repository_id', $repository->getKey())
+                            ->where('sha', $data['sha'])
+                            ->exists();
+
+                        if ($isNew) {
+                            try {
+                                $data['files'] = $this->provider->fetchCommitFiles(
+                                    $repository->repository_url,
+                                    $token,
+                                    (string) $data['sha'],
+                                );
+                            } catch (\Throwable $exception) {
+                                $errors[] = 'Fichiers du commit '.$data['sha'].' : '.$exception->getMessage();
+                            }
+                        }
+                    }
+
                     $imported += $this->upsertCommit($repository, $data, $withFiles);
                 }
             }

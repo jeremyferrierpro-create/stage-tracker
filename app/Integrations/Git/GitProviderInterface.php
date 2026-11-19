@@ -28,5 +28,13 @@ interface GitProviderInterface
      *                                    additions/deletions — peut être vide si le fournisseur ne
      *                                    retourne pas les fichiers dans la liste).
      */
-    public function fetchCommits(string $repositoryUrl, ?string $token, string $branch, int $page, int $perPage): array;
+    public function fetchCommits(string $repositoryUrl, ?string $token, string $branch, int $page, int $perPage, ?string $since = null): array;
+
+    /**
+     * Récupère les fichiers modifiés par un commit (GitHub : endpoint
+     * /repos/{owner}/{repo}/commits/{sha}).
+     *
+     * @return list<array<string, mixed>> path, change_type, additions, deletions
+     */
+    public function fetchCommitFiles(string $repositoryUrl, ?string $token, string $sha): array;
 }

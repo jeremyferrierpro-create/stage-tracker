@@ -10,6 +10,7 @@ use App\Domain\Git\Services\CommitImportService;
 use App\Domain\Identity\Models\Workspace;
 use App\Domain\Internship\Models\Internship;
 use App\Integrations\Git\GitProviderInterface;
+use App\Jobs\SyncRepository;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -133,6 +134,17 @@ class RepositoryController extends Controller
         $repositoryModel = $projectModel->repositories()->findOrFail($repository);
 
         $this->authorizeManage($workspace, $internshipModel);
+
+        // En production (file database), la synchronisation part en arrière-plan.
+        // En tests / file sync, on l'exécute immédiatement pour garder un retour
+        // d'erreur synchrone et déterministe.
+        if (config('queue.default') !== 'sync') {
+            SyncRepository::dispatch($repositoryModel->getKey(), $request->user()->getKey());
+
+            return redirect()
+                ->back()
+                ->with('status', 'Synchronisation lancée en arrière-plan.');
+        }
 
         $run = $this->importer->sync($repositoryModel);
 

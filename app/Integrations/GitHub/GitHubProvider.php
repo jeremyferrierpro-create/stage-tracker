@@ -39,16 +39,22 @@ class GitHubProvider implements GitProviderInterface
         ];
     }
 
-    public function fetchCommits(string $repositoryUrl, ?string $token, string $branch, int $page, int $perPage): array
+    public function fetchCommits(string $repositoryUrl, ?string $token, string $branch, int $page, int $perPage, ?string $since = null): array
     {
         $slug = $this->parseSlug($repositoryUrl);
 
+        $query = [
+            'sha' => $branch,
+            'page' => $page,
+            'per_page' => $perPage,
+        ];
+
+        if ($since !== null && $since !== '') {
+            $query['since'] = $since;
+        }
+
         $response = $this->client($token)
-            ->get(self::API_BASE.'/repos/'.$slug.'/commits', [
-                'sha' => $branch,
-                'page' => $page,
-                'per_page' => $perPage,
-            ]);
+            ->get(self::API_BASE.'/repos/'.$slug.'/commits', $query);
 
         if ($response->status() === 404) {
             throw new \RuntimeException('Dépôt inaccessible : vérifiez l\'URL et les droits du jeton.');
@@ -79,6 +85,51 @@ class GitHubProvider implements GitProviderInterface
         }
 
         return $commits;
+    }
+
+    /**
+     * @return list<array{path: string, change_type: string, additions: int|null, deletions: int|null}>
+     */
+    public function fetchCommitFiles(string $repositoryUrl, ?string $token, string $sha): array
+    {
+        $slug = $this->parseSlug($repositoryUrl);
+
+        $response = $this->client($token)
+            ->get(self::API_BASE.'/repos/'.$slug.'/commits/'.$sha);
+
+        if ($response->status() === 404) {
+            throw new \RuntimeException('Commit introuvable ou dépôt inaccessible.');
+        }
+
+        if (in_array($response->status(), [401, 403], true)) {
+            throw new \RuntimeException('Accès refusé par GitHub : jeton invalide ou limite d\'API atteinte.');
+        }
+
+        if ($response->failed()) {
+            throw new \RuntimeException('Erreur GitHub (HTTP '.$response->status().').');
+        }
+
+        $files = [];
+
+        foreach ((array) $response->json('files', []) as $file) {
+            if (! isset($file['filename'])) {
+                continue;
+            }
+
+            $files[] = [
+                'path' => (string) $file['filename'],
+                'change_type' => match ($file['status'] ?? 'modified') {
+                    'added' => 'added',
+                    'removed' => 'deleted',
+                    'renamed' => 'renamed',
+                    default => 'modified',
+                },
+                'additions' => isset($file['additions']) ? (int) $file['additions'] : null,
+                'deletions' => isset($file['deletions']) ? (int) $file['deletions'] : null,
+            ];
+        }
+
+        return $files;
     }
 
     /**
