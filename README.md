@@ -26,6 +26,7 @@
 15. [Dépannage](#15-dépannage)
 16. [Développement et contribution](#16-développement-et-contribution)
 17. [Limites connues](#17-limites-connues)
+18. [Déploiement Cloud (Render & Vercel)](#18-déploiement-cloud-render--vercel)
 
 ---
 
@@ -976,6 +977,76 @@ Créer `.env.testing` à partir de `.env` avec `APP_ENV=testing` et
 | Chiffrement des sauvegardes | non prévu en V1 (documenté) |
 
 *Statut : `DISPONIBLE` — mis à jour à chaque release.*
+
+---
+
+## 18. Déploiement Cloud (Render & Vercel)
+
+Pour permettre aux 4 collègues de formation DWWM d'accéder à Stage Tracker en libre accès 24/7 sans dépendre d'une machine locale, le projet est prêt pour le déploiement sur **Render** (recommandé en conteneur Docker) ou **Vercel** (serverless), relié à la base managée **Neon PostgreSQL**.
+
+### 18.1 Déploiement sur Render (Web Service Docker — Recommandé)
+
+Render est la plateforme idéale pour héberger un monolithe Laravel avec PostgreSQL.
+
+#### Étapes d'installation :
+1. Créez un compte sur [Render.com](https://render.com).
+2. Cliquez sur **New +** → **Web Service**.
+3. Liez votre dépôt GitHub contenant le projet Stage Tracker (ou spécifiez l'URL du dépôt).
+4. Définissez les options :
+   - **Name** : `stage-tracker-dwwm`
+   - **Region** : `Frankfurt (EU Central)` (pour être au plus près de l'instance Neon EU)
+   - **Runtime** : `Docker` (utilise le fichier `Dockerfile` fourni à la racine)
+   - **Instance Type** : `Free` ou `Starter` (0.5 CPU, 512 MB RAM)
+5. **Variables d'environnement** à renseigner dans l'onglet *Environment* :
+   - `APP_NAME` : `Stage Tracker DWWM`
+   - `APP_ENV` : `production`
+   - `APP_DEBUG` : `false`
+   - `APP_KEY` : Clé 32 octets base64 (générez-la en local avec `php artisan key:generate --show`)
+   - `APP_URL` : `https://stage-tracker-dwwm.onrender.com`
+   - `DB_CONNECTION` : `pgsql`
+   - `DATABASE_URL` : Votre chaîne de connexion Neon (ex: `postgresql://user:pass@ep-dark-morning-...eu-central-1.aws.neon.tech/neondb?sslmode=require`)
+   - `SESSION_DRIVER` : `database`
+   - `CACHE_STORE` : `database`
+   - `QUEUE_CONNECTION` : `sync`
+6. Cliquez sur **Deploy Web Service**.
+   - Le build installe les dépendances PHP, compile les assets Vite (`npm run build`), applique les migrations automatiques (`php artisan migrate --force`), et démarre le serveur web.
+
+---
+
+### 18.2 Déploiement sur Vercel (Architecture Serverless)
+
+Vercel permet d'exécuter Stage Tracker via le runtime serverless PHP (`vercel-php`).
+
+#### Étapes d'installation :
+1. Installez le CLI Vercel ou connectez-vous sur [Vercel.com](https://vercel.com) :
+   ```bash
+   npm i -g vercel
+   vercel login
+   ```
+2. À la racine du projet, vérifiez la présence de `vercel.json` et du bridge `api/index.php` (déjà fournis).
+3. Compilez les assets en amont :
+   ```bash
+   npm run build
+   ```
+4. Lancez le déploiement :
+   ```bash
+   vercel --prod
+   ```
+5. Dans le tableau de bord Vercel (**Settings** → **Environment Variables**), ajoutez les variables suivantes :
+   - `APP_NAME` : `Stage Tracker DWWM`
+   - `APP_ENV` : `production`
+   - `APP_DEBUG` : `false`
+   - `APP_KEY` : Votre clé Laravel (`base64:...`)
+   - `APP_URL` : L'URL attribuée par Vercel (ex: `https://stage-tracker-dwwm.vercel.app`)
+   - `DB_CONNECTION` : `pgsql`
+   - `DATABASE_URL` : Chaîne de connexion Neon (`postgresql://...`)
+   - `SESSION_DRIVER` : `cookie` (recommandé en serverless éphémère sans état local)
+   - `CACHE_STORE` : `array`
+   - `VIEW_COMPILED_PATH` : `/tmp/views`
+6. Pour exécuter les migrations initiales sur la base Neon, lancez une fois en local :
+   ```bash
+   php artisan migrate --force
+   ```
 
 ---
 
