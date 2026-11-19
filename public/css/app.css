@@ -46,12 +46,12 @@ body {
 
 a {
     color: var(--accent-blue);
-    text-decoration: none;
+    text-decoration: underline;
+    text-underline-offset: 2px;
     transition: color 0.15s ease-in-out;
 }
 a:hover {
     color: #7dd3fc;
-    text-decoration: underline;
 }
 
 :focus-visible {
