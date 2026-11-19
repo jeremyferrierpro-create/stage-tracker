@@ -1055,3 +1055,5 @@ Vercel permet d'exécuter Stage Tracker via le runtime serverless PHP (`vercel-p
 Le mode de licence n'est pas encore décidé. Toute réutilisation par des
 camarades de formation doit rester conforme aux règles de confidentialité des
 données de stage (aucune donnée réelle partagée).
+#   s t a g e - t r a c k e r  
+ 

@@ -24,9 +24,9 @@
     <a class="skip-link" href="#contenu">Aller au contenu</a>
 
     <header class="topbar">
-        <a href="{{ route('home') }}" class="brand">⚡ Stage Tracker <span style="font-size: 0.75rem; color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); padding: 0.15rem 0.45rem; border-radius: 999px; margin-left: 0.4rem; font-weight: 500;">DWWM</span></a>
+        <a href="{{ route('home') }}" class="brand">Stage Tracker <span class="badge-tag">DWWM</span></a>
         <nav aria-label="Navigation principale">
-            <a href="{{ route('help') }}" class="nav-help-link" style="color: #fbbf24; font-weight: 600;">📖 Guide DWWM</a>
+            <a href="{{ route('help') }}" class="nav-help-link">Guide DWWM</a>
             @auth
                 <a href="{{ route('workspaces.index') }}">Mes espaces</a>
                 <a href="{{ route('account.password.edit') }}">Mot de passe</a>
@@ -133,12 +133,11 @@
                                 </a>
                             @endcan
 
-                            <hr style="border: 0; border-top: 1px solid #1f2937; margin: 0.8rem 0;">
+                            <hr style="border: 0; border-top: 1px solid var(--border-subtle); margin: 0.8rem 0;">
 
                             <a href="{{ route('help') }}"
-                               @if ($currentRoute === 'help') aria-current="page" @endif
-                               style="color: #fbbf24;">
-                                📖 Guide & Méthode DWWM
+                               @if ($currentRoute === 'help') aria-current="page" @endif>
+                                Guide & Méthode DWWM
                             </a>
                         </nav>
                     </div>

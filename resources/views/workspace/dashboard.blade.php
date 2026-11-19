@@ -19,8 +19,8 @@
     </p>
 
     @if (session('invitation_link'))
-        <div class="card" style="border: 2px solid #f59e0b; background: rgba(245, 158, 11, 0.08); margin-bottom: 1.5rem;">
-            <h2 style="color: #f59e0b; margin-top: 0;">🔗 Lien d'invitation direct généré</h2>
+        <div class="card" style="border: 2px solid var(--parme-primary); background: var(--parme-soft); margin-bottom: 1.5rem;">
+            <h2 style="color: var(--parme-primary); margin-top: 0;">🔗 Lien d'invitation direct généré</h2>
             <p>Transmettez ce lien directement à votre maître de stage / tuteur (par e-mail, messagerie ou SMS) :</p>
             <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
                 <input type="text" id="invitation-link-input-dash" value="{{ session('invitation_link') }}" readonly style="flex: 1; font-family: monospace;">
@@ -31,7 +31,7 @@
     @endif
 
     @can('manageMembers', $workspace)
-        <div class="card" style="margin-bottom: 1.5rem; border-left: 4px solid #f59e0b;">
+        <div class="card" style="margin-bottom: 1.5rem; border-left: 4px solid var(--parme-primary);">
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
                 <div>
                     <h2 style="margin: 0; font-size: 1.25rem;">🤝 Inviter mon maître de stage / tuteur</h2>

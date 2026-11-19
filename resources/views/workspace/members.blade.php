@@ -14,8 +14,8 @@
     <h1>Membres de {{ $workspace->name }}</h1>
 
     @if (session('invitation_link'))
-        <div class="card" style="border: 2px solid #f59e0b; background: rgba(245, 158, 11, 0.08);">
-            <h2 style="color: #f59e0b; margin-top: 0;">🔗 Lien d'invitation direct généré</h2>
+        <div class="card" style="border: 2px solid var(--parme-primary); background: var(--parme-soft);">
+            <h2 style="color: var(--parme-primary); margin-top: 0;">🔗 Lien d'invitation direct généré</h2>
             <p>Transmettez ce lien directement à votre maître de stage / tuteur (par e-mail, messagerie ou SMS) :</p>
             <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
                 <input type="text" id="invitation-link-input" value="{{ session('invitation_link') }}" readonly style="flex: 1; font-family: monospace;">
