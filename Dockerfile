@@ -1,6 +1,6 @@
 FROM php:8.5-fpm-alpine
 
-# Dépendances système
+# 1. Dépendances système nécessaires pour PHP, PostgreSQL, les images et Vite/Node
 RUN apk add --no-cache \
     postgresql-dev \
     libzip-dev \
@@ -14,33 +14,36 @@ RUN apk add --no-cache \
     nodejs \
     npm
 
-# Extensions PHP requises
-RUN docker-php-ext-configure gd --with-freetype --with-webp
-RUN docker-php-ext-install -j$(nproc) pdo_pgsql pgsql bcmath zip opcache
-RUN docker-php-ext-install -j$(nproc) gd
+# 2. Configuration et installation des extensions PHP
+RUN docker-php-ext-install -j$(nproc) pdo_pgsql pgsql zip bcmath
 
-# Installation Composer
+RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
+    && docker-php-ext-install -j$(nproc) gd \
+    && apk del .build-deps
+
+# 3. Récupération de Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
+# 4. Dossier de travail dans le conteneur
 WORKDIR /var/www/html
 
-# Copie des fichiers projet
+# 5. Copie du code de l'application
 COPY . /var/www/html
 
-# Installation des dépendances PHP et compilation des assets Vite
+# 6. Installation des paquets PHP (sans dev) et compilation des assets front (Vite)
 RUN composer install --no-dev --optimize-autoloader --no-interaction \
     && npm ci \
     && npm run build \
     && rm -rf node_modules
 
-# Permissions stockage
+# 7. Droits d'écriture pour les dossiers de cache et logs de Laravel
 RUN chmod -R 775 storage bootstrap/cache
 
 EXPOSE 8000
 
-# Démarrage avec migrations automatiques et mise en cache
+# 8. Préparation du cache Laravel et lancement du serveur
 CMD php artisan config:cache \
     && php artisan route:cache \
     && php artisan view:cache \
-    && php artisan migrate --force \
     && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
