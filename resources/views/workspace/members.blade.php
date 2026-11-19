@@ -13,6 +13,18 @@
 @section('content')
     <h1>Membres de {{ $workspace->name }}</h1>
 
+    @if (session('invitation_link'))
+        <div class="card" style="border: 2px solid #f59e0b; background: rgba(245, 158, 11, 0.08);">
+            <h2 style="color: #f59e0b; margin-top: 0;">🔗 Lien d'invitation direct généré</h2>
+            <p>Transmettez ce lien directement à votre maître de stage / tuteur (par e-mail, messagerie ou SMS) :</p>
+            <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                <input type="text" id="invitation-link-input" value="{{ session('invitation_link') }}" readonly style="flex: 1; font-family: monospace;">
+                <button type="button" onclick="navigator.clipboard.writeText(document.getElementById('invitation-link-input').value); alert('Lien copié dans le presse-papiers !');">Copier le lien</button>
+            </div>
+            <p class="muted" style="margin-top: 0.5rem; font-size: 0.85rem;">Ce lien est unique et valable pendant 7 jours.</p>
+        </div>
+    @endif
+
     @if ($assignableRoles !== [])
         <div class="card">
             <h2>Inviter un participant</h2>

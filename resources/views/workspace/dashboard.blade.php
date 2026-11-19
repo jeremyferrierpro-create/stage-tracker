@@ -18,6 +18,37 @@
         @endif
     </p>
 
+    @if (session('invitation_link'))
+        <div class="card" style="border: 2px solid #f59e0b; background: rgba(245, 158, 11, 0.08); margin-bottom: 1.5rem;">
+            <h2 style="color: #f59e0b; margin-top: 0;">🔗 Lien d'invitation direct généré</h2>
+            <p>Transmettez ce lien directement à votre maître de stage / tuteur (par e-mail, messagerie ou SMS) :</p>
+            <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                <input type="text" id="invitation-link-input-dash" value="{{ session('invitation_link') }}" readonly style="flex: 1; font-family: monospace;">
+                <button type="button" onclick="navigator.clipboard.writeText(document.getElementById('invitation-link-input-dash').value); alert('Lien copié dans le presse-papiers !');">Copier le lien</button>
+            </div>
+            <p class="muted" style="margin-top: 0.5rem; font-size: 0.85rem;">Ce lien est unique et valable pendant 7 jours. Dès son inscription via ce lien, votre tuteur sera automatiquement rattaché à votre stage.</p>
+        </div>
+    @endif
+
+    @can('manageMembers', $workspace)
+        <div class="card" style="margin-bottom: 1.5rem; border-left: 4px solid #f59e0b;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h2 style="margin: 0; font-size: 1.25rem;">🤝 Inviter mon maître de stage / tuteur</h2>
+                    <p class="muted" style="margin: 0.25rem 0 0 0;">
+                        Permettez à votre tuteur de suivre vos activités, valider vos journées de stage et attester vos compétences DWWM.
+                    </p>
+                </div>
+                <form method="POST" action="{{ route('workspace.invitations.store', $workspace) }}" style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                    @csrf
+                    <input type="hidden" name="role" value="supervisor">
+                    <input type="email" name="email" placeholder="email.tuteur@entreprise.fr" required style="min-width: 260px;">
+                    <button type="submit" class="button">Générer le lien d'invitation</button>
+                </form>
+            </div>
+        </div>
+    @endcan
+
     <p class="muted">
         Vous êtes membre actif de cet espace. Toutes les données affichées ici
         sont filtrées par le serveur sur ce workspace (isolation multi-tenant).

@@ -7,6 +7,7 @@ use App\Domain\Identity\Models\Invitation;
 use App\Domain\Identity\Models\User;
 use App\Domain\Identity\Models\Workspace;
 use App\Domain\Identity\Models\WorkspaceMember;
+use App\Domain\Internship\Models\InternshipParticipant;
 use App\Mail\WorkspaceInvitationMail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -119,6 +120,8 @@ final class InvitationService
             Workspace::roleLabel($invitation->role),
         ));
 
+        $invitation->plain_token = $token;
+
         return $invitation;
     }
 
@@ -190,6 +193,21 @@ final class InvitationService
             ]);
 
             $invitation->forceFill(['accepted_at' => now()])->save();
+
+            // Rattachement automatique au stage en tant que tuteur / superviseur
+            if (in_array($invitation->role, ['supervisor', 'tutor'], true)) {
+                $internships = $workspace->internships()->get();
+                foreach ($internships as $internship) {
+                    InternshipParticipant::firstOrCreate([
+                        'internship_id' => $internship->id,
+                        'workspace_id' => $workspace->id,
+                        'user_id' => $user->id,
+                    ], [
+                        'role' => $invitation->role,
+                        'status' => 'active',
+                    ]);
+                }
+            }
 
             $this->audit->record(
                 'invitation.accepted',

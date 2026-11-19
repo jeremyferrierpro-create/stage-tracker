@@ -44,14 +44,20 @@ class MemberController extends Controller
     {
         $this->authorize('manageMembers', $workspace);
 
-        $this->invitations->invite(
+        $invitation = $this->invitations->invite(
             $workspace,
             $request->user(),
             (string) $request->input('email'),
             (string) $request->input('role'),
         );
 
-        return back()->with('status', 'Invitation envoyée.');
+        $link = isset($invitation->plain_token)
+            ? route('invitations.show', $invitation->plain_token)
+            : null;
+
+        return back()
+            ->with('status', 'Invitation créée avec succès.')
+            ->with('invitation_link', $link);
     }
 
     public function destroy(Workspace $workspace, string $invitation): RedirectResponse
