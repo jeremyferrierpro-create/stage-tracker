@@ -10,6 +10,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CompetencyController;
 use App\Http\Controllers\DailyLogController;
 use App\Http\Controllers\EvidenceController;
+use App\Http\Controllers\HelpController;
 use App\Http\Controllers\InternshipController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\MemberController;
@@ -73,6 +74,9 @@ Route::middleware('auth')->group(function (): void {
 
     Route::get('/workspaces', [WorkspaceController::class, 'index'])
         ->name('workspaces.index');
+
+    Route::get('/aide', [HelpController::class, 'index'])
+        ->name('help');
 
     Route::prefix('/w/{workspace}')
         ->whereUuid('workspace')
