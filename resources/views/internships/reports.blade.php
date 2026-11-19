@@ -68,6 +68,19 @@
                                     <a class="button secondary small" href="{{ route('workspace.internships.reports.download', [$workspace, $internship, $report]) }}">HTML</a>
                                     <a class="button secondary small" href="{{ route('workspace.internships.reports.export', [$workspace, $internship, $report, 'pdf']) }}">PDF</a>
                                     <a class="button secondary small" href="{{ route('workspace.internships.reports.export', [$workspace, $internship, $report, 'docx']) }}">DOCX</a>
+                                @elseif ($report->status === 'failed' && $canGenerate)
+                                    <form method="POST" action="{{ route('workspace.internships.reports.retry', [$workspace, $internship, $report]) }}" class="inline">
+                                        @csrf
+                                        <button type="submit" class="small">Relancer</button>
+                                    </form>
+                                @endif
+
+                                @if ($canGenerate)
+                                    <form method="POST" action="{{ route('workspace.internships.reports.destroy', [$workspace, $internship, $report]) }}" class="inline" onsubmit="return confirm('Supprimer ce rapport ?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="danger small">Supprimer</button>
+                                    </form>
                                 @endif
                             </td>
                         </tr>

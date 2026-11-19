@@ -27,6 +27,23 @@ class ReportController extends Controller
 {
     public function __construct(private readonly AuditLogger $audit) {}
 
+    /**
+     * Vue transverse des rapports de l'espace (remplace le lien « à venir »).
+     */
+    public function workspaceIndex(Request $request, Workspace $workspace): View
+    {
+        $this->authorize('view', $workspace);
+
+        return view('reports.index', [
+            'workspace' => $workspace,
+            'reports' => Report::query()
+                ->where('workspace_id', $workspace->id)
+                ->with(['internship', 'templateVersion.template', 'generator'])
+                ->orderByDesc('generated_at')
+                ->paginate(20),
+        ]);
+    }
+
     public function index(Request $request, Workspace $workspace, string $internship): View
     {
         $internshipModel = $workspace->internships()->findOrFail($internship);
@@ -93,6 +110,46 @@ class ReportController extends Controller
         return redirect()
             ->back()
             ->with('status', 'Rapport en file de génération.');
+    }
+
+    public function destroy(Request $request, Workspace $workspace, string $internship, string $report): RedirectResponse
+    {
+        $internshipModel = $workspace->internships()->findOrFail($internship);
+        $permissions = EffectivePermissions::resolveForInternship($request->user(), $workspace, $internshipModel);
+        $role = $workspace->roleFor($request->user());
+
+        abort_unless($permissions['export'] || in_array($role, ['owner', 'admin'], true), 403);
+
+        $reportModel = $internshipModel->reports()->where('id', $report)->firstOrFail();
+
+        if ($reportModel->file_path !== null) {
+            Storage::disk('local')->delete($reportModel->file_path);
+        }
+
+        $this->audit->record('report.deleted', $workspace, $reportModel, [], $request->user());
+        $reportModel->delete();
+
+        return redirect()->back()->with('status', 'Rapport supprimé.');
+    }
+
+    public function retry(Request $request, Workspace $workspace, string $internship, string $report): RedirectResponse
+    {
+        $internshipModel = $workspace->internships()->findOrFail($internship);
+        $permissions = EffectivePermissions::resolveForInternship($request->user(), $workspace, $internshipModel);
+        abort_unless($permissions['export'], 403);
+
+        $reportModel = $internshipModel->reports()->where('id', $report)->firstOrFail();
+        abort_unless($reportModel->status === 'failed', 422);
+
+        $reportModel->forceFill([
+            'status' => 'queued',
+            'generated_at' => now(),
+        ])->save();
+
+        GenerateReport::dispatch($reportModel);
+        $this->audit->record('report.retried', $workspace, $reportModel, ['status' => 'queued'], $request->user());
+
+        return redirect()->back()->with('status', 'Génération relancée.');
     }
 
     public function download(Request $request, Workspace $workspace, string $internship, string $report): StreamedResponse

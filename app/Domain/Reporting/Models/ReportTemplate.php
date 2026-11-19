@@ -66,6 +66,10 @@ class ReportTemplate extends Model
         'daily_logs',
         'evidences',
         'competencies',
+        'tasks',
+        'commits',
+        'collaboration',
+        'synthesis',
     ];
 
     /**
