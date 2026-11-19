@@ -7,6 +7,7 @@ use App\Domain\Evaluation\Models\Competency;
 use App\Domain\Identity\Models\User;
 use App\Domain\Identity\Models\Workspace;
 use App\Domain\Identity\Models\WorkspaceMember;
+use App\Domain\Reporting\Models\ReportTemplate;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
@@ -38,6 +39,12 @@ class SeederTest extends TestCase
         foreach ($workspace->competencies()->get() as $competency) {
             $this->assertStringStartsWith('C', (string) $competency->code);
         }
+
+        $template = ReportTemplate::query()->where('workspace_id', $workspace->id)->first();
+        $this->assertNotNull($template);
+        $this->assertSame('Synthèse de stage', $template->name);
+        $this->assertSame('published', $template->status);
+        $this->assertTrue($template->versions()->where('version', 'v1.0.0')->exists());
     }
 
     public function test_seeder_is_idempotent(): void
@@ -62,6 +69,31 @@ class SeederTest extends TestCase
         $this->assertTrue($admin->isActive());
         $this->assertTrue(Hash::check('mot-de-passe-demo-2026', $admin->getAuthPassword()));
         $this->assertSame('owner', $admin->workspaces()->first()->pivot->role);
+    }
+
+    public function test_seeded_template_can_generate_report_for_demo_internship(): void
+    {
+        $this->artisan('db:seed')->assertExitCode(0);
+
+        $admin = User::query()->where('email', 'admin@example.test')->sole();
+        $workspace = Workspace::query()->where('name', 'Espace Démo')->firstOrFail();
+        $internship = $workspace->internships()->firstOrFail();
+        $template = ReportTemplate::query()->where('workspace_id', $workspace->id)->firstOrFail();
+        $version = $template->versions()->firstOrFail();
+
+        $response = $this->actingAs($admin)->post(
+            route('workspace.internships.reports.store', [$workspace, $internship]),
+            [
+                'template_version_id' => $version->id,
+            ]
+        );
+
+        $response->assertRedirect();
+        $this->assertDatabaseHas('reports', [
+            'internship_id' => $internship->id,
+            'template_version_id' => $version->id,
+            'status' => 'generated',
+        ]);
     }
 
     public function test_seeder_refuses_outside_local_and_test(): void

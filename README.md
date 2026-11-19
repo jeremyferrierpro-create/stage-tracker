@@ -96,7 +96,7 @@ développement du projet :
 | Outil | Version vérifiée | Vérification |
 |---|---|---|
 | PHP | 8.5.12 (NTS, VS17 x64) | `php -v` |
-| Extensions PHP | `pdo_pgsql`, `pgsql`, `mbstring`, `openssl`, `ctype`, `curl`, `fileinfo`, `tokenizer`, `xml`, `bcmath` | `php -m` |
+| Extensions PHP | `pdo_pgsql`, `pgsql`, `mbstring`, `openssl`, `ctype`, `curl`, `fileinfo`, `tokenizer`, `xml`, `bcmath`, `gd`, `zip` | `php -m` |
 | Composer | 2.10.3 | `composer -V` |
 | Node.js | 24.21.0 | `node --version` |
 | npm | 11.19.0 | `npm --version` |
@@ -206,6 +206,34 @@ php artisan db:show         # PostgreSQL 16.15, connexion pgsql
 
 *Statut : `DISPONIBLE` — backend vérifié le 2026-11-04, frontend vérifié le 2026-11-08.*
 
+### 4.8 Déployer sur Neon (optionnel)
+
+Le projet est préconfiguré pour Neon (`neon.ts`, `.neon` ignoré par Git).
+Neon fournit Postgres, et les services Auth, Functions, AI Gateway et Realtime.
+
+```bash
+npm i -g neon@latest
+neon login
+neon link --project-id <project-id> --branch production
+npm i @neon/config
+neon deploy
+```
+
+`neon deploy` provisionne les services déclarés et écrit les variables Neon
+dans `.env` (`DATABASE_URL` poolée, `DATABASE_URL_UNPOOLED` directe, etc.).
+Laravel utilise `DB_URL` (poolée) pour l'application ; les migrations passent
+par la connexion directe :
+
+```bash
+php artisan migrate --database=pgsql_direct
+```
+
+> Le connecteur GitHub, l'authentification Laravel et le stockage local restent
+> inchangés : Neon Auth / Object Storage ne remplacent pas les composants
+> existants. L'AI Gateway nécessite des crédits sur le compte Neon.
+
+Ne jamais committer `.env` ni `.neon`.
+
 ---
 
 ## 5. Premier lancement
@@ -251,11 +279,9 @@ connexion, « Mes espaces » liste les espaces dont vous êtes membre actif.
    - la barre supérieure porte le nom du produit, « Mes espaces », votre nom et
      la déconnexion ;
    - la navigation latérale regroupe « Tableau de bord », « Stages » (avec ses
-     projets et activités), « Preuves », puis, uniquement pour les propriétaires
-     et administrateurs, « Membres et invitations », « Compétences », « Modèles
-     de rapports » et « Journal d'audit » (les sections non encore livrées
-     apparaissent grisées avec la mention « à venir » et ne sont pas
-     cliquables) ;
+     projets et activités), « Preuves », « Rapports », puis, uniquement pour les
+     propriétaires et administrateurs, « Membres et invitations », « Compétences »,
+     « Modèles de rapports » et « Journal d'audit » ;
    - le sélecteur « Espace actif » liste tous vos espaces avec leur rôle et
      permet de basculer directement vers leur tableau de bord ;
    - un fil d'Ariane rappelle l'emplacement (Mes espaces › Espace › Page) ;
@@ -723,8 +749,12 @@ toute évolution crée une nouvelle version.
 
 Depuis la fiche du stage, « Rapports » : choisissez un modèle de l'espace et
 lancez la génération. Elle est **asynchrone** (file de tâches) : le statut
-passe de `En attente` à `Généré` (ou `Échoué`), puis le rapport est
+passe de `En file` à `Généré` (ou `Échoué`), puis le rapport est
 téléchargeable en **HTML**, **PDF** ou **DOCX**.
+
+> **Worker requis** : avec `QUEUE_CONNECTION=database`, lancez
+> `php artisan queue:work` dans un second terminal. Sans worker, le rapport
+> reste au statut `En file` et aucun fichier n'est produit.
 
 ### 12.3 Exclusions garanties
 

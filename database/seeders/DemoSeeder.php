@@ -17,6 +17,7 @@ use App\Domain\Internship\Models\InternshipParticipant;
 use App\Domain\Journal\Models\DailyLog;
 use App\Domain\Project\Models\Activity;
 use App\Domain\Project\Models\Project;
+use App\Domain\Reporting\Models\ReportTemplate;
 use Illuminate\Database\Seeder;
 
 /**
@@ -29,7 +30,13 @@ class DemoSeeder extends Seeder
     public function run(): void
     {
         if (User::query()->where('email', 'admin@example.test')->exists()) {
-            $this->command?->line('Jeu de démonstration déjà présent : seeding ignoré.');
+            $workspace = Workspace::query()->where('name', 'Espace Démo')->first();
+            if ($workspace !== null && ! ReportTemplate::query()->where('workspace_id', $workspace->id)->exists()) {
+                $this->seedReportTemplate($workspace);
+                $this->command?->line('Jeu de démonstration déjà présent : trame de rapport créée.');
+            } else {
+                $this->command?->line('Jeu de démonstration déjà présent : seeding ignoré.');
+            }
 
             return;
         }
@@ -233,12 +240,38 @@ class DemoSeeder extends Seeder
             'status' => 'mobilized',
         ]);
 
+        // Trame publiée prête à l'emploi : sans elle, le formulaire de
+        // génération est masqué et la fonctionnalité paraît absente.
+        $this->seedReportTemplate($workspace);
+
         $this->command?->line(
             'Jeu de démonstration créé : utilisateurs (mot de passe « '.self::DEMO_PASSWORD.' »),'
             .' espace « Espace Démo », compétences, stage, projet démo,'
-            .' deux preuves (une partagée, une privée), une entrée de journal'
-            .' et dépôt Git démo avec 3 commits.'
+            .' deux preuves (une partagée, une privée), une entrée de journal,'
+            .' dépôt Git démo avec 3 commits et trame de rapport publiée.'
         );
+    }
+
+    private function seedReportTemplate(Workspace $workspace): ReportTemplate
+    {
+        $template = ReportTemplate::create([
+            'workspace_id' => $workspace->id,
+            'name' => 'Synthèse de stage',
+            'type' => 'memoir',
+            'description' => 'Trame de démonstration : identité, activités, journal, preuves et compétences.',
+            'status' => 'published',
+        ]);
+
+        $template->versions()->create([
+            'version' => 'v1.0.0',
+            'schema_json' => [
+                'title' => 'Synthèse de stage',
+                'sections' => ['identity', 'activities', 'daily_logs', 'evidences', 'competencies', 'tasks', 'commits', 'collaboration'],
+            ],
+            'published_at' => now(),
+        ]);
+
+        return $template;
     }
 
     private function createUser(string $name, string $email): User

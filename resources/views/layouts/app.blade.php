@@ -101,6 +101,11 @@
                                 </a>
                             @endif
 
+                            <a href="{{ route('workspace.reports.index', $workspace) }}"
+                               @if ($currentRoute === 'workspace.reports.index') aria-current="page" @endif>
+                                Rapports
+                            </a>
+
                             @can('manageMembers', $workspace)
                                 <a href="{{ route('workspace.members.index', $workspace) }}"
                                    @if ($currentRoute === 'workspace.members.index') aria-current="page" @endif>
@@ -122,10 +127,6 @@
                                     Journal d'audit
                                 </a>
                             @endcan
-
-                            @foreach (['Rapports'] as $coming)
-                                <span class="soon">{{ $coming }} <em>à venir</em></span>
-                            @endforeach
                         </nav>
                     </div>
                 </aside>

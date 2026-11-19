@@ -82,7 +82,7 @@ class LayoutTest extends TestCase
             ->assertSee('Voir tous les espaces');
     }
 
-    public function test_modules_sections_are_not_links_until_delivered(): void
+    public function test_modules_sections_are_links_when_delivered(): void
     {
         $owner = User::factory()->create();
         $workspace = $this->workspaceWithMember($owner);
@@ -93,10 +93,9 @@ class LayoutTest extends TestCase
 
         $content = strtolower((string) $response->getContent());
 
-        $this->assertStringContainsString('à venir', $content);
-        foreach (['preuves', 'rapports'] as $section) {
-            $this->assertStringNotContainsString(">{$section}</a>", (string) $content);
-        }
+        $this->assertStringNotContainsString('à venir', $content);
+        $this->assertStringContainsString(route('workspace.reports.index', $workspace), $content);
+        $this->assertStringContainsString(route('workspace.evidences.index', $workspace), $content);
     }
 
     public function test_guest_pages_have_no_workspace_navigation(): void
