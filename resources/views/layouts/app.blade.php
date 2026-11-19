@@ -28,6 +28,7 @@
         <nav aria-label="Navigation principale">
             @auth
                 <a href="{{ route('workspaces.index') }}">Mes espaces</a>
+                <a href="{{ route('account.password.edit') }}">Mot de passe</a>
                 <span class="user">{{ auth()->user()->name }}</span>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf

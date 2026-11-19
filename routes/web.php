@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccountPasswordController;
 use App\Http\Controllers\ActivityCompetencyController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AuditLogController;
@@ -61,6 +62,11 @@ Route::middleware('guest')->group(function (): void {
 Route::middleware('auth')->group(function (): void {
     Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
 
+    Route::get('/compte/mot-de-passe', [AccountPasswordController::class, 'edit'])
+        ->name('account.password.edit');
+    Route::post('/compte/mot-de-passe', [AccountPasswordController::class, 'update'])
+        ->name('account.password.update');
+
     Route::get('/workspaces', [WorkspaceController::class, 'index'])
         ->name('workspaces.index');
 
@@ -70,6 +76,9 @@ Route::middleware('auth')->group(function (): void {
         ->group(function (): void {
             Route::get('/dashboard', [WorkspaceController::class, 'dashboard'])
                 ->name('workspace.dashboard');
+
+            Route::get('/reports', [ReportController::class, 'workspaceIndex'])
+                ->name('workspace.reports.index');
 
             // Membres et invitations (T-007).
             Route::get('/members', [MemberController::class, 'index'])
@@ -241,6 +250,12 @@ Route::middleware('auth')->group(function (): void {
             Route::post('/internships/{internship}/reports', [ReportController::class, 'store'])
                 ->whereUuid('internship')
                 ->name('workspace.internships.reports.store');
+            Route::delete('/internships/{internship}/reports/{report}', [ReportController::class, 'destroy'])
+                ->whereUuid('internship')->whereUuid('report')
+                ->name('workspace.internships.reports.destroy');
+            Route::post('/internships/{internship}/reports/{report}/retry', [ReportController::class, 'retry'])
+                ->whereUuid('internship')->whereUuid('report')
+                ->name('workspace.internships.reports.retry');
             Route::get('/internships/{internship}/reports/{report}/download', [ReportController::class, 'download'])
                 ->whereUuid('internship')->whereUuid('report')
                 ->name('workspace.internships.reports.download');
