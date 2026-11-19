@@ -34,8 +34,8 @@
             <button type="submit">Se connecter</button>
         </form>
 
-        <p class="muted" style="margin-top: 1.5rem; font-size: .9rem;">
-            Aucune inscription publique : les comptes sont créés par un administrateur.
+        <p class="muted" style="margin-top: 1.5rem; font-size: .95rem;">
+            Nouveau stagiaire ? <a href="{{ route('register') }}">Créer mon espace de stage DWWM</a>
         </p>
     </div>
 @endsection

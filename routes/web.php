@@ -5,6 +5,7 @@ use App\Http\Controllers\ActivityCompetencyController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CompetencyController;
 use App\Http\Controllers\DailyLogController;
@@ -57,6 +58,9 @@ Route::post('/invitations/{token}/decline', [InvitationController::class, 'decli
 Route::middleware('guest')->group(function (): void {
     Route::get('/login', [LoginController::class, 'create'])->name('login');
     Route::post('/login', [LoginController::class, 'store'])->name('login.store');
+
+    Route::get('/register', [RegisterController::class, 'create'])->name('register');
+    Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
 });
 
 Route::middleware('auth')->group(function (): void {
