@@ -15,14 +15,9 @@ RUN apk add --no-cache \
     npm
 
 # Extensions PHP requises
-RUN docker-php-ext-configure gd --with-freetype --with-webp \
-    && docker-php-ext-install -j$(nproc) \
-        pdo_pgsql \
-        pgsql \
-        bcmath \
-        gd \
-        zip \
-        opcache
+RUN docker-php-ext-configure gd --with-freetype --with-webp
+RUN docker-php-ext-install -j$(nproc) pdo_pgsql pgsql bcmath zip opcache
+RUN docker-php-ext-install -j$(nproc) gd
 
 # Installation Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
