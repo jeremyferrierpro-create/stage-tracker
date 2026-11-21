@@ -45,9 +45,22 @@ Status: VALIDATED as shipped policy
 
 ## 5. Governance and human accountability
 
-- `VALIDATED` document statuses and human approvals require `--by "<name>"`.
-- Evidence records are hash-chained (`previous` → `hash`), so tampering is
-  detectable (`aidf evidence verify`, also part of `doctor`).
+- `VALIDATED` document statuses require `--by "<name>"`; `NOT_APPLICABLE`
+  requires `--note`.
+- Document status is canonical in the Markdown frontmatter. Gates and `doctor`
+  cross-check it against `config.json`; a mismatch is a real `FAIL`, not a
+  silent PASS.
+- **Declared approval is not authentication.** `--human --by "<name>"` records
+  `approval.authenticated: false` and `method: "declared"`; the agent can run
+  the same command, so it proves intent only. `approvedBy` is preserved as
+  historical declared identity.
+- `security.requireAuthenticatedApproval` (optional, default `false`) makes
+  human-required gates reject declared-only approval as `NOT_PROVEN`. No
+  signing/authentication mechanism is proven in 0.2.0 L0; this remains an open
+  decision.
+- Evidence records are hash-chained (`previous` → `hash`). `aidf evidence
+  verify` and `doctor` check every hash, every link, ordering, `index.lastHash`,
+  duplicates and unindexed files; they never repair history.
 - High-stakes phases (`security`, `release`) require `requireHumanApprovalFor`
   checks; agent-only approvals fail as `BLOCKED`.
 
@@ -60,7 +73,9 @@ Status: VALIDATED as shipped policy
 | Secret leakage via logs/reports | secret content never read; logs are local JSONL |
 | Arbitrary shell command via a check | shell-free spawn + operator rejection + opt-in |
 | Fake success (agent claiming tests ran) | gate NOT_PROVEN without real evidence |
-| Tampered evidence | chained SHA-256, verified on demand |
+| Config claims a document status the file does not have | frontmatter is canonical; mismatch = FAIL |
+| Agent claims a human approval | declared approval is unauthenticated; strict mode = NOT_PROVEN |
+| Tampered evidence | chained SHA-256, full chain verification on demand |
 | Malicious downloaded content | no auto-execution; index-only resources |
 | Uncontrolled updates to Spec Kit artefacts | generated constitution carries source hash; conflicts preserve original |
 

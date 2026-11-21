@@ -7,7 +7,7 @@
   },
   "framework": {
     "name": "aidf",
-    "version": "0.1.0",
+    "version": "0.3.2",
     "channel": "local"
   },
   "adapter": "qoder",
@@ -122,5 +122,5 @@
     "retentionDays": 365
   },
   "createdAt": "2026-11-04T06:16:04.454Z",
-  "updatedAt": "2026-11-04T07:32:55.703Z"
+  "updatedAt": "2026-11-21T16:28:41.182Z"
 }

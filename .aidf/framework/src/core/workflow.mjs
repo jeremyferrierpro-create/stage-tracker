@@ -1,6 +1,7 @@
 import path from 'node:path';
 import { spawn } from 'node:child_process';
 import { parseYaml } from '../util/yaml.mjs';
+import { splitFrontmatter } from '../util/frontmatter.mjs';
 import { readText, readJson, writeJson, exists, resolveInside } from '../util/fsx.mjs';
 import { aidfPaths, FRAMEWORK_ROOT, PHASES } from './paths.mjs';
 import { loadConfig } from './config.mjs';
@@ -122,11 +123,26 @@ export async function runCommand(command, options = {}) {
   });
 }
 
-function statusFromChecks(checks) {
-  const blocking = checks.filter((c) => c.blocking !== false && c.status !== 'NOT_APPLICABLE');
-  if (blocking.some((c) => c.status === 'FAIL')) return 'FAIL';
-  if (blocking.some((c) => c.status === 'BLOCKED')) return 'BLOCKED';
-  if (blocking.some((c) => c.status === 'NOT_PROVEN')) return 'NOT_PROVEN';
+function statusFromChecks(checks, options = {}) {
+  const blocking = checks.filter((c) => c.blocking !== false);
+  const applicable = blocking.filter((c) => c.status !== 'NOT_APPLICABLE');
+
+  // A gate with no blocking checks is informative by default. It only PASSes
+  // when it declares that intent explicitly; otherwise it cannot silently pass.
+  if (blocking.length === 0) {
+    if (options.applicability !== 'informative') return 'NOT_PROVEN';
+    if (checks.some((c) => c.status === 'FAIL')) return 'FAIL';
+    if (checks.some((c) => c.status === 'BLOCKED')) return 'BLOCKED';
+    return 'PASS';
+  }
+
+  // Blocking checks that are NOT_APPLICABLE cannot prove anything: a gate made
+  // only of not-applicable blocking checks is NOT_PROVEN, never PASS.
+  if (applicable.length === 0) return 'NOT_PROVEN';
+
+  if (applicable.some((c) => c.status === 'FAIL')) return 'FAIL';
+  if (applicable.some((c) => c.status === 'BLOCKED')) return 'BLOCKED';
+  if (applicable.some((c) => c.status === 'NOT_PROVEN')) return 'NOT_PROVEN';
   return 'PASS';
 }
 
@@ -140,7 +156,7 @@ async function checkFileExists(root, check) {
   }
 }
 
-function checkDocStatus(config, check) {
+async function checkDocStatus(root, config, check) {
   const docs = check.documents ?? (check.document ? [check.document] : []);
   if (docs.length === 0) return { status: 'BLOCKED', reason: 'No document configured for doc-status check.' };
   const results = [];
@@ -150,7 +166,37 @@ function checkDocStatus(config, check) {
       results.push({ doc, status: 'BLOCKED', reason: `${doc} is not configured.` });
       continue;
     }
-    const status = entry.status;
+
+    // The file is canonical: a status recorded in config.json is only trusted
+    // when the document frontmatter says the same. This closes the historical
+    // hole where a config could claim VALIDATED while the file stayed a template.
+    const file = path.join(root, '.aidf', 'docs', `${doc}.md`);
+    if (!(await exists(file))) {
+      results.push({ doc, status: 'BLOCKED', reason: `${doc} file is missing (.aidf/docs/${doc}.md).` });
+      continue;
+    }
+    let fileStatus = null;
+    try {
+      const frontmatter = splitFrontmatter(await readText(file)).frontmatter;
+      fileStatus = frontmatter && typeof frontmatter === 'object' ? frontmatter.status : null;
+    } catch (error) {
+      results.push({ doc, status: 'BLOCKED', reason: `${doc} file is unreadable: ${error.message}` });
+      continue;
+    }
+    if (!fileStatus) {
+      results.push({ doc, status: 'BLOCKED', reason: `${doc} file has no frontmatter status.` });
+      continue;
+    }
+    if (String(fileStatus) !== String(entry.status)) {
+      results.push({
+        doc,
+        status: 'FAIL',
+        reason: `${doc} status mismatch: file=${fileStatus} config=${entry.status}.`,
+      });
+      continue;
+    }
+
+    const status = String(fileStatus);
     if (check.disallowed?.includes(status)) {
       results.push({ doc, status: 'FAIL', reason: `${doc} is ${status}.` });
     } else if (check.allowed && !check.allowed.includes(status)) {
@@ -163,13 +209,15 @@ function checkDocStatus(config, check) {
   return { status, reason: results.map((r) => `${r.doc}: ${r.reason}`).join(' '), details: results };
 }
 
-async function checkEvidence(root, check) {
+async function checkEvidence(root, check, config = {}) {
   const index = await loadEvidenceIndex(root);
+  const requireAuth = config.security?.requireAuthenticatedApproval === true;
   const matches = index.entries.filter((e) => {
     if (check.evidenceType && e.type !== check.evidenceType) return false;
     if (check.gate && e.gate !== check.gate) return false;
     if (e.status !== 'PASS') return false;
     if (check.requireHumanApproval && !e.humanApproval) return false;
+    if (check.requireHumanApproval && requireAuth && !e.authenticatedApproval) return false;
     if (check.maxAgeDays) {
       const age = (Date.now() - new Date(e.createdAt).getTime()) / 86400000;
       if (age > check.maxAgeDays) return false;
@@ -177,10 +225,15 @@ async function checkEvidence(root, check) {
     return true;
   });
   if (matches.length > 0) {
+    const declaredOnly = matches.filter((e) => e.humanApproval && !e.authenticatedApproval).length;
     return {
       status: 'PASS',
-      reason: `Found ${matches.length} matching evidence record(s).`,
+      reason: `Found ${matches.length} matching evidence record(s).`
+        + (declaredOnly > 0 ? ` ${declaredOnly} approval(s) are declared, not authenticated.` : ''),
       evidence: matches.slice(0, 5).map((m) => m.file),
+      approval: check.requireHumanApproval
+        ? (declaredOnly === 0 ? 'authenticated' : 'declared')
+        : null,
     };
   }
   const anyType = index.entries.filter((e) => !check.evidenceType || e.type === check.evidenceType);
@@ -188,6 +241,13 @@ async function checkEvidence(root, check) {
     return {
       status: 'BLOCKED',
       reason: `Evidence exists for "${check.evidenceType}" but lacks human approval.`,
+    };
+  }
+  if (check.requireHumanApproval && requireAuth
+    && anyType.some((e) => e.status === 'PASS' && e.humanApproval && !e.authenticatedApproval)) {
+    return {
+      status: 'NOT_PROVEN',
+      reason: `Evidence for "${check.evidenceType}" has a declared approval only; authenticated approval is required.`,
     };
   }
   return {
@@ -200,10 +260,14 @@ async function checkCommand(root, config, check, options) {
   const key = check.commandKey;
   const command = config.commands?.[key];
   if (!command) {
-    if (check.missing === 'NOT_APPLICABLE') {
-      return { status: 'NOT_APPLICABLE', reason: `No "${key}" command is configured.` };
+    if (check.missing === 'NOT_APPLICABLE' && check.blocking === false) {
+      return { status: 'NOT_APPLICABLE', reason: `No "${key}" command is configured (informative check).` };
     }
-    return { status: 'BLOCKED', reason: `No "${key}" command is configured in .aidf/config.json.` };
+    return {
+      status: 'BLOCKED',
+      reason: `No "${key}" command is configured in .aidf/config.json.`
+        + (check.missing === 'NOT_APPLICABLE' ? ' A blocking check cannot be NOT_APPLICABLE.' : ''),
+    };
   }
   const allowedByConfig = config.security?.allowedCommands ?? [];
   if (allowedByConfig.length > 0 && !allowedByConfig.includes(key)) {
@@ -254,10 +318,10 @@ export async function evaluateGate(root, gate, options = {}) {
         result = await checkFileExists(root, check);
         break;
       case 'doc-status':
-        result = checkDocStatus(config, check);
+        result = await checkDocStatus(root, config, check);
         break;
       case 'evidence':
-        result = await checkEvidence(root, check);
+        result = await checkEvidence(root, check, config);
         break;
       case 'command':
         result = await checkCommand(root, config, check, options);
@@ -282,13 +346,24 @@ export async function evaluateGate(root, gate, options = {}) {
       details: result.details ?? null,
     });
   }
-  const status = statusFromChecks(checks);
+  const status = statusFromChecks(checks, { applicability: gate.applicability });
+  const blocking = checks.filter((c) => c.blocking !== false);
+  const applicableBlocking = blocking.filter((c) => c.status !== 'NOT_APPLICABLE');
+  let reason = null;
+  if (blocking.length === 0 && gate.applicability !== 'informative') {
+    reason = 'Gate has no blocking check and is not declared informative; it cannot silently PASS.';
+  } else if (blocking.length > 0 && applicableBlocking.length === 0) {
+    reason = 'No applicable blocking check: the gate cannot be proven from NOT_APPLICABLE checks alone.';
+  }
   return {
     gate: gate.id,
     phase: gate.phase,
     kind: gate.kind,
     description: gate.description,
     status,
+    reason,
+    blockingChecks: blocking.length,
+    applicableBlockingChecks: applicableBlocking.length,
     checks,
     evaluatedAt: new Date().toISOString(),
   };

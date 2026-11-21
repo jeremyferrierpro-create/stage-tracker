@@ -4,7 +4,7 @@ import { existsSync } from '../util/fsx.mjs';
 
 export const FRAMEWORK_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const AIDF_DIR = '.aidf';
-export const AIDF_VERSION = '0.1.0';
+export const AIDF_VERSION = '0.3.2';
 
 export const DOCUMENTS = [
   'PRD',
@@ -35,6 +35,7 @@ export const PHASES = [
 
 export function aidfPaths(root) {
   const base = path.join(root, AIDF_DIR);
+  const artefactsDir = path.join(base, 'artefacts');
   return {
     root,
     base,
@@ -56,6 +57,18 @@ export function aidfPaths(root) {
     adapters: path.join(base, 'adapters'),
     context: path.join(base, 'state', 'context'),
     reports: path.join(base, 'reports'),
+    // L1 artefacts
+    artefacts: {
+      dir: artefactsDir,
+      requirements: path.join(artefactsDir, 'requirements.json'),
+      discovery: path.join(artefactsDir, 'discovery.json'),
+      constraints: path.join(artefactsDir, 'constraints.json'),
+      architecture: path.join(artefactsDir, 'architecture.json'),
+      testPlan: path.join(artefactsDir, 'test-plan.json'),
+      decisions: path.join(artefactsDir, 'decisions'),
+      security: path.join(artefactsDir, 'security'),
+      'security/threat-model': path.join(artefactsDir, 'security', 'threat-model.json'),
+    },
   };
 }
 

@@ -8,12 +8,15 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CompetencyController;
+use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\DailyLogController;
 use App\Http\Controllers\EvidenceController;
 use App\Http\Controllers\HelpController;
 use App\Http\Controllers\InternshipController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\MemberController;
+use App\Http\Controllers\NoteController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReportTemplateController;
@@ -368,5 +371,56 @@ Route::middleware('auth')->group(function (): void {
             Route::get('/evidences/{evidence}/download', [EvidenceController::class, 'download'])
                 ->whereUuid('evidence')
                 ->name('workspace.evidences.download');
+
+            // Messagerie interne (REQ-F-003).
+            Route::get('/messages', [ConversationController::class, 'index'])
+                ->name('workspace.messages.index');
+            Route::post('/messages', [ConversationController::class, 'store'])
+                ->name('workspace.messages.store');
+            Route::post('/internships/{internship}/messages', [ConversationController::class, 'threadForInternship'])
+                ->whereUuid('internship')
+                ->name('workspace.internships.messages.thread');
+            Route::post('/internships/{internship}/projects/{project}/messages', [ConversationController::class, 'threadForProject'])
+                ->whereUuid('internship')->whereUuid('project')
+                ->name('workspace.internships.projects.messages.thread');
+            Route::get('/messages/{conversation}', [ConversationController::class, 'show'])
+                ->whereUuid('conversation')
+                ->name('workspace.messages.show');
+            Route::post('/messages/{conversation}/messages', [ConversationController::class, 'storeMessage'])
+                ->whereUuid('conversation')
+                ->name('workspace.messages.messages.store');
+            Route::post('/messages/{conversation}/read', [ConversationController::class, 'markRead'])
+                ->whereUuid('conversation')
+                ->name('workspace.messages.read');
+            Route::get('/messages/{conversation}/attachments/{message}', [ConversationController::class, 'downloadAttachment'])
+                ->whereUuid('conversation')->whereUuid('message')
+                ->name('workspace.messages.attachments.download');
+
+            // Notifications in-app (REQ-F-002).
+            Route::get('/notifications', [NotificationController::class, 'index'])
+                ->name('workspace.notifications.index');
+            Route::post('/notifications/{notification}/read', [NotificationController::class, 'markRead'])
+                ->whereUuid('notification')
+                ->name('workspace.notifications.read');
+            Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead'])
+                ->name('workspace.notifications.read_all');
+            Route::get('/notifications/{notification}/open', [NotificationController::class, 'open'])
+                ->whereUuid('notification')
+                ->name('workspace.notifications.open');
+
+            // Pense-bête / notes et rappels (REQ-F-004).
+            Route::get('/notes', [NoteController::class, 'index'])
+                ->name('workspace.notes.index');
+            Route::post('/notes', [NoteController::class, 'store'])
+                ->name('workspace.notes.store');
+            Route::put('/notes/{note}', [NoteController::class, 'update'])
+                ->whereUuid('note')
+                ->name('workspace.notes.update');
+            Route::post('/notes/{note}/toggle', [NoteController::class, 'toggle'])
+                ->whereUuid('note')
+                ->name('workspace.notes.toggle');
+            Route::delete('/notes/{note}', [NoteController::class, 'destroy'])
+                ->whereUuid('note')
+                ->name('workspace.notes.destroy');
         });
 });

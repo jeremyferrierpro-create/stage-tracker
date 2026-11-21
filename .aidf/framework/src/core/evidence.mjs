@@ -32,6 +32,15 @@ export async function recordEvidence(root, entry) {
     createdBy: entry.createdBy ?? 'aidf',
     humanApproval: Boolean(entry.humanApproval),
     approvedBy: entry.approvedBy ?? null,
+    // `approvedBy` is kept for historical compatibility. It is a *declared*
+    // identity only; authentication is never inferred from it.
+    approval: entry.approval ?? {
+      declaredBy: entry.humanApproval ? (entry.approvedBy ?? null) : null,
+      declaredAt: entry.humanApproval ? createdAt : null,
+      authenticated: false,
+      method: entry.humanApproval ? 'declared' : 'none',
+      keyId: null,
+    },
     createdAt,
     checks: entry.checks ?? [],
     commands: entry.commands ?? [],
@@ -52,6 +61,8 @@ export async function recordEvidence(root, entry) {
     createdAt,
     humanApproval: body.humanApproval,
     approvedBy: body.approvedBy,
+    authenticatedApproval: Boolean(body.approval?.authenticated),
+    approvalMethod: body.approval?.method ?? null,
     file: path.relative(root, file).replace(/\\/g, '/'),
     hash,
   });
@@ -98,6 +109,98 @@ export async function verifyEvidenceFile(root, entry) {
   const expected = sha256Text(JSON.stringify(copy));
   if (expected !== body.hash) return { ok: false, reason: 'Evidence hash does not match content.' };
   return { ok: true };
+}
+
+/**
+ * Verify the whole evidence chain: every record hash, every `previous` link,
+ * chronological order, index consistency and unindexed/missing files.
+ * Never repairs or rewrites history: inconsistencies are reported.
+ */
+export async function verifyEvidenceChain(root) {
+  const problems = [];
+  const add = (code, file, reason) => problems.push({ code, file: file ?? null, reason });
+  const index = await loadEvidenceIndex(root);
+  if (!Array.isArray(index.entries)) {
+    add('INVALID_INDEX', null, 'index.entries is not an array.');
+    return { ok: false, checked: 0, problems };
+  }
+  const entries = index.entries;
+  const seenIds = new Set();
+  const seenFiles = new Set();
+  let previous = null;
+  let previousAt = null;
+
+  for (const entry of entries) {
+    if (!entry || typeof entry !== 'object' || !entry.file || !entry.id) {
+      add('INVALID_ENTRY', entry?.file ?? null, 'Index entry requires an id and a file.');
+      previous = entry?.hash ?? previous;
+      continue;
+    }
+    if (seenIds.has(entry.id)) add('DUPLICATE_ID', entry.file, `Duplicate evidence id: ${entry.id}.`);
+    seenIds.add(entry.id);
+    if (seenFiles.has(entry.file)) add('DUPLICATE_FILE', entry.file, 'The same evidence file is indexed more than once.');
+    seenFiles.add(entry.file);
+
+    const abs = path.join(root, entry.file);
+    if (!(await exists(abs))) {
+      add('MISSING_FILE', entry.file, 'Evidence file is missing.');
+      previous = entry.hash ?? previous;
+      previousAt = entry.createdAt ?? previousAt;
+      continue;
+    }
+
+    let body;
+    try {
+      body = JSON.parse(await readText(abs));
+    } catch (error) {
+      add('INVALID_JSON', entry.file, `Evidence file is not valid JSON: ${error.message}`);
+      previous = entry.hash ?? previous;
+      previousAt = entry.createdAt ?? previousAt;
+      continue;
+    }
+
+    const copy = { ...body };
+    delete copy.hash;
+    if (sha256Text(JSON.stringify(copy)) !== body.hash) {
+      add('HASH_MISMATCH', entry.file, 'Record content does not match its stored hash.');
+    }
+    if (entry.hash !== body.hash) add('INDEX_HASH_MISMATCH', entry.file, 'Index hash differs from record hash.');
+    if (entry.id !== body.id) add('INDEX_ID_MISMATCH', entry.file, 'Index id differs from record id.');
+    if (entry.status !== undefined && entry.status !== body.status) {
+      add('INDEX_STATUS_MISMATCH', entry.file, 'Index status differs from record status.');
+    }
+    if ((body.previous ?? null) !== (previous ?? null)) {
+      add('CHAIN_BROKEN', entry.file, `Expected previous ${previous ?? 'null'}, found ${body.previous ?? 'null'}.`);
+    }
+    if (previousAt && entry.createdAt && String(entry.createdAt) < String(previousAt)) {
+      add('ORDER', entry.file, 'Entry is older than its predecessor in the chain.');
+    }
+    previous = body.hash;
+    previousAt = entry.createdAt ?? previousAt;
+  }
+
+  if (entries.length > 0 && index.lastHash !== previous) {
+    add('INDEX_LAST_HASH_MISMATCH', null, 'index.lastHash does not match the last record hash.');
+  }
+  if (entries.length === 0 && index.lastHash) {
+    add('INDEX_LAST_HASH_MISMATCH', null, 'index.lastHash is set but the index contains no entries.');
+  }
+
+  const dir = aidfPaths(root).evidence;
+  let files = [];
+  try {
+    files = (await readDirSafe(dir))
+      .filter((e) => e.isFile() && e.name.endsWith('.json') && e.name !== 'index.json')
+      .map((e) => path.relative(root, path.join(dir, e.name)).replace(/\\/g, '/'));
+  } catch {
+    files = [];
+  }
+  const referenced = new Set([...seenFiles].map((f) => String(f).replace(/\\/g, '/')));
+  for (const file of files) {
+    if (!referenced.has(file)) add('UNINDEXED_RECORD', file, 'Record file is not referenced by the index.');
+  }
+
+  return { ok: problems.length === 0, checked: entries.length, problems };
 }
 
 export async function listEvidenceFiles(root) {

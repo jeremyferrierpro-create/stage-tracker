@@ -42,8 +42,11 @@ RUN chmod -R 775 storage bootstrap/cache
 
 EXPOSE 8000
 
-# 8. Préparation du cache Laravel et lancement du serveur
-CMD php artisan config:cache \
+# 8. Migrations puis caches Laravel et lancement du serveur
+#    (`migrate --force` est idempotent : il n'applique que les migrations
+#    manquantes, ce qui rend le déploiement Render sûr à chaque redeploy).
+CMD php artisan migrate --force \
+    && php artisan config:cache \
     && php artisan route:cache \
     && php artisan view:cache \
     && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}

@@ -42,6 +42,7 @@ skills:
     ide:
       - qoder
       - generic
+      - opencode
     path: skills/aidf-project-context/SKILL.md
     status: AVAILABLE
 
@@ -80,6 +81,7 @@ skills:
     ide:
       - qoder
       - generic
+      - opencode
     path: skills/aidf-product-analysis/SKILL.md
     status: AVAILABLE
 
@@ -118,6 +120,7 @@ skills:
     ide:
       - qoder
       - generic
+      - opencode
     path: skills/aidf-requirements-engineering/SKILL.md
     status: AVAILABLE
 
@@ -157,6 +160,7 @@ skills:
     ide:
       - qoder
       - generic
+      - opencode
     path: skills/aidf-architecture-review/SKILL.md
     status: AVAILABLE
 
@@ -197,6 +201,7 @@ skills:
     ide:
       - qoder
       - generic
+      - opencode
     path: skills/aidf-database-design/SKILL.md
     status: AVAILABLE
 
@@ -238,6 +243,7 @@ skills:
     ide:
       - qoder
       - generic
+      - opencode
     path: skills/aidf-frontend-implementation/SKILL.md
     status: AVAILABLE
 
@@ -277,6 +283,7 @@ skills:
     ide:
       - qoder
       - generic
+      - opencode
     path: skills/aidf-backend-implementation/SKILL.md
     status: AVAILABLE
 
@@ -316,6 +323,7 @@ skills:
     ide:
       - qoder
       - generic
+      - opencode
     path: skills/aidf-ui-ux-implementation/SKILL.md
     status: AVAILABLE
 
@@ -358,6 +366,7 @@ skills:
     ide:
       - qoder
       - generic
+      - opencode
     path: skills/aidf-security-review/SKILL.md
     status: AVAILABLE
 
@@ -396,6 +405,7 @@ skills:
     ide:
       - qoder
       - generic
+      - opencode
     path: skills/aidf-testing-validation/SKILL.md
     status: AVAILABLE
 
@@ -438,6 +448,7 @@ skills:
     ide:
       - qoder
       - generic
+      - opencode
     path: skills/aidf-devops-engineering/SKILL.md
     status: AVAILABLE
 
@@ -478,6 +489,7 @@ skills:
     ide:
       - qoder
       - generic
+      - opencode
     path: skills/aidf-documentation-maintenance/SKILL.md
     status: AVAILABLE
 
@@ -524,5 +536,6 @@ skills:
     ide:
       - qoder
       - generic
+      - opencode
     path: skills/aidf-phase-transition/SKILL.md
     status: AVAILABLE

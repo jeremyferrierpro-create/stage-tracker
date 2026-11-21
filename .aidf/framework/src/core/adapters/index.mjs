@@ -1,9 +1,11 @@
 import { QoderAdapter } from './qoder.mjs';
 import { GenericAdapter } from './generic.mjs';
+import { OpenCodeAdapter } from './opencode.mjs';
 
 const FACTORIES = {
   qoder: () => new QoderAdapter(),
   generic: () => new GenericAdapter(),
+  opencode: () => new OpenCodeAdapter(),
 };
 
 export const ADAPTER_KEYS = Object.keys(FACTORIES);

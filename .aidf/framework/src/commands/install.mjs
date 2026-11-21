@@ -23,7 +23,7 @@ export function installArgSpec() {
 export async function installCommand(argv, ctx) {
   const args = parseArgs(argv, installArgSpec());
   if (args.help) {
-    ctx.logger.info('Usage: aidf install [--target <dir>] [--adapter qoder|generic] [--name <name>] [--with-hooks] [--dry-run] [--force]');
+    ctx.logger.info('Usage: aidf install [--target <dir>] [--adapter qoder|opencode|generic] [--name <name>] [--with-hooks] [--dry-run] [--force]');
     return 0;
   }
   const adapterKey = assertEnum(args.adapter, ADAPTER_KEYS, 'adapter') ?? 'qoder';

@@ -8,6 +8,7 @@ use App\Domain\Identity\Models\User;
 use App\Domain\Identity\Models\Workspace;
 use App\Domain\Identity\Models\WorkspaceMember;
 use App\Domain\Internship\Models\InternshipParticipant;
+use App\Domain\Notifications\NotificationService;
 use App\Mail\WorkspaceInvitationMail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -22,7 +23,10 @@ final class InvitationService
 {
     public const EXPIRES_IN_DAYS = 7;
 
-    public function __construct(private readonly AuditLogger $audit) {}
+    public function __construct(
+        private readonly AuditLogger $audit,
+        private readonly NotificationService $notifications,
+    ) {}
 
     /**
      * Rôles que l'inviteur peut proposer, selon son rôle dans le workspace.
@@ -194,8 +198,17 @@ final class InvitationService
 
             $invitation->forceFill(['accepted_at' => now()])->save();
 
-            // Rattachement automatique au stage en tant que tuteur / superviseur
-            if (in_array($invitation->role, ['supervisor', 'tutor'], true)) {
+            // Rattachement automatique aux stages du workspace. Les rôles à
+            // portée « stage attribué » (supervisor, tutor, viewer) sont
+            // attachés en lecture/écriture selon la matrice : viewer devient
+            // `observer` (lecture seule) pour conserver la portée restreinte.
+            $stageRoles = [
+                'supervisor' => 'supervisor',
+                'tutor' => 'tutor',
+                'viewer' => 'observer',
+            ];
+
+            if (isset($stageRoles[$invitation->role])) {
                 $internships = $workspace->internships()->get();
                 foreach ($internships as $internship) {
                     InternshipParticipant::firstOrCreate([
@@ -203,7 +216,7 @@ final class InvitationService
                         'workspace_id' => $workspace->id,
                         'user_id' => $user->id,
                     ], [
-                        'role' => $invitation->role,
+                        'role' => $stageRoles[$invitation->role],
                         'status' => 'active',
                     ]);
                 }
@@ -219,6 +232,28 @@ final class InvitationService
                 ],
                 $user,
             );
+
+            // Notifie les gestionnaires de l'espace (REQ-F-002).
+            $managers = User::query()
+                ->whereIn('id', $workspace->members()
+                    ->where('status', 'active')
+                    ->whereIn('role', ['owner', 'admin'])
+                    ->pluck('user_id'))
+                ->get();
+
+            foreach ($managers as $manager) {
+                $this->notifications->send(
+                    $workspace,
+                    $manager,
+                    'member_joined',
+                    $user->name.' a rejoint l\'espace',
+                    Workspace::roleLabel($invitation->role),
+                    [
+                        'url' => route('workspace.members.index', $workspace),
+                        'dedupe_key' => 'member_joined:'.$user->id.':'.$workspace->id,
+                    ],
+                );
+            }
 
             return $member;
         });

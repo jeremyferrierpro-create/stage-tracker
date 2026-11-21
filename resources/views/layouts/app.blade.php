@@ -12,6 +12,13 @@
             ? auth()->user()->workspaces()->wherePivot('status', 'active')->orderBy('name')->get()
             : collect();
         $currentRoute = request()->route() ? request()->route()->getName() : null;
+        $unreadNotifications = collect();
+        $unreadNotificationCount = 0;
+        if ($workspace && auth()->check()) {
+            $notificationService = app(\App\Domain\Notifications\NotificationService::class);
+            $unreadNotifications = $notificationService->unreadFor(auth()->user(), $workspace);
+            $unreadNotificationCount = $notificationService->unreadCount(auth()->user(), $workspace);
+        }
     @endphp
     @if ($vite->isRunningHot() || file_exists(public_path('build/manifest.json')))
         @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -28,6 +35,14 @@
         <nav aria-label="Navigation principale">
             <a href="{{ route('help') }}" class="nav-help-link">Guide DWWM</a>
             @auth
+                @if ($workspace)
+                    <a href="{{ route('workspace.notifications.index', $workspace) }}" class="bell" aria-label="Notifications">
+                        🔔
+                        @if ($unreadNotificationCount > 0)
+                            <span class="unread-count">{{ $unreadNotificationCount > 99 ? '99+' : $unreadNotificationCount }}</span>
+                        @endif
+                    </a>
+                @endif
                 <a href="{{ route('workspaces.index') }}">Mes espaces</a>
                 <a href="{{ route('account.password.edit') }}">Mot de passe</a>
                 <span class="user">{{ auth()->user()->name }}</span>
@@ -106,6 +121,16 @@
                                 </a>
                             @endif
 
+                            <a href="{{ route('workspace.messages.index', $workspace) }}"
+                               @if (str_starts_with((string) $currentRoute, 'workspace.messages')) aria-current="page" @endif>
+                                Messages
+                            </a>
+
+                            <a href="{{ route('workspace.notes.index', $workspace) }}"
+                               @if (str_starts_with((string) $currentRoute, 'workspace.notes')) aria-current="page" @endif>
+                                Pense-bête
+                            </a>
+
                             <a href="{{ route('workspace.reports.index', $workspace) }}"
                                @if ($currentRoute === 'workspace.reports.index') aria-current="page" @endif>
                                 Rapports
@@ -173,6 +198,30 @@
             @yield('content')
         </main>
     @endauth
+
+    @if ($workspace && $unreadNotifications->isNotEmpty())
+        <div class="toast-stack" aria-label="Notifications non lues">
+            @foreach ($unreadNotifications as $toast)
+                <div class="toast" role="status">
+                    <div class="toast-body">
+                        <strong>{{ $toast->title }}</strong>
+                        @if ($toast->body)<span>{{ $toast->body }}</span>@endif
+                        <span class="muted small">{{ $toast->created_at->diffForHumans() }}</span>
+                    </div>
+                    <div class="toast-actions">
+                        @if (! empty($toast->data['url']))
+                            <a class="button secondary small"
+                               href="{{ route('workspace.notifications.open', [$workspace, $toast]) }}">Ouvrir</a>
+                        @endif
+                        <form method="POST" action="{{ route('workspace.notifications.read', [$workspace, $toast]) }}">
+                            @csrf
+                            <button type="submit" class="toast-dismiss" aria-label="Marquer comme lu">×</button>
+                        </form>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    @endif
 
     <footer class="footer">
         Stage Tracker — suivi de stage et traçabilité des activités professionnelles.

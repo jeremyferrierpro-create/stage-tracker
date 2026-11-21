@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aidf.dev/schemas/test-plan/v1",
+  "$defs": {
+    "source": {
+      "type": "object",
+      "required": ["type", "author", "createdAt"],
+      "properties": {
+        "type": { "enum": ["human", "generated", "derived"] },
+        "author": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "generator": { "type": ["string", "null"] }
+      }
+    },
+    "linkage": {
+      "type": "object",
+      "properties": {
+        "covers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "required": ["schemaVersion", "timestamp", "valid"],
+      "properties": {
+        "schemaVersion": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "valid": { "type": "boolean" },
+        "errors": { "type": "array", "items": { "type": "string" } },
+        "warnings": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "testCase": {
+      "type": "object",
+      "required": ["id", "name", "type", "path", "command"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "type": {
+          "type": "string",
+          "enum": ["unit", "integration", "api", "e2e", "security", "accessibility", "performance"]
+        },
+        "path": { "type": "string" },
+        "command": { "type": "string" },
+        "status": {
+          "type": "string",
+          "enum": ["planned", "written", "passing", "failing", "skipped"]
+        }
+      }
+    },
+    "testStrategy": {
+      "type": "object",
+      "required": ["approach", "coverageGoals", "tools"],
+      "properties": {
+        "approach": { "type": "string" },
+        "coverageGoals": {
+          "type": "object",
+          "properties": {
+            "line": { "type": "number" },
+            "branch": { "type": "number" },
+            "function": { "type": "number" },
+            "statement": { "type": "number" }
+          }
+        },
+        "tools": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "mockPolicy": {
+          "type": "string",
+          "description": "When mocks are allowed/prohibited"
+        }
+      }
+    }
+  },
+  "type": "object",
+  "required": ["id", "schemaVersion", "createdAt", "updatedAt", "status", "source", "links", "validation"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^TP-\\d{3}$",
+      "description": "Test plan identifier"
+    },
+    "schemaVersion": {
+      "const": "1.0.0",
+      "description": "Schema version"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["DRAFT", "VALIDATED", "BLOCKED", "OUTDATED"]
+    },
+    "strategy": { "$ref": "#/$defs/testStrategy" },
+    "testCases": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/testCase" }
+    },
+    "source": { "$ref": "#/$defs/source" },
+    "links": { "$ref": "#/$defs/linkage" },
+    "validation": { "$ref": "#/$defs/validation" }
+  }
+}

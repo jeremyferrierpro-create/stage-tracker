@@ -1,0 +1,449 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-11-21T19:16:48.695Z",
+  "root": "C:\\Users\\jerem\\Desktop\\stage_tracker\\aidf\\projets\\stage-tracker",
+  "verdict": "READY",
+  "summary": {
+    "gates": 16,
+    "pass": 16,
+    "blocked": 0,
+    "notProven": 0,
+    "notApplicable": 0
+  },
+  "blockers": [],
+  "notProvenGates": [],
+  "gates": [
+    {
+      "id": "intake-entry",
+      "phase": "intake",
+      "kind": "entry",
+      "status": "PASS",
+      "reason": null,
+      "checks": [
+        {
+          "id": "manifest-present",
+          "type": "file-exists",
+          "status": "PASS",
+          "reason": ".aidf/manifest.json exists."
+        },
+        {
+          "id": "constitution-present",
+          "type": "file-exists",
+          "status": "PASS",
+          "reason": ".aidf/docs/constitution.md exists."
+        }
+      ]
+    },
+    {
+      "id": "intake-exit",
+      "phase": "intake",
+      "kind": "exit",
+      "status": "PASS",
+      "reason": null,
+      "checks": [
+        {
+          "id": "context-selected",
+          "type": "file-exists",
+          "status": "PASS",
+          "reason": ".aidf/state/context/latest.md exists."
+        },
+        {
+          "id": "task-classification",
+          "type": "evidence",
+          "status": "PASS",
+          "reason": "Found 1 matching evidence record(s)."
+        }
+      ]
+    },
+    {
+      "id": "discovery-entry",
+      "phase": "discovery",
+      "kind": "entry",
+      "status": "PASS",
+      "reason": null,
+      "checks": [
+        {
+          "id": "previous-intake",
+          "type": "previous-gate",
+          "status": "PASS",
+          "reason": "Prior gates PASS: intake-exit."
+        }
+      ]
+    },
+    {
+      "id": "discovery-exit",
+      "phase": "discovery",
+      "kind": "exit",
+      "status": "PASS",
+      "reason": null,
+      "checks": [
+        {
+          "id": "project-scan",
+          "type": "evidence",
+          "status": "PASS",
+          "reason": "Found 1 matching evidence record(s)."
+        },
+        {
+          "id": "trd-not-blocked",
+          "type": "doc-status",
+          "status": "PASS",
+          "reason": "TRD: TRD is VALIDATED."
+        }
+      ]
+    },
+    {
+      "id": "specification-entry",
+      "phase": "specification",
+      "kind": "entry",
+      "status": "PASS",
+      "reason": null,
+      "checks": [
+        {
+          "id": "previous-discovery",
+          "type": "previous-gate",
+          "status": "PASS",
+          "reason": "Prior gates PASS: discovery-exit."
+        }
+      ]
+    },
+    {
+      "id": "specification-exit",
+      "phase": "specification",
+      "kind": "exit",
+      "status": "PASS",
+      "reason": null,
+      "checks": [
+        {
+          "id": "prd-validated",
+          "type": "doc-status",
+          "status": "PASS",
+          "reason": "PRD: PRD is VALIDATED. APPFLOW: APPFLOW is VALIDATED."
+        },
+        {
+          "id": "security-not-contradictory",
+          "type": "doc-status",
+          "status": "PASS",
+          "reason": "SECURITY: SECURITY is VALIDATED."
+        },
+        {
+          "id": "spec-human-validation",
+          "type": "evidence",
+          "status": "PASS",
+          "reason": "Found 1 matching evidence record(s). 1 approval(s) are declared, not authenticated."
+        }
+      ]
+    },
+    {
+      "id": "planning-entry",
+      "phase": "planning",
+      "kind": "entry",
+      "status": "PASS",
+      "reason": null,
+      "checks": [
+        {
+          "id": "previous-specification",
+          "type": "previous-gate",
+          "status": "PASS",
+          "reason": "Prior gates PASS: specification-exit."
+        }
+      ]
+    },
+    {
+      "id": "planning-exit",
+      "phase": "planning",
+      "kind": "exit",
+      "status": "PASS",
+      "reason": null,
+      "checks": [
+        {
+          "id": "trd-plan-validated",
+          "type": "doc-status",
+          "status": "PASS",
+          "reason": "TRD: TRD is VALIDATED. PLAN: PLAN is VALIDATED."
+        },
+        {
+          "id": "backend-not-blocked",
+          "type": "doc-status",
+          "status": "PASS",
+          "reason": "BACKEND: BACKEND is VALIDATED."
+        },
+        {
+          "id": "plan-human-approval",
+          "type": "evidence",
+          "status": "PASS",
+          "reason": "Found 1 matching evidence record(s). 1 approval(s) are declared, not authenticated."
+        }
+      ]
+    },
+    {
+      "id": "implementation-entry",
+      "phase": "implementation",
+      "kind": "entry",
+      "status": "PASS",
+      "reason": null,
+      "checks": [
+        {
+          "id": "previous-planning",
+          "type": "previous-gate",
+          "status": "PASS",
+          "reason": "Prior gates PASS: planning-exit."
+        }
+      ]
+    },
+    {
+      "id": "implementation-exit",
+      "phase": "implementation",
+      "kind": "exit",
+      "status": "PASS",
+      "reason": null,
+      "checks": [
+        {
+          "id": "conventions-not-contradictory",
+          "type": "doc-status",
+          "status": "PASS",
+          "reason": "CONVENTIONS: CONVENTIONS is VALIDATED."
+        },
+        {
+          "id": "implementation-evidence",
+          "type": "evidence",
+          "status": "PASS",
+          "reason": "Found 27 matching evidence record(s)."
+        }
+      ]
+    },
+    {
+      "id": "testing-entry",
+      "phase": "testing",
+      "kind": "entry",
+      "status": "PASS",
+      "reason": null,
+      "checks": [
+        {
+          "id": "previous-implementation",
+          "type": "previous-gate",
+          "status": "PASS",
+          "reason": "Prior gates PASS: implementation-exit."
+        }
+      ]
+    },
+    {
+      "id": "testing-exit",
+      "phase": "testing",
+      "kind": "exit",
+      "status": "PASS",
+      "reason": null,
+      "checks": [
+        {
+          "id": "test-command",
+          "type": "command",
+          "status": "PASS",
+          "reason": "Command exited 0 in 41560ms."
+        },
+        {
+          "id": "test-evidence",
+          "type": "evidence",
+          "status": "PASS",
+          "reason": "Found 1 matching evidence record(s)."
+        }
+      ]
+    },
+    {
+      "id": "security-entry",
+      "phase": "security",
+      "kind": "entry",
+      "status": "PASS",
+      "reason": null,
+      "checks": [
+        {
+          "id": "previous-testing",
+          "type": "previous-gate",
+          "status": "PASS",
+          "reason": "Prior gates PASS: testing-exit."
+        }
+      ]
+    },
+    {
+      "id": "security-exit",
+      "phase": "security",
+      "kind": "exit",
+      "status": "PASS",
+      "reason": null,
+      "checks": [
+        {
+          "id": "security-doc-validated",
+          "type": "doc-status",
+          "status": "PASS",
+          "reason": "SECURITY: SECURITY is VALIDATED."
+        },
+        {
+          "id": "security-audit",
+          "type": "command",
+          "status": "NOT_APPLICABLE",
+          "reason": "No \"securityAudit\" command is configured (informative check)."
+        },
+        {
+          "id": "security-human-approval",
+          "type": "evidence",
+          "status": "PASS",
+          "reason": "Found 1 matching evidence record(s). 1 approval(s) are declared, not authenticated."
+        }
+      ]
+    },
+    {
+      "id": "release-entry",
+      "phase": "release",
+      "kind": "entry",
+      "status": "PASS",
+      "reason": null,
+      "checks": [
+        {
+          "id": "previous-security",
+          "type": "previous-gate",
+          "status": "PASS",
+          "reason": "Prior gates PASS: security-exit."
+        }
+      ]
+    },
+    {
+      "id": "release-exit",
+      "phase": "release",
+      "kind": "exit",
+      "status": "PASS",
+      "reason": null,
+      "checks": [
+        {
+          "id": "prior-gates",
+          "type": "previous-gate",
+          "status": "PASS",
+          "reason": "Prior gates PASS: intake-exit, discovery-exit, specification-exit, planning-exit, implementation-exit, testing-exit, security-exit."
+        },
+        {
+          "id": "build-command",
+          "type": "command",
+          "status": "PASS",
+          "reason": "Command exited 0 in 2456ms."
+        },
+        {
+          "id": "release-human-approval",
+          "type": "evidence",
+          "status": "PASS",
+          "reason": "Found 1 matching evidence record(s). 1 approval(s) are declared, not authenticated."
+        }
+      ]
+    }
+  ],
+  "documents": [
+    {
+      "doc": "PRD",
+      "status": "VALIDATED",
+      "validatedBy": "Jeremy Ferrier",
+      "validatedAt": "2026-11-04T06:25:55.452Z"
+    },
+    {
+      "doc": "TRD",
+      "status": "VALIDATED",
+      "validatedBy": "Jeremy Ferrier",
+      "validatedAt": "2026-11-04T06:25:55.605Z"
+    },
+    {
+      "doc": "APPFLOW",
+      "status": "VALIDATED",
+      "validatedBy": "Jeremy Ferrier",
+      "validatedAt": "2026-11-04T06:25:55.748Z"
+    },
+    {
+      "doc": "UI-UX",
+      "status": "VALIDATED",
+      "validatedBy": "Jeremy Ferrier",
+      "validatedAt": "2026-11-04T06:25:55.905Z"
+    },
+    {
+      "doc": "BACKEND",
+      "status": "VALIDATED",
+      "validatedBy": "Jeremy Ferrier",
+      "validatedAt": "2026-11-04T06:25:56.080Z"
+    },
+    {
+      "doc": "PLAN",
+      "status": "VALIDATED",
+      "validatedBy": "Jeremy Ferrier",
+      "validatedAt": "2026-11-04T06:25:56.212Z"
+    },
+    {
+      "doc": "SECURITY",
+      "status": "VALIDATED",
+      "validatedBy": "Jeremy Ferrier",
+      "validatedAt": "2026-11-04T06:25:56.418Z"
+    },
+    {
+      "doc": "CONVENTIONS",
+      "status": "VALIDATED",
+      "validatedBy": "Jeremy Ferrier",
+      "validatedAt": "2026-11-04T06:55:47.342Z"
+    },
+    {
+      "doc": "constitution",
+      "status": "VALIDATED",
+      "validatedBy": "Jeremy Ferrier",
+      "validatedAt": "2026-11-04T06:25:55.314Z"
+    },
+    {
+      "doc": "DECISIONS",
+      "status": "VALIDATED",
+      "validatedBy": "Jeremy Ferrier",
+      "validatedAt": "2026-11-04T06:55:47.167Z"
+    },
+    {
+      "doc": "CHANGELOG",
+      "status": "VALIDATED",
+      "validatedBy": "Jeremy Ferrier",
+      "validatedAt": "2026-11-04T07:32:55.703Z"
+    }
+  ],
+  "changelog": {
+    "present": true,
+    "path": ".aidf/docs/CHANGELOG.md"
+  },
+  "evidence": {
+    "total": 64,
+    "byStatus": {
+      "PASS": 58,
+      "NOT_PROVEN": 4,
+      "BLOCKED": 2
+    }
+  },
+  "artefacts": {
+    "total": 2,
+    "byType": {
+      "security-threat-model": 1,
+      "test-plan": 1
+    }
+  },
+  "project": {
+    "git": {
+      "repository": true,
+      "branch": "main",
+      "head": "04d4288",
+      "dirty": 109
+    },
+    "tests": {
+      "runners": [
+        "playwright",
+        "phpunit"
+      ],
+      "directories": [
+        "tests",
+        "e2e"
+      ]
+    },
+    "frameworks": [
+      "Vite",
+      "Playwright"
+    ]
+  },
+  "limitations": [
+    "Gate evaluation is read-only: no gate-run evidence is recorded and workflow state is not mutated.",
+    "Command checks report NOT_PROVEN unless --allow-exec (or security.allowCommandExecution) permits execution.",
+    "READY means every gate evaluated PASS or NOT_APPLICABLE; it is not a deployment authorization."
+  ]
+}

@@ -14,12 +14,13 @@ class InternshipParticipant extends Model
 {
     use BelongsToWorkspace;
 
-    public const ROLES = ['trainee', 'supervisor', 'tutor'];
+    public const ROLES = ['trainee', 'supervisor', 'tutor', 'observer'];
 
     public const ROLE_LABELS = [
         'trainee' => 'Stagiaire',
         'supervisor' => 'Maître de stage',
         'tutor' => 'Tuteur pédagogique',
+        'observer' => 'Observateur (lecture)',
     ];
 
     /**

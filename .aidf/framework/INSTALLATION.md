@@ -12,45 +12,56 @@ dépannage inclus.
 |---|---|
 | Node.js ≥ 20.11 | Validé sur v24.21.0 (Windows 11). `node --version` doit répondre. |
 | aucun paquet npm | AIDF n'a **aucune dépendance runtime** (vérifié : fonctionne sans `npm install`). |
-| Qoder IDE (optionnel) | Pour l'adaptateur `qoder` : règles/skills/agent/hooks dans `.qoder/`. Sans Qoder, utilisez `--adapter generic` (bloc `AGENTS.md` seulement). |
+| Package npm `framework-aidf` | Publié sur npm — `npx framework-aidf …` fonctionne sans clone. |
+| Qoder IDE (optionnel) | Pour l'adaptateur `qoder` : règles/skills/agent/hooks dans `.qoder/`. Sans Qoder, utilisez `--adapter opencode` ou `--adapter generic`. |
+| OpenCode (optionnel) | Pour l'adaptateur `opencode` : `AGENTS.md` + `.opencode/skills/` — **runtime prouvé** (nécessite un worktree git pour la découverte des skills projet). |
 | `specify` CLI (optionnel) | Pour l'intégration Spec Kit (`aidf speckit …`) — sinon les gates spec-kit passent en `NOT_APPLICABLE`. |
-| git (optionnel) | Pour des diff d'evidence riches ; sans git, AIDF fonctionne (evidence par liste de fichiers). |
+| git (optionnel) | Pour des diff d'evidence riches ; sans git, AIDF fonctionne (evidence par liste de fichiers). Recommandé aussi pour OpenCode (découverte des skills). |
 
 ## 2. Installer AIDF dans un projet
 
-### 2.1 Depuis l'intérieur du projet (recommandé)
+### 2.1 Depuis npm (recommandé)
+
+```powershell
+cd C:\chemin\vers\votre-projet
+npx framework-aidf install --adapter qoder --with-hooks
+```
+
+### 2.2 Depuis l'intérieur du projet, checkout local
 
 ```powershell
 cd C:\chemin\vers\votre-projet
 node C:\chemin\vers\aidf\bin\aidf.mjs install --adapter qoder --with-hooks
 ```
 
-### 2.2 Depuis l'extérieur (cible explicite)
+### 2.3 Depuis l'extérieur (cible explicite)
 
 ```powershell
-node C:\chemin\vers\aidf\bin\aidf.mjs install --target C:\projets\mon-projet --adapter qoder --with-hooks
+npx framework-aidf install --target C:\projets\mon-projet --adapter qoder --with-hooks
+# ou : node C:\chemin\vers\aidf\bin\aidf.mjs install --target C:\projets\mon-projet --adapter qoder --with-hooks
 ```
 
-### 2.3 Sortie attendue (réelle)
+### 2.4 Sortie attendue (réelle)
 
 ```
 [INFO] AIDF install — mon-projet (qoder)
-[INFO] created=135 updated=0 unchanged=0 conflicts=0 failed=0 would=0
+[INFO] created=~195 updated=0 unchanged=0 conflicts=0 failed=0 would=0
 [INFO] Next: node .aidf/bin/aidf.mjs doctor
 ```
 
-### 2.4 Options
+### 2.5 Options
 
 | Option | Effet |
 |---|---|
 | `--adapter qoder` | Génère règles + 13 skills + agent + (avec hooks) hooks dans `.qoder/` (défaut). |
-| `--adapter generic` | Uniquement le bloc managé `AGENTS.md` (tout IDE compatible AGENTS.md). |
+| `--adapter opencode` | `AGENTS.md` + 13 skills sous `.opencode/skills/` — runtime prouvé (skills découverts si le projet est un worktree git). |
+| `--adapter generic` | Bloc managé `AGENTS.md` + 13 skills sous `.aidf/skills/` — tout hôte compatible AGENTS.md. |
 | `--with-hooks` | Installe aussi `.aidf/hooks/*.mjs` + entrées `SessionStart`/`PostToolUse` dans `.qoder/settings.json` (vos clés/rootSettings conservées). |
 | `--dry-run` | **N'écrit absolument rien** (pas même les logs) ; affiche le plan `WOULD_*`. |
 | `--force` | Ne concerne que les fichiers AIDF déjà présents et modifiés localement (backup automatique dans `.aidf/backups/`). |
 | `--name <nom>` | Nom du projet dans la config. |
 
-### 2.5 Ce qui est préservé (invariants, testés)
+### 2.6 Ce qui est préservé (invariants, testés)
 
 - Un `AGENTS.md` existant : votre contenu est conservé, le bloc AIDF est
   ajouté entre marqueurs `AIDF:BEGIN/END`.
@@ -68,29 +79,39 @@ node .aidf\bin\aidf.mjs skills validate # 13 skills AVAILABLE attendues
 node .aidf\bin\aidf.mjs workflow status # phase courante (intake)
 ```
 
-Doctor `--json` donne la même chose en machine-lisible. Les 3 checks
-`runtime-*` de l'adaptateur restent `NOT_PROVEN` tant que l'étape Qoder
-ci-dessous n'a pas été faite par un humain — c'est voulu et documenté.
+Doctor `--json` donne la même chose en machine-lisible. État runtime réel
+(2026-11-21) : la **découverte des skills Qoder est prouvée** (`/aidf` liste
+les ~14 skills, `/skills` montre `aidf-project-context` — evidence
+`runtime-verification`) ; les checks `runtime-*` restants (règles
+"Always Apply", hooks) restent `NOT_PROVEN` tant que l'étape ci-dessous
+n'est pas faite — c'est voulu et documenté. OpenCode est **runtime prouvé**
+(découverte des skills conditionnée à un worktree git).
 
-> **IMPORTANT — étape Qoder (3 minutes, une fois par projet)** : suivre les
-> étapes 1→5 de `QODER.md` (ouvrir le projet, `/skills`, Always Apply sur
-> `aidf-00-core` et `aidf-10-security`), puis enregistrer la preuve :
-> `aidf evidence add --type qoder-runtime-activation --human --by "votre_nom"`.
+> **Étape Qoder restante (2 minutes, une fois par projet)** : dans Qoder,
+> Settings → Rules : `aidf-00-core` et `aidf-10-security` en *Always Apply*,
+> puis faire une édition pour vérifier que `.aidf/logs/audit-<date>.jsonl`
+> est écrit (hooks). Enregistrer : `aidf evidence add --type
+> qoder-runtime-activation --human --by "votre_nom"`.
 
 ## 4. Mettre à jour
 
-Depuis une copie **plus récente** du framework :
+Depuis une version **plus récente** du framework (npm ou checkout) :
 
 ```powershell
-node C:\chemin\vers\nouveau-aidf\bin\aidf.mjs update --target C:\projets\mon-projet --adapter qoder --with-hooks
+npx framework-aidf@latest update --target C:\projets\mon-projet --adapter qoder --with-hooks
+# ou : node C:\chemin\vers\nouveau-aidf\bin\aidf.mjs update --target C:\projets\mon-projet --adapter qoder --with-hooks
 ```
 
 - Seuls les fichiers **managés** sont rafraîchis ; vos documents
-  (`.aidf/docs/*`), evidence et état workflow sont préservés.
+  (`.aidf/docs/*`), artefacts, evidence et état workflow sont préservés.
+- `aidf ops init` peut ajouter `.aidf/workflows/pipeline.yaml` (projet) —
+  ce fichier n'est jamais écrasé par `update`.
 - Un fichier managé que vous avez édité → `CONFLICT` (exit 2), contenu
   préservé. Résolution : fusionner à la main, ou `update --force` (backup
   automatique créé d'abord).
-- Idempotence vérifiée : `created=0 updated=14 unchanged=121 conflicts=0`.
+- Idempotence vérifiée : `created=0 updated=N unchanged=M conflicts=0`.
+- Migration réelle 0.1.0 → 0.3.x vérifiée sur un projet existant :
+  purement additive (`created=50 updated=35 conflicts=0`), aucune perte.
 
 ## 5. Désinstaller
 

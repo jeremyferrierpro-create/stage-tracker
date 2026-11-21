@@ -134,6 +134,7 @@ export function defaultSkillRoots(root, frameworkRoot = FRAMEWORK_ROOT) {
   const parent = path.dirname(frameworkRoot);
   return [
     path.join(root, '.qoder', 'skills'),
+    path.join(root, '.opencode', 'skills'),
     path.join(root, '.aidf', 'skills'),
     path.join(root, '.claude', 'skills'),
     path.join(root, '.agents', 'skills'),
@@ -333,7 +334,10 @@ export async function linkSkill(root, registry, skillId, options = {}) {
     throw new Error('Built-in skills are installed by the adapter; no link is required.');
   }
   const target = path.resolve(skill.path, '..');
-  const linkPath = path.join('.qoder', 'skills', skill.name);
+  const adapter = options.adapter ?? 'qoder';
+  const linkPath = adapter === 'opencode'
+    ? path.join('.opencode', 'skills', skill.name)
+    : path.join('.qoder', 'skills', skill.name);
   const abs = resolveInside(root, linkPath);
   if (await exists(abs)) {
     return { status: 'UNCHANGED', path: linkPath, target: toPosix(target) };

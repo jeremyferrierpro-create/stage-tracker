@@ -6,3 +6,16 @@ document.querySelectorAll('[data-flash-dismiss]').forEach((button) => {
         button.closest('.flash').remove();
     });
 });
+
+// Messagerie : démarre la lecture en bas du fil et recharge toutes les 15 s
+// tant que la page de conversation est ouverte et qu'aucun champ n'est édité.
+document.querySelectorAll('[data-chat-poll]').forEach((chat) => {
+    const thread = chat.querySelector('.chat-thread');
+    if (thread) thread.scrollTop = thread.scrollHeight;
+
+    setInterval(() => {
+        const active = document.activeElement;
+        const editing = active && (active.tagName === 'TEXTAREA' || active.tagName === 'INPUT');
+        if (!editing) window.location.reload();
+    }, 15000);
+});

@@ -1,6 +1,6 @@
 {
-  "name": "aidf",
-  "version": "0.1.0",
+  "name": "framework-aidf",
+  "version": "0.3.2",
   "description": "AI Development Framework - a portable, governable development environment for AI-assisted software delivery",
   "type": "module",
   "license": "MIT",
@@ -15,11 +15,16 @@
     "src",
     "assets",
     "docs",
+    "demo",
     "README.md",
+    "INSTALLATION.md",
+    "UTILISATION.md",
+    "QODER.md",
+    "CHANGELOG.md",
     "LICENSE"
   ],
   "scripts": {
-    "test": "node --test \"tests/*.test.mjs\"",
+    "test": "node --test \"tests/**/*.test.mjs\"",
     "demo": "node demo/run-demo.mjs",
     "doctor": "node bin/aidf.mjs doctor"
   },

@@ -54,6 +54,9 @@ export function defaultConfig(project = {}) {
       allowedHosts: [],
       protectSecrets: true,
       requireHumanApprovalFor: ['security', 'release'],
+      // Declared approvals (--human --by) are recorded but not authenticated.
+      // Set to true to make gates reject declared-only approvals.
+      requireAuthenticatedApproval: false,
     },
     specKit: {
       enabled: 'auto',
@@ -98,6 +101,10 @@ export function validateConfig(config) {
     else if (!DOC_STATUSES.includes(entry.status)) errors.push(`invalid status for ${doc}: ${entry.status}`);
   }
   if (!Array.isArray(config.security?.allowedCommands)) errors.push('security.allowedCommands must be an array');
+  if (config.security?.requireAuthenticatedApproval !== undefined
+    && typeof config.security.requireAuthenticatedApproval !== 'boolean') {
+    errors.push('security.requireAuthenticatedApproval must be a boolean');
+  }
   return errors;
 }
 

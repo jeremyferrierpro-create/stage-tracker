@@ -24,6 +24,15 @@ import { docsCommand } from './commands/docs.mjs';
 import { contextCommand } from './commands/context.mjs';
 import { speckitCommand } from './commands/speckit.mjs';
 import { configCommand } from './commands/config.mjs';
+import { artefactsCommand } from './commands/artefacts.mjs';
+import { requirementsCommand } from './commands/requirements.mjs';
+import { traceabilityCommand } from './commands/traceability.mjs';
+import { decisionCommand } from './commands/decision.mjs';
+import { designCommand } from './commands/design.mjs';
+import { securityCommand } from './commands/security.mjs';
+import { testsCommand } from './commands/tests.mjs';
+import { releaseCommand } from './commands/release.mjs';
+import { opsCommand } from './commands/ops.mjs';
 
 const COMMANDS = {
   init: { run: initCommand, summary: 'Install AIDF into a project (alias of install).' },
@@ -42,6 +51,15 @@ const COMMANDS = {
   context: { run: contextCommand, summary: 'Assemble the minimum context for a task.' },
   speckit: { run: speckitCommand, summary: 'Inspect, initialise or sync GitHub Spec Kit.' },
   config: { run: configCommand, summary: 'Read or change project configuration.' },
+  artefacts: { run: artefactsCommand, summary: 'List, show, validate or verify structured artefacts.' },
+  requirements: { run: requirementsCommand, summary: 'Manage the requirements registry and coverage.' },
+  traceability: { run: traceabilityCommand, summary: 'Traceability report, chain verification and link checks.' },
+  decision: { run: decisionCommand, summary: 'Evaluate a technology decision (deterministic engine).' },
+  design: { run: designCommand, summary: 'Classify complexity and run the design workflow.' },
+  security: { run: securityCommand, summary: 'Generate and inspect the STRIDE threat model artefact.' },
+  tests: { run: testsCommand, summary: 'Generate a test plan artefact and report requirement coverage.' },
+  release: { run: releaseCommand, summary: 'Build a release readiness report from gates, docs and evidence.' },
+  ops: { run: opsCommand, summary: 'Run the project delivery pipeline (build/test/deploy) with evidence and rollback.' },
   version: { run: versionCommand, summary: 'Print the AIDF version.' },
   help: { run: helpCommand, summary: 'Show this help.' },
 };

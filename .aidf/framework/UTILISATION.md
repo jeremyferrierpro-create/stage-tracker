@@ -109,7 +109,16 @@ aidf skills list
 aidf skills validate        # cycles, compatibilité, registre
 aidf skills show aidf-testing-validation
 aidf skills link <id>      # lier une skill externe (junction) dans .qoder/skills
+
+# Skills tierces (depuis 0.2.0)
+aidf skills sources         # inventaire des ressources externes indexées
+aidf skills catalog         # catalogue avec statut dérivé de la licence
+aidf skills enable owasp-security   # copie un skill canonique + provenance AIDF-SOURCE.json
 ```
+
+Une skill tierce n'est copiée que si sa licence le permet (MIT/Apache/BSD…)
+; GPL et licences inconnues → `BLOCKED`/index-only. Secrets et exécutables
+jamais copiés (`--allow-scripts` explicite pour les rares exceptions).
 
 ## 7. Config utile
 
@@ -141,15 +150,83 @@ aidf speckit sync --adopt    # publie la constitution AIDF (copie avec hash) ; C
 ## 9. Ressources externes
 
 ```powershell
-aidf resources list
-aidf setup resources       # génère .aidf/registry/resources.lock.json (hashes, licences)
+aidf resources inspect <id>       # inventaire sha256 d'une ressource + politique de licence
+aidf resources inventory          # manifeste complet du corpus (hash par fichier)
+aidf resources coverage           # couverture : ressources manquantes, skills en doublon
+aidf resources reconcile          # dérive lock/manifest (fichiers changés/manquants)
+aidf setup resources              # génère .aidf/registry/resources.lock.json
 ```
 
 Licence inconnue → `BLOCKED`, index-only (jamais copié/redistribué). La
 resistance au dishonesty : le verrou inclut le commit, l'arbre hashé, la
-décision de licence.
+décision de licence. Les fichiers secrets (`.env`, `*.pem`, `*.key`…) sont
+détectés **par leur chemin, jamais ouverts** ; les médias/binaires volumineux
+sont exclus par `sources.yaml`.
 
-## 10. Dépannage rapide
+## 10. Les moteurs d'ingénierie (depuis 0.2.0)
+
+Tous produisent des **artefacts canoniques** sous `.aidf/artefacts/`
+(JSON validé par schéma) — jamais de succès déclaré sans exécution réelle.
+
+```powershell
+# Artefacts
+aidf artefacts list|show|validate|verify
+
+# Exigences : registre REQ-F/REQ-NF + couverture
+aidf requirements add --type FUNCTIONAL --title "Export PDF" --ac "contient les totaux"
+aidf requirements list|coverage
+
+# Traçabilité : exigence → design → implémentation → test → preuve
+aidf traceability report|verify|missing|broken
+
+# Décision technologique : moteur déterministe (contraintes dures, scores,
+# éliminations, incertitudes) → artefact DRAFT ; l'interprétation est
+# déléguée à l'agent qui lit le document
+aidf decision evaluate --options options.json --constraints constraints.json
+
+# Design : classifieur de complexité + workflows (mockups SVG/CSS de secours,
+# client Figma REST réel si figma.fileId + FIGMA_TOKEN fournis)
+aidf design classify --context ctx.json
+aidf design run --context ctx.json --write
+
+# Sécurité : modèle STRIDE déterministe depuis la détection projet → TM-### DRAFT
+aidf security analyze --write
+aidf security show
+
+# Tests : plan TP-### (1 cas par critère d'acceptation) + couverture honnête
+aidf tests plan --write
+aidf tests coverage
+
+# Docs : rend les artefacts canoniques en Markdown (docs/generated/) avec
+# provenance sha256 ; --check détecte les éditions manuelles
+aidf docs generate [--check]
+
+# Release : agrège gates + docs + evidence + git → READY/NOT_READY honnête
+aidf release report [--record] [--strict] [--allow-exec]
+```
+
+### Pipeline de delivery (`aidf ops`, depuis 0.3.0)
+
+```powershell
+aidf ops init                     # écrit .aidf/workflows/pipeline.yaml (projet, jamais écrasé)
+aidf ops plan                     # valide et liste les étapes — dry run, rien n'exécute
+aidf ops run --allow-exec         # build → test → deploy séquentiel, fail-fast
+aidf ops rollback --allow-exec    # rejoue les commandes de rollback du dernier deploy
+aidf ops watch --cycles 10 --interval 30 --allow-exec   # monitoring borné (health checks)
+aidf ops status                   # dernier run enregistré
+```
+
+- `pipeline.yaml` déclare `steps` (kind `build`/`test`/`deploy`/`verify`/`custom`)
+  et `rollback` + `monitoring.steps`. C'est un fichier **projet** : relisez-le
+  avant d'autoriser l'exécution.
+- Exécution = `runCommand` : **sans shell**, opérateurs (`|`, `&&`, `>`, …)
+  rejetés, timeout par étape. Permission exigée : `--allow-exec` ou
+  `security.allowCommandExecution=true` — sinon chaque étape = `NOT_PROVEN`.
+- Chaque run écrit `.aidf/reports/OPS-*.{json,md}` ; `--record` ajoute une
+  evidence `ops-run`/`ops-rollback`/`ops-watch`. Un `PASS` signifie « les
+  commandes ont rendu exit 0 », pas « le déploiement est sain ».
+
+## 11. Dépannage rapide
 
 | Symptôme | Signification | Remède |
 |---|---|---|
@@ -162,7 +239,7 @@ décision de licence.
 
 ---
 
-## 11. Exemple réel complet (test E2E TaskFlow, documenté)
+## 12. Exemple réel complet (test E2E TaskFlow, documenté)
 
 Ce parcours a été exécuté pour de vrai le 2026-10-31 (`docs/aidf/VALIDATION.md`) :
 

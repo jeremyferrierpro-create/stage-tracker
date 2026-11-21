@@ -10,6 +10,7 @@ use App\Domain\Internship\Models\Internship;
 use App\Domain\Internship\Models\InternshipParticipant;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class InternshipController extends Controller
@@ -154,7 +155,7 @@ class InternshipController extends Controller
 
         $validated = $request->validate([
             'user_id' => ['required', 'exists:users,id'],
-            'role' => ['required', 'string', 'in:trainee,supervisor,tutor'],
+            'role' => ['required', 'string', Rule::in(InternshipParticipant::ROLES)],
         ]);
 
         $user = User::query()->findOrFail($validated['user_id']);

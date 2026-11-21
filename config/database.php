@@ -86,7 +86,7 @@ return [
 
         'pgsql' => [
             'driver' => 'pgsql',
-            'url' => env('DB_DIRECT_URL', env('DATABASE_URL_UNPOOLED', env('DB_URL'))),
+            'url' => env('DB_DIRECT_URL', env('DATABASE_URL_UNPOOLED', env('DB_URL', env('DATABASE_URL')))),
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '5432'),
             'database' => env('DB_DATABASE', 'laravel'),
@@ -106,7 +106,7 @@ return [
         */
         'pgsql_direct' => [
             'driver' => 'pgsql',
-            'url' => env('DB_DIRECT_URL', env('DATABASE_URL_UNPOOLED')),
+            'url' => env('DB_DIRECT_URL', env('DATABASE_URL_UNPOOLED', env('DATABASE_URL'))),
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '5432'),
             'database' => env('DB_DATABASE', 'laravel'),

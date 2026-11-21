@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aidf.dev/schemas/constraints/v1",
+  "$defs": {
+    "source": {
+      "type": "object",
+      "required": ["type", "author", "createdAt"],
+      "properties": {
+        "type": { "enum": ["human", "generated", "derived"] },
+        "author": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "generator": { "type": ["string", "null"] }
+      }
+    },
+    "link": {
+      "type": "object",
+      "required": ["targetId", "targetType", "type"],
+      "properties": {
+        "targetId": { "type": "string" },
+        "targetType": { "type": "string" },
+        "type": { "type": "string" }
+      }
+    },
+    "linkage": {
+      "type": "object",
+      "properties": {
+        "refersTo": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "required": ["schemaVersion", "timestamp", "valid"],
+      "properties": {
+        "schemaVersion": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "valid": { "type": "boolean" },
+        "errors": { "type": "array", "items": { "type": "string" } },
+        "warnings": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "constraint": {
+      "type": "object",
+      "required": ["id", "type", "description", "enforcement"],
+      "properties": {
+        "id": { "type": "string" },
+        "type": {
+          "type": "string",
+          "enum": ["technology", "budget", "deadline", "regulatory", "contractual", "technical"]
+        },
+        "description": { "type": "string", "minLength": 5 },
+        "enforcement": {
+          "type": "string",
+          "enum": ["hard", "soft"],
+          "description": "hard: cannot be violated; soft: can be violated with approval"
+        },
+        "rationale": { "type": "string" },
+        "mitigation": { "type": "string" }
+      }
+    }
+  },
+  "type": "object",
+  "required": ["id", "schemaVersion", "createdAt", "updatedAt", "status", "source", "links", "validation"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^CONST-\\d{3}$",
+      "description": "Stable constraint identifier"
+    },
+    "schemaVersion": {
+      "const": "1.0.0",
+      "description": "Schema version"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["DRAFT", "VALIDATED", "BLOCKED", "OUTDATED"]
+    },
+    "constraints": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/constraint" }
+    },
+    "source": { "$ref": "#/$defs/source" },
+    "links": { "$ref": "#/$defs/linkage" },
+    "validation": { "$ref": "#/$defs/validation" }
+  }
+}

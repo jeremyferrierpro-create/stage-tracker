@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "framework": {
     "name": "aidf",
-    "version": "0.1.0"
+    "version": "0.3.2"
   },
   "project": {
     "name": "stage-tracker",
@@ -10,13 +10,14 @@
   },
   "adapter": "qoder",
   "installedAt": "2026-11-04T06:16:04.454Z",
-  "updatedAt": "2026-11-04T07:32:55.714Z",
+  "updatedAt": "2026-11-21T16:28:41.186Z",
   "files": {
     ".aidf/framework/src/cli.mjs": {
-      "sha256": "5447ac39270ce9894c5fabcdd0c0a3de39875e89fde0675b08349154c4894433",
+      "sha256": "66e50f879c33a8673e570f2bbcce48b8de978b7d3b49aef12b9e95d4b68da142",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.501Z"
+      "installedAt": "2026-11-04T06:16:04.501Z",
+      "updatedAt": "2026-11-21T16:28:40.597Z"
     },
     ".aidf/framework/src/commands/config.mjs": {
       "sha256": "29a43d00d7f3b90b41dbb0259fd9c2901f76b259c748d2e5b82e6e03761bd489",
@@ -31,34 +32,39 @@
       "installedAt": "2026-11-04T06:16:04.508Z"
     },
     ".aidf/framework/src/commands/docs.mjs": {
-      "sha256": "cc491270c82826e7c0c44357ebff4dd3b9ce6874b5a15ab07b099079db7bea3e",
+      "sha256": "a8d2f08891eb28c51286ab28c58d1de04e3b09694a0b3cbf3df9b90176646343",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.512Z"
+      "installedAt": "2026-11-04T06:16:04.512Z",
+      "updatedAt": "2026-11-21T16:28:40.615Z"
     },
     ".aidf/framework/src/commands/doctor.mjs": {
-      "sha256": "acdc6eb4ac2684ba89f8db0e3ad593b36302f70f0ea2194486f2084a1a7fbd31",
+      "sha256": "dcb68ed0b1782b31665d8f58c1b21a568796e7eb87e9cc3601893a78afd54eec",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.515Z"
+      "installedAt": "2026-11-04T06:16:04.515Z",
+      "updatedAt": "2026-11-21T16:28:40.621Z"
     },
     ".aidf/framework/src/commands/evidence.mjs": {
-      "sha256": "f6303f6ace93750d1abee2990bad0e12b2220019bac942a6a69b9656a7b4ffc0",
+      "sha256": "7d04d68b5b128e3a52f6522e69814c2d59a8f0820b230c80ea0463684a654b0c",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.518Z"
+      "installedAt": "2026-11-04T06:16:04.518Z",
+      "updatedAt": "2026-11-21T16:28:40.625Z"
     },
     ".aidf/framework/src/commands/install.mjs": {
-      "sha256": "695a825dd2e84aa3582cc8aa751bf78890349156f0b0f096d7710bd211556bd0",
+      "sha256": "19437d93041e76947c917d5b54ec7d25a99a7b468381a2a1ac186150b2987c93",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.521Z"
+      "installedAt": "2026-11-04T06:16:04.521Z",
+      "updatedAt": "2026-11-21T16:28:40.629Z"
     },
     ".aidf/framework/src/commands/resources.mjs": {
-      "sha256": "440b5ea39bf2595a64da70bf28f3f4ac6904549e90b50636db06e686359034cd",
+      "sha256": "f110519d08014550fb3e8ef19f809d0f901764c044fe67a3e7acd764de6c2fc5",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.525Z"
+      "installedAt": "2026-11-04T06:16:04.525Z",
+      "updatedAt": "2026-11-21T16:28:40.643Z"
     },
     ".aidf/framework/src/commands/scan.mjs": {
       "sha256": "1854f87f7a06e15295ebeca3e88e28ace3e9bea903296abc682a6aa2d6906c04",
@@ -73,10 +79,11 @@
       "installedAt": "2026-11-04T06:16:04.530Z"
     },
     ".aidf/framework/src/commands/skills.mjs": {
-      "sha256": "f7b3d4aa8cd0b9a147325ca1fdeca6822271b8383df8c6e59e41da33680ed2c7",
+      "sha256": "9ca83b15bd9e7a871e1e5f6b4ef1a986019a1079c33909fe27ca364cfb705f60",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.533Z"
+      "installedAt": "2026-11-04T06:16:04.533Z",
+      "updatedAt": "2026-11-21T16:28:40.655Z"
     },
     ".aidf/framework/src/commands/speckit.mjs": {
       "sha256": "9a9d9354b0ff65d9582778415893d4c388e50ad75df158928f6db28f9b2828f1",
@@ -103,22 +110,25 @@
       "installedAt": "2026-11-04T06:16:04.543Z"
     },
     ".aidf/framework/src/core/adapters/base.mjs": {
-      "sha256": "60eb07b96edb8e0cda3a95de7deb152ea0ab579623eb7a93492f293f45ffc6a4",
+      "sha256": "73ba3d87755194d96f6ab60dfb0c5fe93e196a2906a12115e98eecd0202dc677",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.546Z"
+      "installedAt": "2026-11-04T06:16:04.546Z",
+      "updatedAt": "2026-11-21T16:28:40.673Z"
     },
     ".aidf/framework/src/core/adapters/generic.mjs": {
-      "sha256": "574634f23611a24bca06c4e7accd1b8d604b1dcce5ef34d33256859c481991f8",
+      "sha256": "ffce4df47a5a3f2f2e05ca32ee84fb58d5074e25f531197b192bd6ac666557f5",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.548Z"
+      "installedAt": "2026-11-04T06:16:04.548Z",
+      "updatedAt": "2026-11-21T16:28:40.676Z"
     },
     ".aidf/framework/src/core/adapters/index.mjs": {
-      "sha256": "099636e784ceec7116abf634e19622d1d767a567cb1bb048090480184fad3464",
+      "sha256": "20b1d2c7c3f816ccf0c8b3dcb717bdb84c74b008b947b57685baf991a6f2d4eb",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.550Z"
+      "installedAt": "2026-11-04T06:16:04.550Z",
+      "updatedAt": "2026-11-21T16:28:40.689Z"
     },
     ".aidf/framework/src/core/adapters/qoder.mjs": {
       "sha256": "04a721dd6f2ddde2734c34fb7856cafa0a04b5b28d88a31d056cd6f7d23245df",
@@ -133,10 +143,11 @@
       "installedAt": "2026-11-04T06:16:04.555Z"
     },
     ".aidf/framework/src/core/config.mjs": {
-      "sha256": "819729827d3c29da318b113513090562f06be1d6471e463840897b71460969d2",
+      "sha256": "36cdefb4a1e129310c920a9cf45506755bfde65ca41563e126b46f714852595a",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.557Z"
+      "installedAt": "2026-11-04T06:16:04.557Z",
+      "updatedAt": "2026-11-21T16:28:40.705Z"
     },
     ".aidf/framework/src/core/context.mjs": {
       "sha256": "1c27560ac699c556a8db34f9cdf9d0620e790f2f5f39aef9dbf256aecde5eab9",
@@ -151,10 +162,11 @@
       "installedAt": "2026-11-04T06:16:04.563Z"
     },
     ".aidf/framework/src/core/evidence.mjs": {
-      "sha256": "f2feac07d89dbcf26734c979da318d440cca7dbc1ecd63905db4d3bd1d012a5b",
+      "sha256": "074603914709436b9c54ef73e5489cb419deb5e3c804a664173878926f42143e",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.565Z"
+      "installedAt": "2026-11-04T06:16:04.565Z",
+      "updatedAt": "2026-11-21T16:28:40.736Z"
     },
     ".aidf/framework/src/core/installer.mjs": {
       "sha256": "29848fbd4415e6dc57e3886d79650f5ff7e94538aa2e047bcc4ba2ad7b4de893",
@@ -169,22 +181,25 @@
       "installedAt": "2026-11-04T06:16:04.570Z"
     },
     ".aidf/framework/src/core/paths.mjs": {
-      "sha256": "75f89e518a80bcae75afb7be3b6de1b753ddb0dbd1c5efed3d6c84b739c5b48e",
+      "sha256": "f633e554abbdb300f74af54266a6d703a3651c980d28fff6f63f69e3da13e239",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.572Z"
+      "installedAt": "2026-11-04T06:16:04.572Z",
+      "updatedAt": "2026-11-21T16:28:40.748Z"
     },
     ".aidf/framework/src/core/resources.mjs": {
-      "sha256": "d16cfcc7d23788b04698096fea3f2d0a405f6168c082f9edf6bc3f3a3031febb",
+      "sha256": "2450613c1d8eb71bc1e07e5290604fc434f4e2b67e507046173ee5b1e9d7230f",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.574Z"
+      "installedAt": "2026-11-04T06:16:04.574Z",
+      "updatedAt": "2026-11-21T16:28:40.762Z"
     },
     ".aidf/framework/src/core/skills.mjs": {
-      "sha256": "76e74bff824f6b870d60f22a133ff178d6f5b13cee9610471eb76167eac8530f",
+      "sha256": "489efdf5f43815d27420045f9693f2911023f1b85db39eb186e0b69825a775c2",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.577Z"
+      "installedAt": "2026-11-04T06:16:04.577Z",
+      "updatedAt": "2026-11-21T16:28:40.771Z"
     },
     ".aidf/framework/src/core/speckit.mjs": {
       "sha256": "49369fc23005ac755576d638483eb978647d81d7ebe78887024d0283a40bdc1e",
@@ -193,10 +208,11 @@
       "installedAt": "2026-11-04T06:16:04.580Z"
     },
     ".aidf/framework/src/core/workflow.mjs": {
-      "sha256": "383941c21b1887c97b17a290796cbf16402e7ea9d24204c15ae89b8e23107d25",
+      "sha256": "88607eadbc5e5aacdf1123516712fed6fe69fa773521980db31f30a61738cbff",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.582Z"
+      "installedAt": "2026-11-04T06:16:04.582Z",
+      "updatedAt": "2026-11-21T16:28:40.807Z"
     },
     ".aidf/framework/src/util/args.mjs": {
       "sha256": "9c1fea0bda0c23c41afd51c018c0abdbd22a82536257073edbef54633230624a",
@@ -271,70 +287,81 @@
       "installedAt": "2026-11-04T06:16:04.614Z"
     },
     ".aidf/framework/assets/docs/APPFLOW.md": {
-      "sha256": "8f550903ba6fa94a745358881d92fdf4e8d7d2e3b5298a4161df7c77f3c576e5",
+      "sha256": "6b86243e9b26867fa4640dde9557355fe749cc67b904315e309938f97c0f7a30",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.617Z"
+      "installedAt": "2026-11-04T06:16:04.617Z",
+      "updatedAt": "2026-11-21T16:28:40.838Z"
     },
     ".aidf/framework/assets/docs/BACKEND.md": {
-      "sha256": "b7edbaf007f2c722a99196b88815d0fdf69832e9b3538f99b6c148f7eb11bb1c",
+      "sha256": "b4516cc2d96adca42478a12508926d4719ba2939ce3af5d3f1efcb012594793e",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.619Z"
+      "installedAt": "2026-11-04T06:16:04.619Z",
+      "updatedAt": "2026-11-21T16:28:40.843Z"
     },
     ".aidf/framework/assets/docs/CHANGELOG.md": {
-      "sha256": "cb970d24835c20b643d5f78a44825cfb87c83890c1717526a76e578d9156d364",
+      "sha256": "e718c63e21bdd93c55766a9de01eed4a98f47045a76a5bd452e5fbcb2982fcc7",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.621Z"
+      "installedAt": "2026-11-04T06:16:04.621Z",
+      "updatedAt": "2026-11-21T16:28:40.847Z"
     },
     ".aidf/framework/assets/docs/constitution.md": {
-      "sha256": "2da5c5fcd6eab781fbb3865a39e31eda39c534c8a9ce5d813499f70550caf412",
+      "sha256": "bac1fb05f48bfe0d7ebeaa315189543cecaf6a778ea465cf9dcaf6a86b1d07a7",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.625Z"
+      "installedAt": "2026-11-04T06:16:04.625Z",
+      "updatedAt": "2026-11-21T16:28:40.851Z"
     },
     ".aidf/framework/assets/docs/CONVENTIONS.md": {
-      "sha256": "e29cf861b66216eee68731417179208fbcf8a6ce211830adbe3246c55e667341",
+      "sha256": "5e9f1f0e2b04680f40cb56c74def44671c89ed5318a497207670cb57fa5485e2",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.629Z"
+      "installedAt": "2026-11-04T06:16:04.629Z",
+      "updatedAt": "2026-11-21T16:28:40.856Z"
     },
     ".aidf/framework/assets/docs/DECISIONS.md": {
-      "sha256": "9d71f663ca60568cfaeec77aec1a6d6ad8d7aa09cf978aa2c16b2a6ba467f9a0",
+      "sha256": "4de25137fa13c812fab0eb61818122151bf042e7a4f92776a6564d1be3f0a036",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.631Z"
+      "installedAt": "2026-11-04T06:16:04.631Z",
+      "updatedAt": "2026-11-21T16:28:40.860Z"
     },
     ".aidf/framework/assets/docs/PLAN.md": {
-      "sha256": "c8db03ffa56b1b013a66744414345edf5c16328a5b5d1a08770a331acaa96c74",
+      "sha256": "34409e543b929ce5246b0ba1993ef27686ae75e0d850d21be0673b6f62cc0127",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.634Z"
+      "installedAt": "2026-11-04T06:16:04.634Z",
+      "updatedAt": "2026-11-21T16:28:40.864Z"
     },
     ".aidf/framework/assets/docs/PRD.md": {
-      "sha256": "68a77e67fa7f6565183ca1a714d9533c50738d658f2a00e4c6a837ae23fd0659",
+      "sha256": "72f6a551737c104cea511f6ca40ccb152fea00cd1bf8f841af3d53ec0355ab4c",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.637Z"
+      "installedAt": "2026-11-04T06:16:04.637Z",
+      "updatedAt": "2026-11-21T16:28:40.870Z"
     },
     ".aidf/framework/assets/docs/SECURITY.md": {
-      "sha256": "e449efbfff02588430c74b221c3687171640c820871db4eea55cff7b4033fa1f",
+      "sha256": "58cacf4c29ae42df882d5169bce327cada8d1ff0d45c626645bb27e2c00aa6ec",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.640Z"
+      "installedAt": "2026-11-04T06:16:04.640Z",
+      "updatedAt": "2026-11-21T16:28:40.874Z"
     },
     ".aidf/framework/assets/docs/TRD.md": {
-      "sha256": "b24dcfc5ac4447999c6a2d153c024815b8e77cb33a8f5aefccee7da16db26261",
+      "sha256": "cf7ba2cb7e5345f32e3b3f157ede806ee056c8d3e3bde377d147f0ad3b24cdcf",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.644Z"
+      "installedAt": "2026-11-04T06:16:04.644Z",
+      "updatedAt": "2026-11-21T16:28:40.879Z"
     },
     ".aidf/framework/assets/docs/UI-UX.md": {
-      "sha256": "504bde4567ea4df10fd9c729f7d7e233d26ae2154c7d78c688e5b8e55b010d9c",
+      "sha256": "8ecc1cf907fe7c9b8ade38f06d8df548813a9ab12ecd400a452e7f48b2ea646c",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.647Z"
+      "installedAt": "2026-11-04T06:16:04.647Z",
+      "updatedAt": "2026-11-21T16:28:40.883Z"
     },
     ".aidf/framework/assets/hooks/audit.mjs": {
       "sha256": "5b79637ad363ce69560a6bd02f0df8150d458e283aa8d1e8443e4425214511c2",
@@ -403,16 +430,18 @@
       "installedAt": "2026-11-04T06:16:04.684Z"
     },
     ".aidf/framework/assets/registry/skills.yaml": {
-      "sha256": "1667eaca3d258499c71aa2c679ea2790fbbbc25dee82f1345ac6f652d026f4ab",
+      "sha256": "67aaf9f4454fe4886de76d90bbb715936e180954fca091e22d10bf1e1063cf07",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.687Z"
+      "installedAt": "2026-11-04T06:16:04.687Z",
+      "updatedAt": "2026-11-21T16:28:40.911Z"
     },
     ".aidf/framework/assets/registry/sources.yaml": {
-      "sha256": "91ee335f3c606756b7a9fb3c4143af78d79c504d1934c49a32d46afebd331d00",
+      "sha256": "d798fc670e2358e018458e7275820aff49c0b54c5edc6acd43bffd03d287661a",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.690Z"
+      "installedAt": "2026-11-04T06:16:04.690Z",
+      "updatedAt": "2026-11-21T16:28:40.915Z"
     },
     ".aidf/framework/assets/skills/aidf-architecture-review/SKILL.md": {
       "sha256": "ad155a5d1245a970178ab092ee272d6530d9d82b9a9d0ae0ea68328d22354b76",
@@ -511,16 +540,18 @@
       "installedAt": "2026-11-04T06:16:04.748Z"
     },
     ".aidf/framework/docs/aidf/COMPATIBILITY.md": {
-      "sha256": "f6e70bf05a9758a7076f2b185ad06fd72acdeba973e03c8187c4df095f7f6514",
+      "sha256": "9588ec6f0a6cbd8abc18f9f035d2b4f17d4a30b2ba6a7f49f18d3f8163101dd4",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.750Z"
+      "installedAt": "2026-11-04T06:16:04.750Z",
+      "updatedAt": "2026-11-21T16:28:41.002Z"
     },
     ".aidf/framework/docs/aidf/DECISIONS.md": {
-      "sha256": "13e9aa868e6067c8c78fbb3eb8296c6c53218458da91fff74e88a5e47c4ed7f6",
+      "sha256": "2d07042ef5743e17a66e844759ac30f742862066e352725c811da840cd6007dd",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.754Z"
+      "installedAt": "2026-11-04T06:16:04.754Z",
+      "updatedAt": "2026-11-21T16:28:41.006Z"
     },
     ".aidf/framework/docs/aidf/FRAMEWORK.md": {
       "sha256": "b16a8b6e3c7b8fc59a8b7650ac33ba81ae766e22f74404d768a52cb03f651460",
@@ -553,10 +584,11 @@
       "installedAt": "2026-11-04T06:16:04.769Z"
     },
     ".aidf/framework/docs/aidf/SECURITY.md": {
-      "sha256": "aeeb23d4d69f2f5e876066c961a607dbcd0050081358658595103cd16cf1995e",
+      "sha256": "ee7aea4988d1b4031818f4537e0f367ddcb84accf9c7d3cead2c4387717abdf8",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.771Z"
+      "installedAt": "2026-11-04T06:16:04.771Z",
+      "updatedAt": "2026-11-21T16:28:41.027Z"
     },
     ".aidf/framework/docs/aidf/SKILLS.md": {
       "sha256": "c2efadc3434d6299349cc91cfdf9536dc3a7167d938d6e3bc11d4c728a3221da",
@@ -583,16 +615,18 @@
       "installedAt": "2026-11-04T06:16:04.785Z"
     },
     ".aidf/framework/package.json": {
-      "sha256": "cc68d1706c514500d843e1a8dfbe2c71648d5f1c0cb1f5f4cfaa6e84a100c415",
+      "sha256": "bd2a54c5f237664d5318bd4e17926f0062a58ea7953f5ded289bffa0820e7da1",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.801Z"
+      "installedAt": "2026-11-04T06:16:04.801Z",
+      "updatedAt": "2026-11-21T16:28:41.039Z"
     },
     ".aidf/framework/README.md": {
-      "sha256": "f4e62bc8cf4d26b844b6ff06a8aa1b0a0f0ba75b4fcb1368bcfd1d1707a62f27",
+      "sha256": "ae8c9a567a841248dfbdc96e31028e56a8864c30321087f1718c426ee78d4405",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.804Z"
+      "installedAt": "2026-11-04T06:16:04.804Z",
+      "updatedAt": "2026-11-21T16:28:41.043Z"
     },
     ".aidf/framework/LICENSE": {
       "sha256": "6a270413742e69b403e986f49391cc0509cb2099d2685f26d419afaba863daba",
@@ -601,16 +635,18 @@
       "installedAt": "2026-11-04T06:16:04.808Z"
     },
     ".aidf/framework/INSTALLATION.md": {
-      "sha256": "7f5d19213dc06fd9bf722896cbd20ca9d906188b03080990065395a6eb798365",
+      "sha256": "86e06c05505e85fcbad67a0010cd5d1c6a8865e4bd04eb405e6c2b15c4a94397",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.812Z"
+      "installedAt": "2026-11-04T06:16:04.812Z",
+      "updatedAt": "2026-11-21T16:28:41.050Z"
     },
     ".aidf/framework/UTILISATION.md": {
-      "sha256": "01b408976f6e2094f651a1f20a3d339b4d76d836ebd94a2bc77d2ded7667606b",
+      "sha256": "d7fc1527dea9cf1dbc24211c70f3d9cd422ccb8daca2b6392e70efd43ae025ec",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.815Z"
+      "installedAt": "2026-11-04T06:16:04.815Z",
+      "updatedAt": "2026-11-21T16:28:41.055Z"
     },
     ".aidf/framework/QODER.md": {
       "sha256": "5970f1ebe1e2f7c8ad18fc4a46e3384abe0afb62af7fcf1fe2cceb6316703532",
@@ -619,10 +655,11 @@
       "installedAt": "2026-11-04T06:16:04.818Z"
     },
     ".aidf/framework/CHANGELOG.md": {
-      "sha256": "3054c928ed7e6f1d08decb8f7e293f6e8de2617428be3d0ec9b0e16354df920e",
+      "sha256": "32ab846f49f7301d3bda8440fe4fc889733c29ada08dce9543acc7f076f7e194",
       "category": "framework",
       "owner": "aidf",
-      "installedAt": "2026-11-04T06:16:04.820Z"
+      "installedAt": "2026-11-04T06:16:04.820Z",
+      "updatedAt": "2026-11-21T16:28:41.061Z"
     },
     ".aidf/bin/aidf.mjs": {
       "sha256": "8f22ee2614f2a3ad1c5ce9837e32c69dfc822f1084cee645c8e0e596ff0933c7",
@@ -912,6 +949,318 @@
       "owner": "aidf",
       "mergeJson": true,
       "installedAt": "2026-11-04T06:16:04.953Z"
+    },
+    ".aidf/framework/src/commands/artefacts.mjs": {
+      "sha256": "a74bf17d6be74307a86a4788463058a2ff0ae5c9ec5e7128a8a0034773d7e021",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.601Z"
+    },
+    ".aidf/framework/src/commands/decision.mjs": {
+      "sha256": "c34f22c947a1dff94ef0a20b66d39896988de09d9ada7a7676bc4f977d5926e2",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.608Z"
+    },
+    ".aidf/framework/src/commands/design.mjs": {
+      "sha256": "32c4dd6b7d25046e85268caaff808c4b5bd37df07d34552b296705d2e5c59a47",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.611Z"
+    },
+    ".aidf/framework/src/commands/ops.mjs": {
+      "sha256": "0d3c00968c91b8b73c24880ce8da9257c0c79cdd51626c8b19ea1b8f066f9e07",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.632Z"
+    },
+    ".aidf/framework/src/commands/release.mjs": {
+      "sha256": "cb28e097aafc40e91c482fc17a453e5fca7cc37bf34b3eb2988f89c5678c4c22",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.635Z"
+    },
+    ".aidf/framework/src/commands/requirements.mjs": {
+      "sha256": "b36bbd7d98d1faf56cede147de55e8ade86168d0db5bdd7034b7047b5936d7b6",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.639Z"
+    },
+    ".aidf/framework/src/commands/security.mjs": {
+      "sha256": "b5bf28a6b6944874764947034239a4a72df5abff4b1aeb4c82fa8127645fee2e",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.648Z"
+    },
+    ".aidf/framework/src/commands/tests.mjs": {
+      "sha256": "7d6f821993f56597c1806605c529696b8cf47137e2cb9e356f8add775c8d6d70",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.660Z"
+    },
+    ".aidf/framework/src/commands/traceability.mjs": {
+      "sha256": "f6a2d3bcb54ad30bb7e72337bb19cb77fdd2068a83ce7f29d532a06a8d9fd7c5",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.663Z"
+    },
+    ".aidf/framework/src/core/adapters/opencode.mjs": {
+      "sha256": "92e93a951eca48ffb5614c498a94e6cffdcb2e3ac8dd02120069c866d8e2b2d0",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.692Z"
+    },
+    ".aidf/framework/src/core/artefacts/index.mjs": {
+      "sha256": "956faaa966bdc0371b150af0b1f03da5a8a02b2d1b2de46612c4f70b528b3763",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.697Z"
+    },
+    ".aidf/framework/src/core/artefacts/validation.mjs": {
+      "sha256": "60af5369b304507460830b4ec2c2203a5a7d333da5747be1b4f23c556d8309d2",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.699Z"
+    },
+    ".aidf/framework/src/core/design-engineering/complexity-classifier.mjs": {
+      "sha256": "237e6ed50b08832b4a21e4d04195ef2811c9e639bed2f63a192f9b4fdde98127",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.710Z"
+    },
+    ".aidf/framework/src/core/design-engineering/engine.mjs": {
+      "sha256": "f470fa9f9311967b103debad215b3ca2b5b1bc136f0d22993ca1865e6e62220d",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.712Z"
+    },
+    ".aidf/framework/src/core/design-engineering/fallback/mockups.mjs": {
+      "sha256": "fb9776a651f26a0605031f68feb95060fa5f823a7a5e2e2a7f82adf3eda795dc",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.715Z"
+    },
+    ".aidf/framework/src/core/design-engineering/fallback/wireframes.mjs": {
+      "sha256": "ead2e40371cf1f5c618024445a9fc788270a3ff9c3b38c61ec5ccdb204585a1c",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.718Z"
+    },
+    ".aidf/framework/src/core/design-engineering/figma/validators.mjs": {
+      "sha256": "98447977c848db43b87c0a4408be5a48f9e380a6d6d426dcc019ead09898658f",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.721Z"
+    },
+    ".aidf/framework/src/core/design-engineering/index.mjs": {
+      "sha256": "3e2e142f50e8c45f96a0b9cad9d5a277ce67e8a79f63ac207ed721aeb80bd086",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.723Z"
+    },
+    ".aidf/framework/src/core/design-engineering/visual-parity/capture.mjs": {
+      "sha256": "762938bc346fd99ad9e55a67e241908b8939fe854fd71a8a7426ad85cab48793",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.726Z"
+    },
+    ".aidf/framework/src/core/docsgen.mjs": {
+      "sha256": "8990ab2c0b3264ba9e5db8abfa6a95eaa701307aff2a1d28df409fcb111efeb1",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.731Z"
+    },
+    ".aidf/framework/src/core/ops.mjs": {
+      "sha256": "350067abe9b508f9063b4ba9550da034bf9a1d14a3ff58db52979891fa83b028",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.744Z"
+    },
+    ".aidf/framework/src/core/requirements/index.mjs": {
+      "sha256": "ed48e1cf859a1c47ae58edfd425f499d47d05e0d5284442b99b2152eacdd46b6",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.751Z"
+    },
+    ".aidf/framework/src/core/requirements/registry.mjs": {
+      "sha256": "ac41bfe6b46889dd664b956e35955bd881d01ac56205dd534305db7336d06932",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.754Z"
+    },
+    ".aidf/framework/src/core/resource-inventory.mjs": {
+      "sha256": "720014c020cae637053a6581c2a3401bfaa05b59eb61c0772dc26ca3f5d8d778",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.758Z"
+    },
+    ".aidf/framework/src/core/security/threat-model.mjs": {
+      "sha256": "ae4e5be96baff2e6c9499f77621a21f047ce307e183b4be3ba6c22d48e4ba3c5",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.766Z"
+    },
+    ".aidf/framework/src/core/source-skills.mjs": {
+      "sha256": "d02fdae1083e4530bf8be01e74789b912a18bd6c8477ea8fb9437af01b8b753e",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.775Z"
+    },
+    ".aidf/framework/src/core/technology-decision/analyzer-deterministic.mjs": {
+      "sha256": "d89d96a34dd2d90bf946318a8e98a13ec820e0815bc5ef31b718e14870d488e7",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.781Z"
+    },
+    ".aidf/framework/src/core/technology-decision/engine.mjs": {
+      "sha256": "f48e739b7085834fb9c30cbe0e470ca71ae8a58b8ade90189e9c7bdbcdca924c",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.784Z"
+    },
+    ".aidf/framework/src/core/technology-decision/generator.mjs": {
+      "sha256": "80b8ac095d88dcbe4296820ddff6c8d84b516403664b4c9a078e05a2f21b092c",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.788Z"
+    },
+    ".aidf/framework/src/core/technology-decision/index.mjs": {
+      "sha256": "72bb76237af826b8940f10ca10fc8f45dd09a5858c9403ceec31d4b402ebb016",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.790Z"
+    },
+    ".aidf/framework/src/core/technology-decision/options/index.mjs": {
+      "sha256": "c8dae0e2db253809dedb05663c8c841bc47182e03083422077cf339dc193c3fa",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.793Z"
+    },
+    ".aidf/framework/src/core/testplan.mjs": {
+      "sha256": "49b0179cd59d0459208228b0d5bdebff234353901ef6be5821fc8d83320dab5d",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.796Z"
+    },
+    ".aidf/framework/src/core/traceability/chain.mjs": {
+      "sha256": "744e9ae0c8cdda922fc05ecc05ad7ee0804fbeaced4df31dce928075362e99f5",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.799Z"
+    },
+    ".aidf/framework/src/core/traceability/index.mjs": {
+      "sha256": "2fd7b8f2ce992c48add23269d39f691771705adadc15a08481b55446359c3ac8",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.801Z"
+    },
+    ".aidf/framework/assets/schemas/architecture/v1.json": {
+      "sha256": "3d05a3df694e1260ab86f45e68afcd9429023df5b59283a5ddbb1f3f00ca5f3b",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.919Z"
+    },
+    ".aidf/framework/assets/schemas/constraints/v1.json": {
+      "sha256": "21c92f0a85482848bb4e911d003b2d457f2a8b909da2a558d6d9797df9e49cb0",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.922Z"
+    },
+    ".aidf/framework/assets/schemas/decision/v1.json": {
+      "sha256": "0f58399285d36a4b0bd9c67730b65a2c6650d420d31752aeb50e657b9efed7e9",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.925Z"
+    },
+    ".aidf/framework/assets/schemas/discovery/v1.json": {
+      "sha256": "dfdc679a22c7e319ae285cf664b868b90573ecacdcf490bc07a78143f758cc96",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.928Z"
+    },
+    ".aidf/framework/assets/schemas/requirement/v1.json": {
+      "sha256": "d850569585ff75a55363a0431d326651ca868653756fca14b7d17cdcac0fe66c",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.931Z"
+    },
+    ".aidf/framework/assets/schemas/security/threat-model/v1.json": {
+      "sha256": "7c0603f6c6aeac7082da2713ea0c8c77581745356df89b3769a15a55eda2b7e0",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.935Z"
+    },
+    ".aidf/framework/assets/schemas/test-plan/v1.json": {
+      "sha256": "fab5b84e89961b5a346871eea26799d97dab83828ec0a15df96b05dff242c144",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.939Z"
+    },
+    ".aidf/framework/docs/aidf/ADR-001-artefacts-architectur.md": {
+      "sha256": "471b24782cb8af99bb34c59cc3f5949d2cba08df6431009546601d7199d99894",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.971Z"
+    },
+    ".aidf/framework/docs/aidf/ADR-002-requirements-registry.md": {
+      "sha256": "9e76e79d9c174bae2b1640deae607283612a70550b363598fb479c070b9f3ce6",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.974Z"
+    },
+    ".aidf/framework/docs/aidf/ADR-003-traceability-chain.md": {
+      "sha256": "ac4f1cb0d6443fa0ef23a1dd8741e5d5c94f19abaca0809613a9975087826bf0",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.976Z"
+    },
+    ".aidf/framework/docs/aidf/ADR-004-markdown-generation.md": {
+      "sha256": "e8c91115d3493cba20b3c71d6823106dd37f38240658359bfbfeef0962a6acf4",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.979Z"
+    },
+    ".aidf/framework/docs/aidf/ADR-005-validation-and-tests.md": {
+      "sha256": "e13db8bff1104bf00186a7869babcf2be4d7f12981abc034ca8af9ef8e7decc5",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.982Z"
+    },
+    ".aidf/framework/docs/aidf/ADR-006-cli-commands.md": {
+      "sha256": "6da30ac2e757564baa9f31207a17d1c8ab308cba88db84a98590e1f66f4014c9",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.985Z"
+    },
+    ".aidf/framework/docs/aidf/ADR-007-compatibility-and-migration.md": {
+      "sha256": "408947cb1b8b8e5476c61a47ed0c616ed8b3cb27dff516861804561cc860fba6",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.989Z"
+    },
+    ".aidf/framework/docs/aidf/ADR-008-schema-versioning.md": {
+      "sha256": "d9a4c5aefc81e31522b9e3277188bd5f73fb20080b814ee62e531638422ea78e",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.992Z"
+    },
+    ".aidf/framework/docs/aidf/ADR-009-artefacts-scope.md": {
+      "sha256": "af6e3fccfeda17e63f1b84cbbc3a103f1fc58a52152796c99e21cd9dac06036f",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:40.995Z"
+    },
+    ".aidf/framework/docs/aidf/L1-ARCHITECTURE-RAPPORT.md": {
+      "sha256": "08b73d515c8468c04ab1ccbde696f8ba2d1e579fc583bf3e315fcb44c605d5a6",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:41.017Z"
+    },
+    ".aidf/framework/docs/aidf/MATRICE-0.1.0-vers-0.2.0.md": {
+      "sha256": "ba708f2f2dd33ba942a235d54cae546d1dfe86674a56093cfa1ac5250530f1b0",
+      "category": "framework",
+      "owner": "aidf",
+      "installedAt": "2026-11-21T16:28:41.022Z"
     }
   },
   "managedBlocks": {},
@@ -927,6 +1276,21 @@
         "created": 152,
         "updated": 0,
         "unchanged": 0,
+        "conflicts": 0,
+        "failed": 0,
+        "linked": 0,
+        "would": 0
+      }
+    },
+    {
+      "ts": "2026-11-21T16:28:41.186Z",
+      "event": "install",
+      "version": "0.3.2",
+      "adapter": "qoder",
+      "summary": {
+        "created": 52,
+        "updated": 37,
+        "unchanged": 112,
         "conflicts": 0,
         "failed": 0,
         "linked": 0,

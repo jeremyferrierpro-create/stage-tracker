@@ -7,10 +7,13 @@ import {
 } from '../util/fsx.mjs';
 import { aidfPaths, FRAMEWORK_ROOT } from './paths.mjs';
 import { runTool } from './detect.mjs';
+import { isSecretPath } from './resource-inventory.mjs';
 
 export const RESOURCE_STATUSES = [
   'PRESENT', 'ABSENT', 'PARTIAL', 'NOT_INSTALLED', 'BLOCKED', 'OUTDATED', 'NOT_APPLICABLE',
 ];
+
+const MAX_HASH_FILE_BYTES = 64 * 1024 * 1024;
 
 export async function loadSources(frameworkRoot = FRAMEWORK_ROOT) {
   const file = path.join(frameworkRoot, 'assets', 'registry', 'sources.yaml');
@@ -115,9 +118,21 @@ export async function inspectResource(resource, options = {}) {
   const licenseFile = await findLicense(dir);
   const files = await listFiles(dir, { ignore: resource.exclude ?? [] });
   const included = files.filter((f) => matchesGlobs(f, resource.include ?? [], resource.exclude ?? []));
-  const treeHash = sha256Text(
-    (await Promise.all(included.slice(0, 5000).map(async (f) => `${f}:${await sha256File(path.join(dir, f))}`))).join('\n'),
-  );
+  const hashed = [];
+  const skipped = { secrets: 0, oversized: 0 };
+  for (const f of included.slice(0, 5000)) {
+    if (isSecretPath(f)) {
+      skipped.secrets += 1;
+      continue;
+    }
+    const stat = await fsp.stat(path.join(dir, f)).catch(() => null);
+    if (!stat || stat.size > MAX_HASH_FILE_BYTES) {
+      skipped.oversized += 1;
+      continue;
+    }
+    hashed.push(`${f}:${await sha256File(path.join(dir, f))}`);
+  }
+  const treeHash = sha256Text(hashed.join('\n'));
   const licenseKnown = resource.license && resource.license !== 'unknown';
   const status = !licenseKnown ? 'BLOCKED' : licenseFile ? 'PRESENT' : 'PARTIAL';
   return {
@@ -133,6 +148,8 @@ export async function inspectResource(resource, options = {}) {
     status,
     path: toPosix(dir),
     files: included.length,
+    hashedFiles: hashed.length,
+    skipped,
     treeHash,
     note: !licenseKnown
       ? 'Licence is unknown: index-only, not redistributable.'

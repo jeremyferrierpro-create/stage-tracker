@@ -1,0 +1,143 @@
+{
+  "id": "TM-001",
+  "schemaVersion": "1.0.0",
+  "type": "security-threat-model",
+  "createdAt": "2026-11-21T17:20:03.823Z",
+  "updatedAt": "2026-11-21T17:20:03.823Z",
+  "status": "DRAFT",
+  "assets": [
+    {
+      "id": "AST-SRC",
+      "name": "Source code and project configuration",
+      "classification": "internal",
+      "owner": "project",
+      "storage": "git repository"
+    },
+    {
+      "id": "AST-DATA",
+      "name": "Application data",
+      "classification": "confidential",
+      "owner": "project",
+      "storage": "project data stores"
+    },
+    {
+      "id": "AST-SEC",
+      "name": "Secrets and credentials",
+      "classification": "restricted",
+      "owner": "project",
+      "storage": "files: .env"
+    }
+  ],
+  "threats": [
+    {
+      "likelihood": "medium",
+      "impact": "high",
+      "status": "open",
+      "name": "Secret material exposure",
+      "description": "Secret-like files present at project root: .env. Content was not read.",
+      "stride": "Information Disclosure",
+      "asset": "AST-SEC",
+      "mitigation": "Verify files are git-ignored, rotate any committed secrets, and use a secret manager.",
+      "id": "THR-001"
+    },
+    {
+      "likelihood": "medium",
+      "impact": "medium",
+      "status": "open",
+      "name": "Supply-chain tampering via dependencies",
+      "description": "Project declares npm dependencies; a compromised or typosquatted package could alter behaviour.",
+      "stride": "Tampering",
+      "asset": "AST-SRC",
+      "mitigation": "Pin versions, commit the lockfile, run dependency audits in CI.",
+      "id": "THR-002"
+    },
+    {
+      "likelihood": "medium",
+      "impact": "medium",
+      "status": "open",
+      "name": "Uncommitted work loss or tampering",
+      "description": "77 uncommitted change(s) detected; work in progress is not protected by history.",
+      "stride": "Repudiation",
+      "asset": "AST-SRC",
+      "mitigation": "Commit or stash work before releases; keep the working tree reviewable.",
+      "id": "THR-003"
+    },
+    {
+      "likelihood": "medium",
+      "impact": "medium",
+      "status": "mitigated",
+      "name": "Agent tool misuse elevating privileges",
+      "description": "AI agents operate with filesystem and shell access; misconfigured permissions could allow destructive actions.",
+      "stride": "Elevation of Privilege",
+      "asset": "AST-SRC",
+      "mitigation": "Command execution is disabled by default (security.allowCommandExecution=false); keep it that way unless justified.",
+      "id": "THR-004"
+    }
+  ],
+  "trustBoundaries": [
+    {
+      "id": "TB-EXT",
+      "name": "External actors to application",
+      "components": [
+        "external users",
+        "AI coding agents",
+        "third-party APIs"
+      ]
+    },
+    {
+      "id": "TB-APP",
+      "name": "Application boundary",
+      "components": [
+        "application runtime"
+      ]
+    },
+    {
+      "id": "TB-DATA",
+      "name": "Data boundary",
+      "components": [
+        "databases",
+        "file system",
+        "secret stores"
+      ]
+    }
+  ],
+  "source": {
+    "type": "generated",
+    "author": "aidf",
+    "createdAt": "2026-11-21T17:20:03.823Z",
+    "generator": "security-threat-model@0.3.2"
+  },
+  "links": {
+    "references": [
+      "REQ-F-001",
+      "REQ-F-002",
+      "REQ-F-003",
+      "REQ-F-004"
+    ]
+  },
+  "validation": {
+    "schemaVersion": "1.0.0",
+    "timestamp": "2026-11-21T17:20:03.823Z",
+    "valid": true,
+    "errors": [],
+    "warnings": [
+      "Generated threat model requires human review before VALIDATED."
+    ]
+  },
+  "detection": {
+    "frameworks": [
+      "Vite",
+      "Playwright"
+    ],
+    "languages": [
+      "JavaScript/TypeScript",
+      "PHP"
+    ],
+    "secretFiles": [
+      ".env"
+    ],
+    "hasAuth": false,
+    "isWeb": false,
+    "generatedBy": "detectProject"
+  }
+}

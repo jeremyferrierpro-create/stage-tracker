@@ -1,15 +1,16 @@
 import path from 'node:path';
 import { parseArgs, assertEnum } from '../util/args.mjs';
 import { resolveProjectRoot, isInitialized, DOCUMENTS, DOC_STATUSES } from '../core/paths.mjs';
-import { loadConfig, saveConfig, setDocumentStatus } from '../core/config.mjs';
+import { loadConfig, saveConfig, setDocumentStatus, defaultConfig } from '../core/config.mjs';
 import { loadManifest, saveManifest, recordFile } from '../core/manifest.mjs';
 import { readText, writeAtomic, sha256Text, exists } from '../util/fsx.mjs';
 import { splitFrontmatter, joinFrontmatter } from '../util/frontmatter.mjs';
 import { attachLogFile } from '../util/logger.mjs';
+import { generateDocs } from '../core/docsgen.mjs';
 
 export function docsArgSpec() {
   return {
-    booleans: ['json', 'help'],
+    booleans: ['json', 'help', 'check'],
     aliases: { h: 'help', t: 'target' },
   };
 }
@@ -18,7 +19,7 @@ export async function docsCommand(argv, ctx) {
   const args = parseArgs(argv, docsArgSpec());
   const sub = args._[0] ?? 'list';
   if (args.help) {
-    ctx.logger.info('Usage: aidf docs <list|show|status> [DOC] [STATUS] [--by <name>] [--note "..."]');
+    ctx.logger.info('Usage: aidf docs <list|show|status|generate> [DOC] [STATUS] [--by <name>] [--note "..."] [--check]');
     return 0;
   }
   const root = resolveProjectRoot({ target: args.target, cwd: process.cwd() });
@@ -27,7 +28,7 @@ export async function docsCommand(argv, ctx) {
     return 1;
   }
   await attachLogFile(ctx.logger, root).catch(() => null);
-  const config = await loadConfig(root);
+  const config = await loadConfig(root).catch(() => defaultConfig({}));
 
   if (sub === 'list') {
     const rows = Object.entries(config.documents).map(([doc, entry]) => ({
@@ -64,6 +65,25 @@ export async function docsCommand(argv, ctx) {
     return 0;
   }
 
+  if (sub === 'generate') {
+    const result = await generateDocs(root, { check: Boolean(args.check) });
+    if (ctx.json) {
+      process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
+    } else {
+      ctx.logger.info(
+        `${args.check ? 'Checked' : 'Generated'} ${result.generated.length} document(s) in ${result.directory}`,
+      );
+      for (const g of result.generated) {
+        ctx.logger.info(`  ${g.action.padEnd(11)} ${g.file} (from ${g.sourceId})`);
+        if (g.diverged) ctx.logger.warn(`    manual edit detected — regenerate overwrites it`);
+      }
+      if (result.generated.length === 0) {
+        ctx.logger.warn('No artefacts found to render. Create requirements/test-plan/threat-model/decision artefacts first.');
+      }
+    }
+    return 0;
+  }
+
   if (sub === 'status') {
     const doc = assertEnum(args._[1], DOCUMENTS, 'document');
     const status = assertEnum(args._[2], DOC_STATUSES, 'status');
@@ -89,7 +109,7 @@ export async function docsCommand(argv, ctx) {
         ...(frontmatter ?? {}),
         doc,
         status,
-        version: frontmatter?.version ?? '0.1.0',
+        version: frontmatter?.version ?? '0.3.2',
         updated: new Date().toISOString().slice(0, 10),
         ...(args.by ? { validated_by: args.by } : {}),
       }, body);

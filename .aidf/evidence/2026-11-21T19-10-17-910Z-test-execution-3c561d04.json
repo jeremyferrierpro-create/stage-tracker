@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-21T19-10-17-910Z-ab33e9",
+  "type": "test-execution",
+  "status": "PASS",
+  "gate": null,
+  "phase": null,
+  "summary": "php artisan test: 217/217 PASS (dont 16 nouveaux tests REQ-F-001..004 : ViewerInvitationTest, ConversationTest x6, NotificationTest x4, NoteTest x5)",
+  "note": "php artisan test: 217/217 PASS (dont 16 nouveaux tests REQ-F-001..004 : ViewerInvitationTest, ConversationTest x6, NotificationTest x4, NoteTest x5)",
+  "createdBy": "agent",
+  "humanApproval": false,
+  "approvedBy": null,
+  "approval": {
+    "declaredBy": null,
+    "declaredAt": null,
+    "authenticated": false,
+    "method": "none",
+    "keyId": null
+  },
+  "createdAt": "2026-11-21T19:10:17.910Z",
+  "checks": [
+    {
+      "id": "manual-record",
+      "status": "NOT_PROVEN",
+      "reason": "Agent declaration only; not a human approval."
+    }
+  ],
+  "commands": [],
+  "files": [],
+  "limitations": [
+    "Agent-declared evidence is not human approval."
+  ],
+  "previous": "c2bf49c3f60fd29e9411bb962f663915a9ebba0d6720805a5afce5998a6ef8da",
+  "hash": "3c561d040c144fea7e66c6fd8431d7f361f2f430b90a7d14337ed786b0afb91a"
+}

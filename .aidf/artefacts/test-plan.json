@@ -1,0 +1,104 @@
+{
+  "id": "TP-001",
+  "schemaVersion": "1.0.0",
+  "type": "test-plan",
+  "createdAt": "2026-11-21T17:20:04.341Z",
+  "updatedAt": "2026-11-21T17:20:04.341Z",
+  "status": "DRAFT",
+  "strategy": {
+    "approach": "One planned test case per acceptance criterion; types inferred from criterion wording and confirmed by a human.",
+    "coverageGoals": {},
+    "tools": [
+      {
+        "name": "playwright",
+        "source": "detected"
+      },
+      {
+        "name": "phpunit",
+        "source": "detected"
+      },
+      {
+        "name": "aidf evidence",
+        "source": "framework",
+        "note": "results recorded via aidf evidence record"
+      }
+    ],
+    "mockPolicy": "Mocks are allowed for external services in unit tests; integration and e2e cases must exercise real boundaries or be marked NOT_PROVEN."
+  },
+  "testCases": [
+    {
+      "id": "TC-REQ-F-001-1",
+      "name": "REQ-F-001: Un invité sans compte crée son compte depuis le lien d'invitation et est connect",
+      "type": "unit",
+      "path": "tests/req-f-001-1.test.mjs",
+      "command": "php artisan test",
+      "status": "planned",
+      "requirement": "REQ-F-001",
+      "criterion": "AC-1"
+    },
+    {
+      "id": "TC-REQ-F-002-1",
+      "name": "REQ-F-002: Cloche + badge non lues + toasts persistants en base de données, sans doublons",
+      "type": "unit",
+      "path": "tests/req-f-002-1.test.mjs",
+      "command": "php artisan test",
+      "status": "planned",
+      "requirement": "REQ-F-002",
+      "criterion": "AC-1"
+    },
+    {
+      "id": "TC-REQ-F-003-1",
+      "name": "REQ-F-003: Conversations 1:1 et groupe au niveau espace, fils rattachés à projet/stage, piè",
+      "type": "unit",
+      "path": "tests/req-f-003-1.test.mjs",
+      "command": "php artisan test",
+      "status": "planned",
+      "requirement": "REQ-F-003",
+      "criterion": "AC-1"
+    },
+    {
+      "id": "TC-REQ-F-004-1",
+      "name": "REQ-F-004: Notes personnelles et partagées dans l'espace, échéances, rattachement stage/pro",
+      "type": "unit",
+      "path": "tests/req-f-004-1.test.mjs",
+      "command": "php artisan test",
+      "status": "planned",
+      "requirement": "REQ-F-004",
+      "criterion": "AC-1"
+    }
+  ],
+  "source": {
+    "type": "generated",
+    "author": "aidf",
+    "createdAt": "2026-11-21T17:20:04.341Z",
+    "generator": "test-plan@0.3.2"
+  },
+  "links": {
+    "covers": [
+      "REQ-F-001",
+      "REQ-F-002",
+      "REQ-F-003",
+      "REQ-F-004"
+    ]
+  },
+  "validation": {
+    "schemaVersion": "1.0.0",
+    "timestamp": "2026-11-21T17:20:04.341Z",
+    "valid": true,
+    "errors": [],
+    "warnings": [
+      "Test cases are planned, not executed. Update status only with real test output evidence."
+    ]
+  },
+  "detection": {
+    "runners": [
+      "playwright",
+      "phpunit"
+    ],
+    "testDirectories": [
+      "tests",
+      "e2e"
+    ],
+    "packageManager": "npm"
+  }
+}

@@ -2,15 +2,15 @@
 
 - Project: stage-tracker
 - Root: `C:/Users/jerem/Desktop/stage_tracker/aidf/projets/stage-tracker`
-- AIDF version: 0.1.0
+- AIDF version: 0.3.2
 - Adapter: qoder
-- Generated: 2026-11-04T06:16:05.000Z
+- Generated: 2026-11-21T16:28:41.232Z
 
 ## Summary
 
-- Created: 152
-- Updated: 0
-- Unchanged: 0
+- Created: 52
+- Updated: 37
+- Unchanged: 112
 - Conflicts: 0
 - Failed: 0
 

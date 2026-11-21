@@ -6,11 +6,16 @@ import {
   linkSkill, SKILL_STATUSES,
 } from '../core/skills.mjs';
 import { loadManifest, saveManifest } from '../core/manifest.mjs';
+import { readInventory } from '../core/resource-inventory.mjs';
+import {
+  catalogSourceSkills, summarizeSourceSkills, saveSourceSkillCatalog,
+  copySourceSkill, skillInstallTarget,
+} from '../core/source-skills.mjs';
 import { attachLogFile } from '../util/logger.mjs';
 
 export function skillsArgSpec() {
   return {
-    booleans: ['json', 'dry-run', 'help'],
+    booleans: ['json', 'dry-run', 'help', 'allow-scripts'],
     aliases: { h: 'help', t: 'target' },
   };
 }
@@ -121,6 +126,77 @@ export async function skillsCommand(argv, ctx) {
       ctx.logger.error(error.message);
       return 1;
     }
+  }
+
+  if (sub === 'sources' || sub === 'catalog') {
+    const manifest = await readInventory(root);
+    if (!manifest) {
+      ctx.logger.error('No resources manifest found. Run `aidf resources inventory --write` first.');
+      return 1;
+    }
+    const entries = catalogSourceSkills(manifest.resources ?? []);
+    const summary = summarizeSourceSkills(entries);
+    if (!args['dry-run']) await saveSourceSkillCatalog(root, entries);
+    if (ctx.json) {
+      process.stdout.write(`${JSON.stringify({ summary, skills: entries }, null, 2)}\n`);
+    } else {
+      ctx.logger.info(
+        `Source skills (${summary.total} files, ${summary.unique} unique) — ${JSON.stringify(summary)}`,
+      );
+      ctx.logger.table(
+        entries.map((s) => ({
+          id: s.id,
+          status: s.status,
+          license: s.license,
+          resource: s.resource,
+          path: s.path,
+        })),
+        [
+          { key: 'id', label: 'Skill' },
+          { key: 'status', label: 'Status' },
+          { key: 'license', label: 'Licence' },
+          { key: 'resource', label: 'Resource' },
+          { key: 'path', label: 'Path' },
+        ],
+      );
+    }
+    return 0;
+  }
+
+  if (sub === 'enable') {
+    const id = args._[1];
+    if (!id) {
+      ctx.logger.error('Usage: aidf skills enable <skill-id> [--allow-scripts] [--dry-run]');
+      return 1;
+    }
+    const manifest = await readInventory(root);
+    if (!manifest) {
+      ctx.logger.error('No resources manifest found. Run `aidf resources inventory --write` first.');
+      return 1;
+    }
+    const entries = catalogSourceSkills(manifest.resources ?? []);
+    const entry = entries.find((s) => s.id === id && s.canonical !== false) ?? entries.find((s) => s.id === id);
+    if (!entry) {
+      ctx.logger.error(`Unknown source skill: ${id}`);
+      return 1;
+    }
+    const target = skillInstallTarget(root, config.adapter, id);
+    if (args['dry-run']) {
+      ctx.logger.info(`[dry-run] Would copy ${entry.resource}:${entry.path} -> ${target}`);
+      return 0;
+    }
+    const result = await copySourceSkill(entry, manifest, target, {
+      allowScripts: Boolean(args['allow-scripts']),
+    });
+    if (result.status !== 'COPIED') {
+      ctx.logger.error(`${result.status}: ${result.reason}`);
+      return 1;
+    }
+    ctx.logger.info(`Copied ${result.files} file(s) to ${result.target} (licence ${entry.license}).`);
+    if (result.skipped.length > 0) {
+      ctx.logger.warn(`Skipped ${result.skipped.length} file(s): executables or secrets.`);
+    }
+    return 0;
   }
 
   ctx.logger.error(`Unknown skills subcommand: ${sub}`);

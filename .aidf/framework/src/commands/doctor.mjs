@@ -5,7 +5,7 @@ import { loadConfig, validateConfig } from '../core/config.mjs';
 import { loadManifest } from '../core/manifest.mjs';
 import { buildSkillRegistry } from '../core/skills.mjs';
 import { specKitStatus } from '../core/speckit.mjs';
-import { loadEvidenceIndex, verifyEvidenceFile } from '../core/evidence.mjs';
+import { loadEvidenceIndex, verifyEvidenceChain } from '../core/evidence.mjs';
 import { loadWorkflowState } from '../core/workflow.mjs';
 import { getAdapter } from '../core/adapters/index.mjs';
 import { detectEnvironment } from '../core/detect.mjs';
@@ -149,15 +149,23 @@ export async function doctorCommand(argv, ctx) {
   });
 
   const evidenceIndex = await loadEvidenceIndex(root);
-  const tampered = [];
-  for (const entry of evidenceIndex.entries) {
-    const result = await verifyEvidenceFile(root, entry);
-    if (!result.ok) tampered.push(`${entry.file}: ${result.reason}`);
-  }
+  const chain = await verifyEvidenceChain(root);
   checks.push({
     id: 'evidence-integrity',
-    status: tampered.length === 0 ? 'PASS' : 'FAIL',
-    detail: tampered.length === 0 ? `${evidenceIndex.entries.length} evidence record(s) verified` : tampered.slice(0, 5).join('; '),
+    status: chain.ok ? 'PASS' : 'FAIL',
+    detail: chain.ok
+      ? `${chain.checked} evidence record(s) verified (hash + previous links + index)`
+      : `${chain.problems.length} chain problem(s): ${chain.problems.slice(0, 5).map((p) => `${p.code}${p.file ? ` (${p.file})` : ''}`).join('; ')}`,
+    problems: chain.problems.map((p) => `${p.code}: ${p.file ?? 'index'} — ${p.reason}`),
+  });
+
+  const declaredOnly = evidenceIndex.entries.filter((e) => e.humanApproval && !e.authenticatedApproval);
+  checks.push({
+    id: 'approvals',
+    status: declaredOnly.length > 0 ? 'WARN' : 'PASS',
+    detail: declaredOnly.length > 0
+      ? `${declaredOnly.length} declared approval(s) are not authenticated (requireAuthenticatedApproval=${config?.security?.requireAuthenticatedApproval === true}).`
+      : 'no declared-only approval recorded',
   });
 
   const state = await loadWorkflowState(root);
@@ -171,7 +179,7 @@ export async function doctorCommand(argv, ctx) {
     checks.push({
       id: 'security-policy',
       status: 'PASS',
-      detail: `commandExecution=${config.security.allowCommandExecution} network=${config.security.allowNetwork} approvals=${(config.security.requireHumanApprovalFor ?? []).join(',')}`,
+      detail: `commandExecution=${config.security.allowCommandExecution} network=${config.security.allowNetwork} approvals=${(config.security.requireHumanApprovalFor ?? []).join(',')} authenticatedApprovalRequired=${config.security.requireAuthenticatedApproval === true}`,
     });
   }
 

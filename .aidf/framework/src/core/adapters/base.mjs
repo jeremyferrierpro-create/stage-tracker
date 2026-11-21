@@ -27,5 +27,6 @@ export async function readIfExists(file) {
 
 export function skillTargetPath(adapterKey, skillName) {
   if (adapterKey === 'qoder') return path.posix.join('.qoder', 'skills', skillName, 'SKILL.md');
+  if (adapterKey === 'opencode') return path.posix.join('.opencode', 'skills', skillName, 'SKILL.md');
   return path.posix.join('.aidf', 'skills', skillName, 'SKILL.md');
 }

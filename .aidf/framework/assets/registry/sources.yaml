@@ -16,9 +16,7 @@ resources:
     commit: ba7894dafb178da085347efe2bec69038e820d71
     localPath: ../resources/spec-kit
     include:
-      - templates/**
-      - scripts/**
-      - docs/**
+      - '**/*'
     exclude:
       - .git/**
       - node_modules/**
@@ -40,7 +38,7 @@ resources:
     commit: a496f5513d4a4cf889bc48e189e579f4b0bdf6aa
     localPath: ../resources/skills
     include:
-      - skills/engineering/**
+      - '**/*'
     exclude:
       - .git/**
       - node_modules/**
@@ -83,7 +81,7 @@ resources:
     commit: a7d7649044505b9c377c8dca28d2d6a543bc7f8c
     localPath: ../resources/agent-rules-books
     include:
-      - '*/**.md'
+      - '**/*'
     exclude:
       - .git/**
     redistribution: allowed
@@ -99,20 +97,23 @@ resources:
     name: Dictionary of AI Coding
     kind: git
     origin: https://github.com/mattpocock/dictionary-of-ai-coding
-    license: unknown
+    license: MIT
+    licenseDeclaredBy: project-owner
+    licenseDeclaredAt: 2026-11-21
     version: 0.0.0-unversioned
     commit: ed1ebed3975cba04ed5e74c6ca73659274beb754
     localPath: ../resources/dictionary-of-ai-coding
     include:
       - dictionary/**
-    redistribution: unknown
-    install: index-only
-    status: BLOCKED
+    redistribution: allowed
+    install: reference
+    status: PRESENT
     verifiedAt: 2026-10-30
     notes: |
-      No LICENSE file was found in the clone. The content is indexed for local
-      reading only and must not be copied or redistributed until the licence is
-      clarified by the owner.
+      The clone contains no LICENSE file, but the project owner declared on
+      2026-11-21 that the content is MIT licensed (Maciej Ciemborowicz). The
+      declaration is recorded here; adding a LICENSE file to the clone remains
+      recommended so automated licence checks stay honest.
 
   - id: jeremy-web-modules
     name: MODULES — cours développeur web (corpus privé)
@@ -122,18 +123,7 @@ resources:
     version: curriculum-2026
     localPath: resources/MODULES
     include:
-      - '*.md'
-      - '*.txt'
-      - '*.pdf'
-      - '*.docx'
-      - '*.pptx'
-      - '*.odt'
-      - '**/*.md'
-      - '**/*.txt'
-      - '**/*.pdf'
-      - '**/*.docx'
-      - '**/*.pptx'
-      - '**/*.odt'
+      - '**/*'
     exclude:
       - STAGE/**
       - '**/node_modules/**'
@@ -145,6 +135,29 @@ resources:
       - '**/*.crt'
       - '**/*.key'
       - '**/db/**'
+      - '**/*.mp4'
+      - '**/*.mov'
+      - '**/*.avi'
+      - '**/*.mkv'
+      - '**/*.mp3'
+      - '**/*.wav'
+      - '**/*.iso'
+      - '**/*.dmg'
+      - '**/*.pkg'
+      - '**/*.deb'
+      - '**/*.exe'
+      - '**/*.msi'
+      - '**/*.zip'
+      - '**/*.tar'
+      - '**/*.tar.gz'
+      - '**/*.tgz'
+      - '**/*.7z'
+      - '**/*.rar'
+      - '**/*.sqlite'
+      - '**/*.sqlite3'
+      - '**/*.db'
+      - '**/*.dll'
+      - '**/*.so'
     redistribution: no
     install: reference
     status: PRESENT
@@ -184,10 +197,7 @@ resources:
     commit: 9ccce0e3cf47abd6a412fc8a8deadd7fd6da501f
     localPath: ../resources/owasp-asvs
     include:
-      - 5.0/en/**
-      - 5.0/docs_en/**
-      - README.md
-      - LICENSE.md
+      - '**/*'
     exclude:
       - .git/**
     redistribution: allowed-with-attribution
@@ -214,3 +224,173 @@ resources:
     notes: |
       Official language reference. AIDF knowledge files summarise a small set of
       rules in their own words and link to the official source.
+
+  # ---------------------------------------------------------------------------
+  # 0.2.0 — resources verified on 2026-11-21 (inventory + licence policy).
+  # Every entry below is indexed; copying is gated by the licence policy.
+  # ---------------------------------------------------------------------------
+
+  - id: 3dviz-pro-max
+    name: 3Dviz Pro Max
+    kind: git
+    origin: https://github.com/viettranx/3dviz-pro-max
+    license: MIT
+    version: 0.1.0
+    commit: d077e0e68915c25be8e71d74684d3144fd1c2aca
+    localPath: ../resources/3dviz-pro-max
+    include: ['**/*']
+    exclude: ['.git/**', 'node_modules/**', '.env.example']
+    redistribution: allowed
+    install: reference
+    status: PRESENT
+    verifiedAt: 2026-11-21
+    notes: |
+      Skill 3dviz-pro-max (805 support files). Playwright and Blender are
+      optional external prerequisites; AIDF never installs them.
+
+  - id: cinematic-ui
+    name: Cinematic UI 2.0
+    kind: git
+    origin: https://github.com/akseolabs-seo/cinematic-ui
+    license: MIT
+    version: 2.0.0
+    commit: 1052c2cead980a9f8a0f219381373910ceedbc30
+    localPath: ../resources/cinematic-ui
+    include: ['**/*']
+    exclude: ['.git/**', 'node_modules/**']
+    redistribution: allowed
+    install: reference
+    status: PRESENT
+    verifiedAt: 2026-11-21
+    notes: |
+      One skill (cinematic-ui). Chrome/Edge and ffmpeg are external and
+      optional; no browser is launched by AIDF.
+
+  - id: claude-code-owasp
+    name: Claude Code OWASP
+    kind: git
+    origin: https://github.com/OWASP/claude-code-owasp
+    license: MIT
+    version: 1.0.0
+    commit: 1ae29cb22518560e3625d77f2ae64f61647d9201
+    localPath: ../resources/claude-code-owasp
+    include: ['**/*']
+    exclude: ['.git/**', 'node_modules/**']
+    redistribution: allowed
+    install: reference
+    status: PRESENT
+    verifiedAt: 2026-11-21
+    notes: |
+      Skill owasp-security used by the security phase and the Security gates.
+
+  - id: claude-skill-rgaa-dev
+    name: Claude Skill RGAA Dev
+    kind: git
+    origin: https://github.com/nicolas-cervantes/claude-skill-rgaa-dev
+    license: Licence Ouverte 2.0
+    version: 1.0.0
+    commit: 0a8e070d997cdc6d04e3e7c0219a457ec7351bfa
+    localPath: ../resources/claude-skill-rgaa-dev
+    include: ['**/*']
+    exclude: ['.git/**', 'node_modules/**', 'install.sh']
+    redistribution: allowed-with-attribution
+    install: reference
+    status: PRESENT
+    verifiedAt: 2026-11-21
+    notes: |
+      Skills audit and rgaa-dev (French accessibility standard). Attribution
+      required. install.sh is indexed but never executed.
+
+  - id: garden-skills
+    name: Garden Skills
+    kind: git
+    origin: https://github.com/garden-co/garden-skills
+    license: MIT
+    version: 1.0.0
+    commit: f2d7adeaf53dcce3d0eb19cbffe8c04f4c636c2a
+    localPath: ../resources/garden-skills
+    include: ['**/*']
+    exclude: ['.git/**', 'node_modules/**']
+    redistribution: allowed
+    install: reference
+    status: PRESENT
+    verifiedAt: 2026-11-21
+    notes: |
+      Six skills (beautiful-article, gpt-image-2, kb-retriever, motion-showreel,
+      web-design-engineer, web-video-presentation). Shell scripts are indexed
+      but refused by the skill copier unless --allow-scripts is given.
+
+  - id: pencil
+    name: Pencil (external GPL-2.0 application)
+    kind: git
+    origin: https://github.com/trypencil/pencil
+    license: GPL-2.0
+    version: 1.0.0
+    commit: 3fc5856b60415068259a8916d17a14adcd6ecc7a
+    localPath: ../resources/pencil
+    include: []
+    exclude: ['**/*']
+    redistribution: no
+    install: none
+    status: BLOCKED
+    verifiedAt: 2026-11-21
+    notes: |
+      EXCLUDED BY HUMAN DECISION (2026-11-21). GPL-2.0 is incompatible with
+      bundling into the MIT AIDF distribution. AIDF does not index, copy or
+      link Pencil; users install it separately.
+
+  - id: taste-skill
+    name: Taste Skill
+    kind: git
+    origin: https://github.com/design-taste/taste-skill
+    license: MIT
+    version: 1.0.0
+    commit: f6b76575f949707b4e3c37cd86cb44b0b98643e8
+    localPath: ../resources/taste-skill
+    include: ['**/*']
+    exclude: ['.git/**', 'node_modules/**', '**/hooks/**']
+    redistribution: allowed
+    install: reference
+    status: PRESENT
+    verifiedAt: 2026-11-21
+    notes: |
+      One skill (design-taste-frontend). The upstream Stop hook executes
+      node gate.mjs; AIDF never installs or runs it.
+
+  - id: ui-ux-design-pro-skill
+    name: UI UX Design Pro Skill
+    kind: git
+    origin: https://github.com/ux-design-pro/ui-ux-design-pro-skill
+    license: MIT
+    version: 1.0.0
+    commit: 3c24c74446e37634d33332e77db4445e2a9cac5b
+    localPath: ../resources/ui-ux-design-pro-skill
+    include: ['**/*']
+    exclude: ['.git/**', 'node_modules/**']
+    redistribution: allowed
+    install: reference
+    status: PRESENT
+    verifiedAt: 2026-11-21
+    notes: |
+      One skill (ui-ux-design-pro). Bun is optional upstream and is not
+      required by AIDF.
+
+  - id: ui-ux-pro-max-skill
+    name: UI UX Pro Max Skill
+    kind: git
+    origin: https://github.com/ux-design-pro/ui-ux-pro-max-skill
+    license: MIT
+    version: 1.0.0
+    commit: 2de1134dc4d1cfe112934611ae5803ae17a1bd7e
+    localPath: ../resources/ui-ux-pro-max-skill
+    include: ['**/*']
+    exclude: ['.git/**', 'node_modules/**']
+    redistribution: allowed
+    install: reference
+    status: PRESENT
+    verifiedAt: 2026-11-21
+    notes: |
+      Seven unique skills copied twice upstream (.claude/skills and
+      cli/assets/skills). The catalogue keeps one canonical copy and marks the
+      other as DUPLICATE with identical hashes.
+

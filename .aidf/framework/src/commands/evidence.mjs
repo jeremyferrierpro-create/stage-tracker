@@ -2,7 +2,7 @@ import { parseArgs } from '../util/args.mjs';
 import { resolveProjectRoot, isInitialized } from '../core/paths.mjs';
 import { loadConfig } from '../core/config.mjs';
 import {
-  recordEvidence, listEvidence, loadEvidenceIndex, verifyEvidenceFile, captureFiles,
+  recordEvidence, listEvidence, verifyEvidenceChain, captureFiles,
 } from '../core/evidence.mjs';
 import { attachLogFile } from '../util/logger.mjs';
 
@@ -56,18 +56,23 @@ export async function evidenceCommand(argv, ctx) {
   }
 
   if (sub === 'verify') {
-    const index = await loadEvidenceIndex(root);
-    const bad = [];
-    for (const entry of index.entries) {
-      const result = await verifyEvidenceFile(root, entry);
-      if (!result.ok) bad.push({ file: entry.file, reason: result.reason });
+    const chain = await verifyEvidenceChain(root);
+    const bad = chain.problems.map((p) => ({
+      file: p.file,
+      reason: `${p.code}: ${p.reason}`,
+    }));
+    if (ctx.json) {
+      process.stdout.write(`${JSON.stringify({
+        ok: chain.ok,
+        checked: chain.checked,
+        problems: chain.problems,
+        bad,
+      }, null, 2)}\n`);
+    } else {
+      ctx.logger.info(`Verified ${chain.checked} evidence record(s) and the chain.`);
+      for (const item of bad) ctx.logger.error(`${item.file ?? 'index'}: ${item.reason}`);
     }
-    if (ctx.json) process.stdout.write(`${JSON.stringify({ checked: index.entries.length, bad }, null, 2)}\n`);
-    else {
-      ctx.logger.info(`Verified ${index.entries.length} evidence record(s).`);
-      for (const item of bad) ctx.logger.error(`${item.file}: ${item.reason}`);
-    }
-    return bad.length === 0 ? 0 : 1;
+    return chain.ok ? 0 : 1;
   }
 
   if (sub === 'show') {
@@ -103,6 +108,15 @@ export async function evidenceCommand(argv, ctx) {
       createdBy: args.human ? 'human' : 'aidf',
       humanApproval: Boolean(args.human),
       approvedBy: args.by ?? null,
+      approval: args.human
+        ? {
+            declaredBy: args.by ?? null,
+            declaredAt: new Date().toISOString(),
+            authenticated: false,
+            method: 'declared',
+            keyId: null,
+          }
+        : { declaredBy: null, declaredAt: null, authenticated: false, method: 'none', keyId: null },
       files: captured.files,
       checks: [{
         id: 'files-captured',
@@ -136,13 +150,24 @@ export async function evidenceCommand(argv, ctx) {
       createdBy: args.human ? 'human' : 'agent',
       humanApproval: Boolean(args.human),
       approvedBy: args.by ?? null,
+      approval: args.human
+        ? {
+            declaredBy: args.by ?? null,
+            declaredAt: new Date().toISOString(),
+            authenticated: false,
+            method: 'declared',
+            keyId: null,
+          }
+        : { declaredBy: null, declaredAt: null, authenticated: false, method: 'none', keyId: null },
       files: [],
       checks: [{
         id: 'manual-record',
         status: args.human ? 'PASS' : 'NOT_PROVEN',
         reason: args.human ? `Approved by ${args.by}` : 'Agent declaration only; not a human approval.',
       }],
-      limitations: args.human ? [] : ['Agent-declared evidence is not human approval.'],
+      limitations: args.human
+        ? ['Declared approval is not authenticated: it records intent, not proof that a human performed the action.']
+        : ['Agent-declared evidence is not human approval.'],
     });
     ctx.logger.info(`Evidence recorded: ${evidence.file}`);
     return 0;

@@ -1,6 +1,6 @@
 # AIDF — AI Development Framework
 
-**Version 0.1.0** · MIT · Node.js ≥ 20.11 · zéro dépendance runtime
+**Version 0.3.2** · MIT · Node.js ≥ 20.11 · zéro dépendance runtime
 
 > AIDF est une **couche de gouvernance installable** dans un projet : elle
 > encadre le développement assisté par IA (agents, Qoder, Spec Kit) avec des
@@ -25,12 +25,24 @@ humaines sont nominatives (`--by "prénom"`).
 
 ## Ce qu'AIDF fait / ne fait pas
 
-**Fait** : installer 131–135 fichiers gouvernés dans un projet ; exposer ~16
-commandes CLI (`--json`, exit 0/1/2) ; gérer 8 phases / 16 gates ; chaîner
-l'evidence (SHA-256) ; 13 skills + adaptateur Qoder (règles, agent
-orchestrateur, hooks) ; intégrer GitHub Spec Kit **sans duplication**
-(constitution générée avec hash de source, conflits jamais écrasés) ;
-enregistrer des ressources externes avec gating de licences.
+**Fait** : installer ~190 fichiers gouvernés dans un projet ; 27 commandes CLI
+(`--json`, exit 0/1/2) dont les moteurs L1–L3 — artefacts canoniques
+(JSON + validation), registre d'exigences, traçabilité exigence→design→
+implémentation→test→preuve, Decision Engine déterministe (interprétation
+déléguée à l'agent hôte), Design Engine (classifieur + mockups SVG/CSS de
+secours), inventaire complet des ressources externes (sha256, licences,
+secrets exclus), catalogue et activation explicite des skills tierces,
+modèle de menace STRIDE, plan de test par critère d'acceptation, génération
+de documentation Markdown avec détection de divergence, pipeline de
+delivery (`aidf ops` : build/test/deploy/rollback + monitoring `watch`
+borné, exécution conditionnée et evidence), client Figma REST réel
+(`validateFigma` prouvé sur un fichier réel), et rapport de
+release consolidé ; gérer 8 phases / 16 gates ; chaîner l'evidence
+(SHA-256) ; 13 skills built-in + adaptateurs **Qoder** (skills runtime
+prouvés par un humain), **OpenCode** (runtime prouvé) et **generic**
+(AGENTS.md + `.aidf/skills/`) ; intégrer
+GitHub Spec Kit **sans duplication** ; enregistrer des ressources externes
+avec gating de licences.
 
 **Ne fait pas** : choisir l'architecture de votre projet ; exécuter des
 commandes sans permission (`--allow-exec` ou config) ; toucher au réseau sans
@@ -39,19 +51,20 @@ autorisation ; lire vos secrets ; se substituer à l'IDE ; publier/pusher.
 ## Démarrage rapide (3 commandes), résultat réel
 
 ```powershell
-# depuis un clone/portable du framework, cible = votre projet
-node C:\chemin\vers\aidf\bin\aidf.mjs install --target C:\projets\mon-projet --adapter qoder --with-hooks
-# → [INFO] created=135 updated=0 unchanged=0 conflicts=0 failed=0
+# via npm (package framework-aidf) ou depuis un clone/portable
+npx framework-aidf install --target C:\projets\mon-projet --adapter qoder --with-hooks
+# → [INFO] created=~190 updated=0 unchanged=0 conflicts=0 failed=0
 
 cd C:\projets\mon-projet
 node .aidf\bin\aidf.mjs doctor          # → tout PASS sauf runtime Qoder (NOT_PROVEN, voir QODER.md)
 node .aidf\bin\aidf.mjs context --task "ma première tâche"
+node .aidf\bin\aidf.mjs release report  # → bilan de release READY/NOT_READY
 ```
 
 Le **premier workflow complet documenté pas-à-pas** (projet TaskFlow, du
 « dicté humain » à la release) est dans `UTILISATION.md` §Exemple réel.
 
-## Les 16 commandes
+## Les commandes (27 verbes)
 
 | Commande | Rôle |
 |---|---|
@@ -64,11 +77,20 @@ Le **premier workflow complet documenté pas-à-pas** (projet TaskFlow, du
 | `workflow status/enter/exit/next` | Avancer **par gates**, jamais en sautant |
 | `validate --gate / --phase` | Évaluer une gate (avec `--allow-exec` pour les commandes) |
 | `evidence add/capture/verify` | Enregistrer/vérifier les preuves (chaîne SHA-256, `--human --by`) |
-| `docs list/show/status` | Les 11 documents projet + statuts nominatifs |
-| `skills list/validate/show/link/refresh` | Catalogue + validation + liaison skill externe |
+| `docs list/show/status/generate` | Les 11 documents projet + statuts ; `generate` rend les artefacts en Markdown (`--check` détecte les éditions manuelles) |
+| `skills list/validate/show/link/refresh/sources/catalog/enable` | Catalogue builtin + skills tierces (licences, doublons, provenance `AIDF-SOURCE.json`) |
 | `config get/set` | Configuration (`commands.*`, `security.*`) |
-| `resources list/inspect`, `setup resources` | Registry externe + verrou reproductible |
+| `resources inventory/coverage/reconcile/inspect` | Inventaire sha256 des ressources, politique de licences, dérive lock/manifest |
 | `speckit status/init/sync` | Intégration GitHub Spec Kit (mapping, constitution) |
+| `artefacts list/show/validate/verify` | Artefacts canoniques (exigences, designs, décisions, tests, threat model) |
+| `requirements add/list/show/update/delete/coverage` | Registre d'exigences `REQ-F/NF-###` + couverture |
+| `traceability report/verify/missing/broken` | Chaîne de traçabilité et liens cassés/manquants |
+| `decision evaluate` | Decision Engine déterministe → artefact `decisions/` DRAFT (approbation humaine requise) |
+| `design classify/run` | Classifieur de complexité + workflows de design (mockups SVG/CSS de secours) |
+| `security analyze/show` | Modèle de menace STRIDE `TM-###` généré depuis la détection projet |
+| `tests plan/coverage` | Plan de test `TP-###` (1 cas par critère) + couverture exigence→test |
+| `release report` | Rapport de release READY/NOT_READY (`--record`, `--strict`, `--allow-exec`) |
+| `ops init/plan/run/rollback/watch/status` | Pipeline de delivery `.aidf/workflows/pipeline.yaml` (build/test/deploy, exécution conditionnée à `--allow-exec`, rollback enregistré, monitoring `watch` borné, rapports + evidence) |
 | `help`, `version` | Aide et version |
 
 Contrat de codes de sortie : **0** succès · **1** échec/refus · **2** conflit/contradiction.
@@ -84,17 +106,17 @@ Contrat de codes de sortie : **0** succès · **1** échec/refus · **2** confli
 
 ```
 AGENTS.md                    bloc managé (votre contenu préservé)
-.qoder/rules/aidf-*.md       3 règles (socle, sécurité, contexte)
-.qoder/skills/aidf-*/        13 skills (compatibles Qoder en nom/description)
-.qoder/agents/               orchestrateur aidf
-.qoder/settings.json         hooks fusionnés (vos clés conservées)
-.aidf/AIDF.md                point d'entrée agent
-.aidf/bin/aidf.mjs           lanceur portable
-.aidf/framework/             copie autonome du framework
-.aidf/docs/                  11 documents avec statuts
-.aidf/registry/              skills, activation-map, dependencies, resources.lock.json
-.aidf/workflows/             phases.yaml + gates.yaml (modifiables projet)
-.aidf/evidence/              preuves chaînées + index
+.qoder/                   règles + 13 skills + agent + hooks (adaptateur qoder)
+.opencode/skills/         13 skills (adaptateur opencode — runtime prouvé)
+.aidf/skills/             13 skills (adaptateur generic — tout hôte AGENTS.md)
+.aidf/AIDF.md              point d'entrée agent
+.aidf/bin/aidf.mjs         lanceur portable
+.aidf/framework/           copie autonome du framework
+.aidf/docs/                11 documents avec statuts + docs/generated/
+.aidf/artefacts/           exigences, décisions, test-plan, threat-model
+.aidf/registry/            skills, activation-map, dependencies, resources.lock.json
+.aidf/workflows/           phases.yaml + gates.yaml + pipeline.yaml (modifiables projet)
+.aidf/evidence/            preuves chaînées + index
 .aidf/state/, reports/, backups/, logs/
 ```
 
@@ -107,11 +129,11 @@ AGENTS.md                    bloc managé (votre contenu préservé)
 `VALIDATION.md` (les mesures), `LIMITATIONS.md`, `COMPATIBILITY.md`,
 `INVENTORY.md`, `FRAMEWORK.md`.
 
-**Journal** : `CHANGELOG.md` (v0.1.0 : liste complète des ajouts/correctifs).
+**Journal** : `CHANGELOG.md` (v0.3.1 : `ops watch` monitoring borné + client Figma REST réel prouvé `fully_verified` ; v0.3.0 : pipeline de delivery `aidf ops` ; v0.2.0 : moteurs artefacts/requirements/traceability/décision/design, inventaire ressources, skills tierces, adaptateur OpenCode, threat model, test plan, docs generate, release report, migration 0.1.0→0.2.0 prouvée). Package publié : **`framework-aidf`** sur npm.
 
 ## Preuves de qualité (mesurées, pas déclarées)
 
-- **43/43 tests** `node --test` (incluant un E2E du CLI : install → doctor →
+- **217/217 tests** `node --test` (incluant un E2E du CLI : install → doctor →
   scan → skills → context → gate → config → speckit → uninstall).
 - **E2E en situation réelle** : projet TaskFlow gouverné de bout en bout,
   2 bugs réels détectés/corrigés par les gates, conflit d'édition humain
