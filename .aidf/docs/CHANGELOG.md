@@ -14,6 +14,18 @@ versionnement [SemVer](https://semver.org/lang/fr/).
 
 ## [Unreleased]
 
+### Ajouté
+- **Planning prévisionnel vs journal réel** : table `plan_entries`
+  (stage, workspace, projet, date, créneau matin/après-midi, titre,
+  minutes prévues, position) alimentée par la commande
+  `stage:import-planning <fichier.md> --workspace= --internship= --project=`
+  qui parse les tableaux markdown du planning jour par jour ;
+  `PlanningComparisonService` compare le prévu aux `daily_logs` et calcule
+  par jour le % réalisé et le statut (fait / partiel / à faire / reporté) ;
+  page dédiée `workspace.internships.planning.show`
+  (`/w/{workspace}/internships/{internship}/planning`) avec lien depuis la
+  fiche stage ; les `daily_logs` ne sont jamais modifiés.
+
 ### À venir
 - (aucun élément en attente — release 1.6.0 approuvée le 2026-11-18, gate `release-exit` PASS, cycle AIDF complet)
 

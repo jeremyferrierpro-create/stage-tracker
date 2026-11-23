@@ -4,6 +4,7 @@ namespace App\Domain\Internship\Models;
 
 use App\Domain\Identity\Models\User;
 use App\Domain\Journal\Models\DailyLog;
+use App\Domain\Planning\Models\PlanEntry;
 use App\Domain\Project\Models\Project;
 use App\Domain\Reporting\Models\Report;
 use App\Models\Concerns\BelongsToWorkspace;
@@ -91,6 +92,16 @@ class Internship extends Model
     public function dailyLogs(): HasMany
     {
         return $this->hasMany(DailyLog::class);
+    }
+
+    /**
+     * Planning prévisionnel importé (prévu vs réel).
+     *
+     * @return HasMany<PlanEntry, $this>
+     */
+    public function planEntries(): HasMany
+    {
+        return $this->hasMany(PlanEntry::class);
     }
 
     /**

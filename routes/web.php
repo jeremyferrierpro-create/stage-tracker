@@ -17,6 +17,7 @@ use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PlanningController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReportTemplateController;
@@ -317,6 +318,11 @@ Route::middleware('auth')->group(function (): void {
             Route::delete('/internships/{internship}/projects/{project}/activities/{activity}/tasks/{task}', [TaskController::class, 'destroy'])
                 ->whereUuid('internship')->whereUuid('project')->whereUuid('activity')->whereUuid('task')
                 ->name('workspace.tasks.destroy');
+
+            // Planning prévisionnel vs journal réel.
+            Route::get('/internships/{internship}/planning', [PlanningController::class, 'show'])
+                ->whereUuid('internship')
+                ->name('workspace.internships.planning.show');
 
             // Journal quotidien (T-027/T-028).
             Route::get('/internships/{internship}/daily-logs', [DailyLogController::class, 'index'])

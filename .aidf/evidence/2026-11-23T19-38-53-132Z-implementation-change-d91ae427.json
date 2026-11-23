@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-23T19-38-53-131Z-d65073",
+  "type": "implementation-change",
+  "status": "PASS",
+  "gate": null,
+  "phase": null,
+  "summary": "Feature planning vs reel: table plan_entries + modele PlanEntry + PlanningMarkdownParser + PlanningComparisonService + commande stage:import-planning + page /planning + tests",
+  "note": "Feature planning vs reel: table plan_entries + modele PlanEntry + PlanningMarkdownParser + PlanningComparisonService + commande stage:import-planning + page /planning + tests",
+  "createdBy": "aidf",
+  "humanApproval": false,
+  "approvedBy": null,
+  "approval": {
+    "declaredBy": null,
+    "declaredAt": null,
+    "authenticated": false,
+    "method": "none",
+    "keyId": null
+  },
+  "createdAt": "2026-11-23T19:38:53.131Z",
+  "checks": [
+    {
+      "id": "files-captured",
+      "status": "PASS",
+      "reason": "14 file(s) from git"
+    }
+  ],
+  "commands": [],
+  "files": [
+    ".aidf/evidence/index.json",
+    "app/Domain/Internship/Models/Internship.php",
+    "resources/views/internships/show.blade.php",
+    "routes/web.php",
+    ".aidf/evidence/2026-11-23T19-38-38-743Z-test-execution-b223e64d.json",
+    "app/Console/Commands/ImportPlanning.php",
+    "app/Domain/Planning/Models/PlanEntry.php",
+    "app/Domain/Planning/PlanningComparisonService.php",
+    "app/Domain/Planning/PlanningMarkdownParser.php",
+    "app/Http/Controllers/PlanningController.php",
+    "database/factories/PlanEntryFactory.php",
+    "database/migrations/2026_11_23_120000_create_plan_entries_table.php",
+    "resources/views/planning/show.blade.php",
+    "tests/Feature/Planning/PlanningTest.php"
+  ],
+  "limitations": [
+    "File list is not a review of the content or quality of the change."
+  ],
+  "previous": "b223e64da3d9b3403d314f4aef6ccb14d5733d2aab035ada672bd48982447632",
+  "hash": "d91ae4272d8a002ed58e9192c882a21346b9ca947dbb000fd146b841b8b7b672"
+}

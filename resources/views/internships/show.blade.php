@@ -41,6 +41,7 @@
 
     <p>
         <a class="button secondary" href="{{ route('workspace.internships.competencies', [$workspace, $internship]) }}">Matrice des compétences</a>
+        <a class="button secondary" href="{{ route('workspace.internships.planning.show', [$workspace, $internship]) }}">Planning</a>
         <a class="button secondary" href="{{ route('workspace.internships.reports.index', [$workspace, $internship]) }}">Rapports</a>
     </p>
 
