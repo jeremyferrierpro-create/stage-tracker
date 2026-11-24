@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "ev-2026-11-24T08-46-00-450Z-152695",
+  "type": "test-execution",
+  "status": "PASS",
+  "gate": null,
+  "phase": null,
+  "summary": "php artisan test (Neon stage_tracker_test): 226/226 PASS, 906 assertions — planning CRUD + pivot plan_entry_activities + parser nouveau format",
+  "note": "php artisan test (Neon stage_tracker_test): 226/226 PASS, 906 assertions — planning CRUD + pivot plan_entry_activities + parser nouveau format",
+  "createdBy": "agent",
+  "humanApproval": false,
+  "approvedBy": null,
+  "approval": {
+    "declaredBy": null,
+    "declaredAt": null,
+    "authenticated": false,
+    "method": "none",
+    "keyId": null
+  },
+  "createdAt": "2026-11-24T08:46:00.450Z",
+  "checks": [
+    {
+      "id": "manual-record",
+      "status": "NOT_PROVEN",
+      "reason": "Agent declaration only; not a human approval."
+    }
+  ],
+  "commands": [],
+  "files": [],
+  "limitations": [
+    "Agent-declared evidence is not human approval."
+  ],
+  "previous": "d91ae4272d8a002ed58e9192c882a21346b9ca947dbb000fd146b841b8b7b672",
+  "hash": "310169015bc68c6eadc0766e054cd6d3863dbe5ab7cbeb4952b9ed5e2e605f9c"
+}
