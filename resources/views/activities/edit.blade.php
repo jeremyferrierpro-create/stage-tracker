@@ -82,6 +82,18 @@
             <label for="solutions">Solutions</label>
             <textarea id="solutions" name="solutions">{{ old('solutions', $activity->solutions) }}</textarea>
 
+            <label for="plan_entry_ids">Entrées de planning réalisées</label>
+            <select id="plan_entry_ids" name="plan_entry_ids[]" multiple size="6">
+                @foreach ($planEntries as $entry)
+                    <option value="{{ $entry->id }}" @selected(in_array($entry->id, old('plan_entry_ids', $linkedPlanEntryIds)))>
+                        {{ $entry->plan_date->format('d/m/Y') }} — {{ $entry->slotLabel() }} — {{ $entry->title }}
+                    </option>
+                @endforeach
+            </select>
+            <p class="muted">Laissez vide pour délier toutes les entrées de planning.</p>
+            @error('plan_entry_ids') <p class="error">{{ $message }}</p> @enderror
+            @error('plan_entry_ids.*') <p class="error">{{ $message }}</p> @enderror
+
             <div class="actions">
                 <button type="submit">Enregistrer</button>
             </div>

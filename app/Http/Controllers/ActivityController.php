@@ -9,6 +9,7 @@ use App\Domain\Evaluation\Models\Competency;
 use App\Domain\Evidence\Models\Evidence;
 use App\Domain\Identity\Models\Workspace;
 use App\Domain\Internship\Models\Internship;
+use App\Domain\Planning\Models\PlanEntry;
 use App\Domain\Project\Models\Activity;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -44,6 +45,7 @@ class ActivityController extends Controller
             'workspace' => $workspace,
             'internship' => $internship,
             'project' => $project,
+            'planEntries' => $this->planEntriesFor($internship),
         ]);
     }
 
@@ -66,12 +68,18 @@ class ActivityController extends Controller
             'results' => ['nullable', 'string', 'max:5000'],
             'difficulties' => ['nullable', 'string', 'max:5000'],
             'solutions' => ['nullable', 'string', 'max:5000'],
+            'plan_entry_ids' => ['nullable', 'array'],
+            'plan_entry_ids.*' => ['uuid'],
         ]);
 
-        $activity = Activity::query()->create(array_merge($validated, [
+        $this->assertPlanEntriesBelong($internship, $validated['plan_entry_ids'] ?? []);
+
+        $activity = Activity::query()->create(collect($validated)->except('plan_entry_ids')->all() + [
             'project_id' => $project->getKey(),
             'workspace_id' => $workspace->getKey(),
-        ]));
+        ]);
+
+        $this->syncPlanEntries($activity, $workspace, $validated['plan_entry_ids'] ?? []);
 
         $this->audit->record(
             'activity.created',
@@ -153,6 +161,7 @@ class ActivityController extends Controller
             'internship' => $internship,
             'project' => $project,
             'activity' => $activity,
+            'planEntries' => $activity->planEntries()->orderBy('plan_date')->orderBy('slot')->orderBy('position')->get(),
             'tasks' => $activity->tasks()->orderBy('position')->get(),
             'evidences' => $evidences,
             'comments' => $comments,
@@ -183,6 +192,8 @@ class ActivityController extends Controller
             'internship' => $internship,
             'project' => $project,
             'activity' => $activity,
+            'planEntries' => $this->planEntriesFor($internship),
+            'linkedPlanEntryIds' => $activity->planEntries()->pluck('plan_entries.id')->all(),
         ]);
     }
 
@@ -206,11 +217,17 @@ class ActivityController extends Controller
             'results' => ['nullable', 'string', 'max:5000'],
             'difficulties' => ['nullable', 'string', 'max:5000'],
             'solutions' => ['nullable', 'string', 'max:5000'],
+            'plan_entry_ids' => ['nullable', 'array'],
+            'plan_entry_ids.*' => ['uuid'],
         ]);
 
-        $activity->fill($validated);
+        $this->assertPlanEntriesBelong($internship, $validated['plan_entry_ids'] ?? []);
+
+        $activity->fill(collect($validated)->except('plan_entry_ids')->all());
         $changed = array_keys($activity->getDirty());
         $activity->save();
+
+        $this->syncPlanEntries($activity, $workspace, $validated['plan_entry_ids'] ?? []);
 
         $this->audit->record(
             'activity.updated',
@@ -256,6 +273,57 @@ class ActivityController extends Controller
         return redirect()
             ->route('workspace.internships.projects.activities.index', [$workspace, $internship, $project])
             ->with('status', 'Activité archivée.');
+    }
+
+    /**
+     * Entrées de planning du stage, triées par date et créneau.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection<int, PlanEntry>
+     */
+    private function planEntriesFor(Internship $internship)
+    {
+        return PlanEntry::query()
+            ->where('internship_id', $internship->getKey())
+            ->orderBy('plan_date')
+            ->orderBy('slot')
+            ->orderBy('position')
+            ->get();
+    }
+
+    /**
+     * Vérifie que chaque entrée de planning appartient au stage.
+     *
+     * @param  list<string>  $ids
+     */
+    private function assertPlanEntriesBelong(Internship $internship, array $ids): void
+    {
+        $ids = array_values(array_unique($ids));
+
+        if ($ids === []) {
+            return;
+        }
+
+        $found = PlanEntry::query()
+            ->where('internship_id', $internship->getKey())
+            ->whereIn('id', $ids)
+            ->count();
+
+        abort_unless($found === count($ids), 422);
+    }
+
+    /**
+     * Synchronise les entrées de planning liées à l'activité.
+     * Le workspace_id est injecté dans chaque pivot (clé composite).
+     *
+     * @param  list<string>  $planEntryIds
+     */
+    private function syncPlanEntries(Activity $activity, Workspace $workspace, array $planEntryIds): void
+    {
+        $activity->planEntries()->sync(
+            collect(array_unique($planEntryIds))->mapWithKeys(
+                static fn (string $id): array => [$id => ['workspace_id' => $workspace->getKey()]],
+            )->all(),
+        );
     }
 
     private function authorizeManage(Workspace $workspace, Internship $internship): void

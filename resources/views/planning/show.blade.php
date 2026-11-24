@@ -64,6 +64,18 @@
                 </select>
                 @error('project_id') <p class="error">{{ $message }}</p> @enderror
 
+                <label for="competency_ids">Compétences visées (optionnel)</label>
+                <select id="competency_ids" name="competency_ids[]" multiple size="5">
+                    @foreach ($competencies as $competency)
+                        <option value="{{ $competency->id }}" @selected(in_array($competency->id, old('competency_ids', [])))>
+                            {{ $competency->code }} — {{ $competency->title }}
+                        </option>
+                    @endforeach
+                </select>
+                <p class="muted">Maintenez Ctrl pour sélectionner plusieurs compétences.</p>
+                @error('competency_ids') <p class="error">{{ $message }}</p> @enderror
+                @error('competency_ids.*') <p class="error">{{ $message }}</p> @enderror
+
                 <button type="submit">Ajouter</button>
             </form>
         </div>
@@ -114,9 +126,18 @@
                                         <strong>{{ \App\Domain\Planning\Models\PlanEntry::SLOT_LABELS[$slot] ?? $slot }}</strong>
                                         <ul>
                                             @foreach ($entries as $entry)
-                                                @php $linked = $activitiesByEntry[$entry->id] ?? collect(); @endphp
+                                                @php
+                                                    $linked = $activitiesByEntry[$entry->id] ?? collect();
+                                                    $linkedCompetencies = $competenciesByEntry[$entry->id] ?? collect();
+                                                    $linkedActivityIds = $linked->pluck('id')->all();
+                                                    $linkedCompetencyIds = $linkedCompetencies->pluck('id')->all();
+                                                @endphp
                                                 <li>
                                                     {{ $entry->title }} <span class="muted">({{ $entry->planned_minutes }} min)</span>
+
+                                                    @foreach ($linkedCompetencies as $competency)
+                                                        <span class="badge">{{ $competency->code }}</span>
+                                                    @endforeach
 
                                                     @if ($linked->isNotEmpty())
                                                         <br><span class="muted">Réalisé par :</span>
@@ -152,6 +173,26 @@
                                                                         <option value="{{ $project->id }}" @selected($entry->project_id === $project->id)>{{ $project->name }}</option>
                                                                     @endforeach
                                                                 </select>
+
+                                                                <label>Compétences visées</label>
+                                                                <select name="competency_ids[]" multiple size="4">
+                                                                    @foreach ($competencies as $competency)
+                                                                        <option value="{{ $competency->id }}" @selected(in_array($competency->id, $linkedCompetencyIds))>
+                                                                            {{ $competency->code }} — {{ $competency->title }}
+                                                                        </option>
+                                                                    @endforeach
+                                                                </select>
+
+                                                                <label>Activités liées</label>
+                                                                <select name="activity_ids[]" multiple size="4">
+                                                                    @foreach ($activities as $activity)
+                                                                        <option value="{{ $activity->id }}" @selected(in_array($activity->id, $linkedActivityIds))>
+                                                                            {{ $activity->project->name }} — {{ $activity->title }}
+                                                                        </option>
+                                                                    @endforeach
+                                                                </select>
+                                                                <p class="muted">Laissez vide pour délier toutes les activités.</p>
+
                                                                 <button type="submit">Enregistrer</button>
                                                             </form>
 

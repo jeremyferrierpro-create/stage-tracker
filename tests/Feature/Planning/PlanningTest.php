@@ -323,6 +323,117 @@ MD);
         $this->assertTrue($entry->fresh()->activities->contains($activity->id));
     }
 
+    public function test_plan_entry_links_competencies_and_activities_on_create_and_update(): void
+    {
+        $owner = User::factory()->create();
+        $workspace = $this->workspaceWithOwner($owner);
+        $trainee = User::factory()->create();
+        [$internship, $project] = $this->internshipWithProject($workspace, $trainee);
+
+        $competency = \App\Domain\Evaluation\Models\Competency::factory()->create([
+            'workspace_id' => $workspace->id,
+        ]);
+        $activity = Activity::factory()->create([
+            'project_id' => $project->id,
+            'workspace_id' => $workspace->id,
+        ]);
+
+        // Création avec liens.
+        $this->actingAs($owner)
+            ->post(route('workspace.internships.planning.store', [$workspace, $internship]), [
+                'plan_date' => '2026-11-24',
+                'slot' => 'morning',
+                'title' => 'Travail sur les compétences',
+                'planned_minutes' => 210,
+                'competency_ids' => [$competency->id],
+                'activity_ids' => [$activity->id],
+            ])
+            ->assertRedirect();
+
+        $entry = PlanEntry::where('title', 'Travail sur les compétences')->sole();
+        $this->assertTrue($entry->competencies->contains($competency->id));
+        $this->assertTrue($entry->activities->contains($activity->id));
+        $this->assertDatabaseHas('plan_entry_competencies', [
+            'plan_entry_id' => $entry->id,
+            'competency_id' => $competency->id,
+            'workspace_id' => $workspace->id,
+        ]);
+        $this->assertDatabaseHas('plan_entry_activities', [
+            'plan_entry_id' => $entry->id,
+            'activity_id' => $activity->id,
+            'workspace_id' => $workspace->id,
+        ]);
+
+        // Mise à jour : on délie tout.
+        $this->actingAs($owner)
+            ->put(route('workspace.internships.planning.update', [$workspace, $internship, $entry]), [
+                'plan_date' => '2026-11-24',
+                'slot' => 'morning',
+                'title' => 'Travail sur les compétences',
+                'planned_minutes' => 210,
+            ])
+            ->assertRedirect();
+
+        $this->assertSame(0, $entry->fresh()->competencies()->count());
+        $this->assertSame(0, $entry->fresh()->activities()->count());
+    }
+
+    public function test_plan_entry_rejects_foreign_competency(): void
+    {
+        $owner = User::factory()->create();
+        $workspace = $this->workspaceWithOwner($owner);
+        $trainee = User::factory()->create();
+        [$internship] = $this->internshipWithProject($workspace, $trainee);
+
+        // Compétence d'un AUTRE workspace.
+        $foreign = \App\Domain\Evaluation\Models\Competency::factory()->create();
+
+        $this->actingAs($owner)
+            ->post(route('workspace.internships.planning.store', [$workspace, $internship]), [
+                'plan_date' => '2026-11-24',
+                'slot' => 'morning',
+                'title' => 'Lien invalide',
+                'planned_minutes' => 210,
+                'competency_ids' => [$foreign->id],
+            ])
+            ->assertStatus(422);
+
+        $this->assertDatabaseCount('plan_entries', 0);
+    }
+
+    public function test_activity_store_links_plan_entries(): void
+    {
+        $owner = User::factory()->create();
+        $workspace = $this->workspaceWithOwner($owner);
+        $trainee = User::factory()->create();
+        [$internship, $project] = $this->internshipWithProject($workspace, $trainee);
+
+        $entry = PlanEntry::factory()->create([
+            'internship_id' => $internship->id,
+            'workspace_id' => $workspace->id,
+            'plan_date' => '2026-11-24',
+            'slot' => 'morning',
+        ]);
+
+        $this->actingAs($owner)
+            ->post(route('workspace.internships.projects.activities.store', [$workspace, $internship, $project]), [
+                'title' => 'Activité liée au planning',
+                'type' => 'feature',
+                'status' => 'todo',
+                'priority' => 'medium',
+                'plan_entry_ids' => [$entry->id],
+            ])
+            ->assertRedirect();
+
+        $activity = Activity::sole();
+        $this->assertTrue($activity->planEntries->contains($entry->id));
+        $this->assertDatabaseHas('plan_entry_activities', [
+            'plan_entry_id' => $entry->id,
+            'activity_id' => $activity->id,
+            'workspace_id' => $workspace->id,
+        ]);
+    }
+
     public function test_planning_crud_rejects_user_without_manage_planning(): void
     {
         $owner = User::factory()->create();

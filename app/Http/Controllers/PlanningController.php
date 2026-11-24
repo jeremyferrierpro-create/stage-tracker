@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Domain\Audit\AuditLogger;
 use App\Domain\Authorization\EffectivePermissions;
+use App\Domain\Evaluation\Models\Competency;
 use App\Domain\Identity\Models\Workspace;
 use App\Domain\Internship\Models\Internship;
 use App\Domain\Planning\Models\PlanEntry;
@@ -36,21 +37,35 @@ class PlanningController extends Controller
             )->all(),
         );
 
-        $activitiesByEntry = PlanEntry::query()
+        $entries = PlanEntry::query()
             ->whereIn('id', $entryIds)
-            ->with('activities.project:id,name')
-            ->get()
-            ->mapWithKeys(static fn (PlanEntry $entry) => [
-                $entry->getKey() => $entry->activities,
-            ]);
+            ->with(['activities.project:id,name', 'competencies:id,code,title'])
+            ->get();
+
+        $activitiesByEntry = $entries->mapWithKeys(
+            static fn (PlanEntry $entry) => [$entry->getKey() => $entry->activities],
+        );
+        $competenciesByEntry = $entries->mapWithKeys(
+            static fn (PlanEntry $entry) => [$entry->getKey() => $entry->competencies],
+        );
 
         return view('planning.show', [
             'workspace' => $workspace,
             'internship' => $internship,
             'days' => $days,
             'projects' => $internship->projects()->orderBy('name')->get(),
+            'competencies' => Competency::query()
+                ->where('workspace_id', $workspace->getKey())
+                ->orderBy('code')
+                ->get(),
+            'activities' => Activity::query()
+                ->whereHas('project', fn ($q) => $q->where('internship_id', $internship->getKey()))
+                ->with('project:id,name')
+                ->orderBy('title')
+                ->get(),
             'canManage' => $permissions['manage_planning'],
             'activitiesByEntry' => $activitiesByEntry,
+            'competenciesByEntry' => $competenciesByEntry,
         ]);
     }
 
@@ -65,9 +80,15 @@ class PlanningController extends Controller
             'title' => ['required', 'string', 'max:200'],
             'planned_minutes' => ['required', 'integer', 'min:1', 'max:600'],
             'project_id' => ['nullable', 'uuid'],
+            'competency_ids' => ['nullable', 'array'],
+            'competency_ids.*' => ['uuid'],
+            'activity_ids' => ['nullable', 'array'],
+            'activity_ids.*' => ['uuid'],
         ]);
 
         $this->assertProjectBelongs($internship, $validated['project_id'] ?? null);
+        $this->assertCompetenciesBelong($workspace, $validated['competency_ids'] ?? []);
+        $this->assertActivitiesBelong($internship, $validated['activity_ids'] ?? []);
 
         $position = PlanEntry::query()
             ->where('internship_id', $internship->getKey())
@@ -75,11 +96,13 @@ class PlanningController extends Controller
             ->where('slot', $validated['slot'])
             ->max('position') ?? -1;
 
-        $entry = PlanEntry::query()->create(array_merge($validated, [
+        $entry = PlanEntry::query()->create(collect($validated)->except(['competency_ids', 'activity_ids'])->all() + [
             'internship_id' => $internship->getKey(),
             'workspace_id' => $workspace->getKey(),
             'position' => $position + 1,
-        ]));
+        ]);
+
+        $this->syncLinks($entry, $workspace, $validated['competency_ids'] ?? [], $validated['activity_ids'] ?? []);
 
         $this->audit->record(
             'plan_entry.created',
@@ -107,12 +130,20 @@ class PlanningController extends Controller
             'title' => ['required', 'string', 'max:200'],
             'planned_minutes' => ['required', 'integer', 'min:1', 'max:600'],
             'project_id' => ['nullable', 'uuid'],
+            'competency_ids' => ['nullable', 'array'],
+            'competency_ids.*' => ['uuid'],
+            'activity_ids' => ['nullable', 'array'],
+            'activity_ids.*' => ['uuid'],
         ]);
 
         $this->assertProjectBelongs($internship, $validated['project_id'] ?? null);
+        $this->assertCompetenciesBelong($workspace, $validated['competency_ids'] ?? []);
+        $this->assertActivitiesBelong($internship, $validated['activity_ids'] ?? []);
 
-        $entry->fill($validated);
+        $entry->fill(collect($validated)->except(['competency_ids', 'activity_ids'])->all());
         $entry->save();
+
+        $this->syncLinks($entry, $workspace, $validated['competency_ids'] ?? [], $validated['activity_ids'] ?? []);
 
         $this->audit->record(
             'plan_entry.updated',
@@ -231,6 +262,72 @@ class PlanningController extends Controller
         abort_unless(
             $internship->projects()->whereKey($projectId)->exists(),
             422,
+        );
+    }
+
+    /**
+     * Vérifie que chaque compétence appartient au workspace.
+     *
+     * @param  list<string>  $ids
+     */
+    private function assertCompetenciesBelong(Workspace $workspace, array $ids): void
+    {
+        $ids = array_values(array_unique($ids));
+
+        if ($ids === []) {
+            return;
+        }
+
+        $found = Competency::query()
+            ->where('workspace_id', $workspace->getKey())
+            ->whereIn('id', $ids)
+            ->count();
+
+        abort_unless($found === count($ids), 422);
+    }
+
+    /**
+     * Vérifie que chaque activité appartient à un projet du stage.
+     *
+     * @param  list<string>  $ids
+     */
+    private function assertActivitiesBelong(Internship $internship, array $ids): void
+    {
+        $ids = array_values(array_unique($ids));
+
+        if ($ids === []) {
+            return;
+        }
+
+        $found = Activity::query()
+            ->whereIn('id', $ids)
+            ->whereHas('project', fn ($q) => $q->where('internship_id', $internship->getKey()))
+            ->count();
+
+        abort_unless($found === count($ids), 422);
+    }
+
+    /**
+     * Synchronise les liens compétences et activités d'une entrée.
+     * Le workspace_id est injecté dans chaque pivot (clé composite).
+     *
+     * @param  list<string>  $competencyIds
+     * @param  list<string>  $activityIds
+     */
+    private function syncLinks(PlanEntry $entry, Workspace $workspace, array $competencyIds, array $activityIds): void
+    {
+        $pivot = static fn (string $id): array => ['workspace_id' => $workspace->getKey()];
+
+        $entry->competencies()->sync(
+            collect(array_unique($competencyIds))->mapWithKeys(
+                static fn (string $id): array => [$id => $pivot($id)],
+            )->all(),
+        );
+
+        $entry->activities()->sync(
+            collect(array_unique($activityIds))->mapWithKeys(
+                static fn (string $id): array => [$id => $pivot($id)],
+            )->all(),
         );
     }
 }

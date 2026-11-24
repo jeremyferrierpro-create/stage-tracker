@@ -2,6 +2,7 @@
 
 namespace App\Domain\Planning\Models;
 
+use App\Domain\Evaluation\Models\Competency;
 use App\Domain\Internship\Models\Internship;
 use App\Domain\Project\Models\Activity;
 use App\Domain\Project\Models\Project;
@@ -90,6 +91,21 @@ class PlanEntry extends Model
             'plan_entry_activities',
             'plan_entry_id',
             'activity_id',
+        )->withPivot('workspace_id')->withTimestamps();
+    }
+
+    /**
+     * Compétences du workspace visées par cette entrée planifiée.
+     *
+     * @return BelongsToMany<Competency, $this>
+     */
+    public function competencies(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Competency::class,
+            'plan_entry_competencies',
+            'plan_entry_id',
+            'competency_id',
         )->withPivot('workspace_id')->withTimestamps();
     }
 

@@ -80,6 +80,18 @@
             <label for="solutions">Solutions apportées</label>
             <textarea id="solutions" name="solutions">{{ old('solutions') }}</textarea>
 
+            <label for="plan_entry_ids">Entrées de planning réalisées (optionnel)</label>
+            <select id="plan_entry_ids" name="plan_entry_ids[]" multiple size="6">
+                @foreach ($planEntries as $entry)
+                    <option value="{{ $entry->id }}" @selected(in_array($entry->id, old('plan_entry_ids', [])))>
+                        {{ $entry->plan_date->format('d/m/Y') }} — {{ $entry->slotLabel() }} — {{ $entry->title }}
+                    </option>
+                @endforeach
+            </select>
+            <p class="muted">Laissez vide si l'activité ne correspond à aucune entrée planifiée.</p>
+            @error('plan_entry_ids') <p class="error">{{ $message }}</p> @enderror
+            @error('plan_entry_ids.*') <p class="error">{{ $message }}</p> @enderror
+
             <div class="actions">
                 <button type="submit">Créer l'activité</button>
                 <a class="button secondary" href="{{ route('workspace.internships.projects.activities.index', [$workspace, $internship, $project]) }}">Annuler</a>

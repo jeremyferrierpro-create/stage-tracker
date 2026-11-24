@@ -41,6 +41,25 @@
     </div>
 
     <div class="card">
+        <h2>Lié au planning</h2>
+        @if ($planEntries->isEmpty())
+            <p class="muted">Aucune entrée de planning associée.</p>
+        @else
+            <ul>
+                @foreach ($planEntries as $entry)
+                    <li>
+                        {{ $entry->plan_date->format('d/m/Y') }} — {{ $entry->slotLabel() }} — {{ $entry->title }}
+                        ({{ $entry->planned_minutes }} min prévues)
+                    </li>
+                @endforeach
+            </ul>
+        @endif
+        @if ($canManage)
+            <p><a class="button secondary small" href="{{ route('workspace.internships.planning.show', [$workspace, $internship]) }}">Ouvrir le planning</a></p>
+        @endif
+    </div>
+
+    <div class="card">
         <h2>Tâches (Kanban)</h2>
 
         @if ($canManage)
