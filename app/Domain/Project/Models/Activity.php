@@ -6,6 +6,7 @@ use App\Domain\Collaboration\Models\Comment;
 use App\Domain\Collaboration\Models\Review;
 use App\Domain\Evaluation\Models\ActivityCompetency;
 use App\Domain\Evidence\Models\Evidence;
+use App\Domain\Planning\Models\PlanEntry;
 use App\Models\Concerns\BelongsToWorkspace;
 use Database\Factories\ActivityFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -152,6 +153,21 @@ class Activity extends Model
     public function activityCompetencies(): HasMany
     {
         return $this->hasMany(ActivityCompetency::class);
+    }
+
+    /**
+     * Entrées de planning prévisionnel que cette activité réalise.
+     *
+     * @return BelongsToMany<PlanEntry, $this>
+     */
+    public function planEntries(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            PlanEntry::class,
+            'plan_entry_activities',
+            'activity_id',
+            'plan_entry_id',
+        )->withPivot('workspace_id')->withTimestamps();
     }
 
     /**

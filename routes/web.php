@@ -323,6 +323,18 @@ Route::middleware('auth')->group(function (): void {
             Route::get('/internships/{internship}/planning', [PlanningController::class, 'show'])
                 ->whereUuid('internship')
                 ->name('workspace.internships.planning.show');
+            Route::post('/internships/{internship}/planning', [PlanningController::class, 'store'])
+                ->whereUuid('internship')
+                ->name('workspace.internships.planning.store');
+            Route::put('/internships/{internship}/planning/{entry}', [PlanningController::class, 'update'])
+                ->whereUuid('internship')->whereUuid('entry')
+                ->name('workspace.internships.planning.update');
+            Route::delete('/internships/{internship}/planning/{entry}', [PlanningController::class, 'destroy'])
+                ->whereUuid('internship')->whereUuid('entry')
+                ->name('workspace.internships.planning.destroy');
+            Route::post('/internships/{internship}/planning/{entry}/activity', [PlanningController::class, 'createActivity'])
+                ->whereUuid('internship')->whereUuid('entry')
+                ->name('workspace.internships.planning.activity.store');
 
             // Journal quotidien (T-027/T-028).
             Route::get('/internships/{internship}/daily-logs', [DailyLogController::class, 'index'])

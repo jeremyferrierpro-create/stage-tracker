@@ -3,6 +3,7 @@
 namespace App\Domain\Planning\Models;
 
 use App\Domain\Internship\Models\Internship;
+use App\Domain\Project\Models\Activity;
 use App\Domain\Project\Models\Project;
 use App\Models\Concerns\BelongsToWorkspace;
 use Database\Factories\PlanEntryFactory;
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * Entrée de planning prévisionnel (prévu), importée depuis un document
@@ -74,6 +76,21 @@ class PlanEntry extends Model
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
+    }
+
+    /**
+     * Activités réelles qui réalisent cette entrée planifiée.
+     *
+     * @return BelongsToMany<Activity, $this>
+     */
+    public function activities(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Activity::class,
+            'plan_entry_activities',
+            'plan_entry_id',
+            'activity_id',
+        )->withPivot('workspace_id')->withTimestamps();
     }
 
     public function slotLabel(): string

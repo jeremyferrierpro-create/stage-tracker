@@ -11,7 +11,10 @@ use Illuminate\Support\Carbon;
  * liste des entrées plan_entries à insérer.
  *
  * Format attendu (voir aidf/projets/coab/docs/PLANNING_STAGE.md) :
- *   | **Lun 23/11** *(en cours)* | texte matin | texte après-midi |
+ *   | Lun 23/11 | texte matin | texte après-midi | livrable/note |
+ * La 4e colonne éventuelle (« Livrable / note ») est ignorée.
+ * Les lignes sans créneau de travail (« VACANCES », « — », cellules
+ * vides) ne produisent aucune entrée.
  *
  * Chaque cellule peut contenir plusieurs sous-tâches séparées par « ; »
  * ou « + » : elles deviennent des plan_entries distinctes qui se
@@ -80,16 +83,20 @@ final class PlanningMarkdownParser
             return null;
         }
 
-        $cells = array_map('trim', explode('|', $line));
-        // explode produit des cases vides en tête et en queue.
-        $cells = array_values(array_filter($cells, static fn (string $c): bool => $c !== ''));
+        // On garde les cases vides : les colonnes sont positionnelles
+        // (jour | matin | après-midi | livrable/note éventuel).
+        $cells = explode('|', $line);
 
-        if (count($cells) < 3) {
+        // explode produit des cases vides en tête et en queue.
+        if (count($cells) < 5) {
             return null;
         }
 
-        // La première cellule ressemble à « **Lun 23/11** *(en cours)* ».
-        if (! preg_match('/\*\*[^*]*?(\d{1,2})\/(\d{1,2})[^*]*?\*\*/u', $cells[0], $m)) {
+        $dayCell = trim($cells[1]);
+
+        // La première cellule contient une date « 23/11 » (gras optionnel).
+        $plain = str_replace(['*', '`'], '', $dayCell);
+        if (! preg_match('/(\d{1,2})\/(\d{1,2})/u', $plain, $m)) {
             return null;
         }
 
@@ -105,7 +112,7 @@ final class PlanningMarkdownParser
             return null;
         }
 
-        return [$date, [$cells[1] ?? '', $cells[2] ?? '']];
+        return [$date, [trim($cells[2] ?? ''), trim($cells[3] ?? '')]];
     }
 
     /**
@@ -118,7 +125,12 @@ final class PlanningMarkdownParser
 
         $text = trim($text);
 
-        return in_array($text, ['', '—', '-'], true) ? '' : $text;
+        // Cellules sans travail planifié.
+        if ($text === '' || in_array($text, ['—', '-', 'VACANCES', 'Week-end'], true)) {
+            return '';
+        }
+
+        return $text;
     }
 
     /**
@@ -133,7 +145,14 @@ final class PlanningMarkdownParser
 
         $subtasks = [];
         foreach ($parts as $part) {
-            foreach (preg_split('/\s+\+\s+/u', $part) ?: [$part] as $sub) {
+            $plusParts = preg_split('/\s+\+\s+/u', $part) ?: [$part];
+
+            // On ne scinde sur « + » que si les deux côtés sont des
+            // sous-tâches plausibles (évite « AIDF 0.4.0 + npm » → « npm »).
+            $splittable = count($plusParts) > 1
+                && min(array_map('mb_strlen', $plusParts)) >= 6;
+
+            foreach ($splittable ? $plusParts : [$part] as $sub) {
                 $sub = trim($sub, " \t\n\r\0\x0B.,");
                 if ($sub !== '') {
                     $subtasks[] = mb_strimwidth($sub, 0, 200, '');

@@ -6,9 +6,11 @@ use App\Domain\Identity\Models\User;
 use App\Domain\Identity\Models\Workspace;
 use App\Domain\Identity\Models\WorkspaceMember;
 use App\Domain\Internship\Models\Internship;
+use App\Domain\Internship\Models\InternshipParticipant;
 use App\Domain\Journal\Models\DailyLog;
 use App\Domain\Planning\Models\PlanEntry;
 use App\Domain\Planning\PlanningComparisonService;
+use App\Domain\Project\Models\Activity;
 use App\Domain\Project\Models\Project;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
@@ -111,6 +113,25 @@ MD);
         );
 
         unlink($file);
+    }
+
+    public function test_parser_handles_four_columns_and_skips_non_working_rows(): void
+    {
+        $entries = \App\Domain\Planning\PlanningMarkdownParser::parse(<<<'MD'
+| Jour | Matin | Après-midi | Livrable / note |
+|---|---|---|---|
+| Lun 23/11 | Tâche A + Tâche B | — | Note ignorée |
+| Mar 24/11 | **VACANCES** | | |
+| Mer 25/11 | Injection AIDF 0.4.0 + npm | Revue | — |
+MD);
+
+        // Lun : 2 sous-tâches le matin, après-midi « — » ignoré.
+        // Mar : « VACANCES » ignoré. Mer : « + npm » non scindé (côté < 6 car.).
+        $this->assertCount(4, $entries);
+        $this->assertSame('2026-11-23', $entries[0]['plan_date']);
+        $this->assertSame('Tâche A', $entries[0]['title']);
+        $this->assertSame('Injection AIDF 0.4.0 + npm', $entries[2]['title']);
+        $this->assertSame(210, $entries[2]['planned_minutes']);
     }
 
     public function test_import_is_idempotent(): void
@@ -224,6 +245,116 @@ MD);
             ->assertOk()
             ->assertSee('Planning vs réel')
             ->assertSee('Matin (9h-12h30)');
+    }
+
+    public function test_owner_can_create_update_and_delete_plan_entry(): void
+    {
+        $owner = User::factory()->create();
+        $workspace = $this->workspaceWithOwner($owner);
+        $trainee = User::factory()->create();
+        [$internship, $project] = $this->internshipWithProject($workspace, $trainee);
+
+        // Création.
+        $this->actingAs($owner)
+            ->post(route('workspace.internships.planning.store', [$workspace, $internship]), [
+                'plan_date' => '2026-11-24',
+                'slot' => 'morning',
+                'title' => 'Squelette MVC',
+                'planned_minutes' => 210,
+                'project_id' => $project->id,
+            ])
+            ->assertRedirect();
+
+        $entry = PlanEntry::where('title', 'Squelette MVC')->sole();
+        $this->assertSame($workspace->id, $entry->workspace_id);
+        $this->assertSame(0, $entry->position);
+
+        // Mise à jour.
+        $this->actingAs($owner)
+            ->put(route('workspace.internships.planning.update', [$workspace, $internship, $entry]), [
+                'plan_date' => '2026-11-25',
+                'slot' => 'afternoon',
+                'title' => 'Squelette MVC affiné',
+                'planned_minutes' => 180,
+                'project_id' => null,
+            ])
+            ->assertRedirect();
+
+        $entry->refresh();
+        $this->assertSame('Squelette MVC affiné', $entry->title);
+        $this->assertSame('2026-11-25', $entry->plan_date->toDateString());
+        $this->assertSame(180, $entry->planned_minutes);
+
+        // Suppression.
+        $this->actingAs($owner)
+            ->delete(route('workspace.internships.planning.destroy', [$workspace, $internship, $entry]))
+            ->assertRedirect();
+
+        $this->assertDatabaseMissing('plan_entries', ['id' => $entry->id]);
+    }
+
+    public function test_create_activity_from_plan_entry_links_them(): void
+    {
+        $owner = User::factory()->create();
+        $workspace = $this->workspaceWithOwner($owner);
+        $trainee = User::factory()->create();
+        [$internship, $project] = $this->internshipWithProject($workspace, $trainee);
+
+        $entry = PlanEntry::factory()->create([
+            'internship_id' => $internship->id,
+            'workspace_id' => $workspace->id,
+            'plan_date' => '2026-11-24',
+            'slot' => 'morning',
+            'title' => 'Page d\'accueil',
+        ]);
+
+        $this->actingAs($owner)
+            ->post(route('workspace.internships.planning.activity.store', [$workspace, $internship, $entry]), [
+                'project_id' => $project->id,
+                'type' => 'feature',
+                'status' => 'todo',
+                'priority' => 'high',
+            ])
+            ->assertRedirect();
+
+        $activity = Activity::sole();
+        $this->assertSame('Page d\'accueil', $activity->title);
+        $this->assertSame($project->id, $activity->project_id);
+        $this->assertTrue($entry->fresh()->activities->contains($activity->id));
+    }
+
+    public function test_planning_crud_rejects_user_without_manage_planning(): void
+    {
+        $owner = User::factory()->create();
+        $workspace = $this->workspaceWithOwner($owner);
+        $trainee = User::factory()->create();
+        [$internship] = $this->internshipWithProject($workspace, $trainee);
+
+        $viewer = User::factory()->create();
+        WorkspaceMember::factory()->create([
+            'workspace_id' => $workspace->id,
+            'user_id' => $viewer->id,
+            'role' => 'viewer',
+        ]);
+        // Le viewer est rattaché au stage pour voir le journal.
+        InternshipParticipant::create([
+            'internship_id' => $internship->id,
+            'workspace_id' => $workspace->id,
+            'user_id' => $viewer->id,
+            'role' => 'observer',
+            'status' => 'active',
+        ]);
+
+        $this->actingAs($viewer)
+            ->post(route('workspace.internships.planning.store', [$workspace, $internship]), [
+                'plan_date' => '2026-11-24',
+                'slot' => 'morning',
+                'title' => 'Non autorisé',
+                'planned_minutes' => 60,
+            ])
+            ->assertForbidden();
+
+        $this->assertDatabaseCount('plan_entries', 0);
     }
 
     public function test_planning_page_rejects_outsider(): void
